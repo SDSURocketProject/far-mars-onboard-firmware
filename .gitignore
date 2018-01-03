@@ -81,3 +81,13 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+#Atmel Studio Files and Directories
+*.cproj
+*.xml
+Debug
+Release
+*.html
+*.txt
+*.png
+*.css
