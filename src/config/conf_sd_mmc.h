@@ -1,7 +1,7 @@
 /**
  * \file
  *
- * \brief SAM D21 Xplained Pro board configuration.
+ * \brief SD/MMC stack configuration file.
  *
  * Copyright (c) 2014-2015 Atmel Corporation. All rights reserved.
  *
@@ -44,7 +44,40 @@
  * Support and FAQ: visit <a href="http://www.atmel.com/design-support/">Atmel Support</a>
  */
 
-#ifndef CONF_BOARD_H_INCLUDED
-#define CONF_BOARD_H_INCLUDED
+#ifndef CONF_SD_MMC_H_INCLUDED
+#define CONF_SD_MMC_H_INCLUDED
 
-#endif /* CONF_BOARD_H_INCLUDED */
+// Define to enable the SPI mode instead of Multimedia Card interface mode
+#define SD_MMC_SPI_MODE
+
+// Define to enable the SDIO support
+//#define SDIO_SUPPORT_ENABLE
+
+// Define to enable the debug trace to the current standard output (stdio)
+//#define SD_MMC_DEBUG
+
+// Define to memory count
+#define SD_MMC_SPI_MEM_CNT          1
+
+//! Select the SPI module SD/MMC is connected to
+#define SD_MMC_SPI                 SERCOM4
+
+#define SD_MMC_SPI_PINMUX_SETTING  SPI_SIGNAL_MUX_SETTING_D
+#define SD_MMC_SPI_PINMUX_PAD0     PINMUX_PB08D_SERCOM4_PAD0
+#define SD_MMC_SPI_PINMUX_PAD1     PINMUX_PB09D_SERCOM4_PAD1
+#define SD_MMC_SPI_PINMUX_PAD2     PINMUX_UNUSED//PINMUX_PB10D_SERCOM4_PAD2
+#define SD_MMC_SPI_PINMUX_PAD3     PINMUX_PB11D_SERCOM4_PAD3
+
+#define SD_MMC_CS                  PIN_PA15
+
+#define SD_MMC_0_CD_GPIO           (PIN_PA14)
+#define SD_MMC_0_CD_DETECT_VALUE   1
+
+// Define the SPI clock source
+#define SD_MMC_SPI_SOURCE_CLOCK    GCLK_GENERATOR_0
+
+// Define the SPI max clock
+#define SD_MMC_SPI_MAX_CLOCK       10000000
+
+#endif /* CONF_SD_MMC_H_INCLUDED */
+

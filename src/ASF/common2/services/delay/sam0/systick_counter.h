@@ -1,9 +1,9 @@
 /**
  * \file
  *
- * \brief SAM RTC Driver (Count Interrupt Mode)
+ * \brief ARM functions for busy-wait delay loops
  *
- * Copyright (C) 2013-2015 Atmel Corporation. All rights reserved.
+ * Copyright (c) 2014-2015 Atmel Corporation. All rights reserved.
  *
  * \asf_license_start
  *
@@ -43,48 +43,71 @@
 /*
  * Support and FAQ: visit <a href="http://www.atmel.com/design-support/">Atmel Support</a>
  */
+#ifndef CYCLE_COUNTER_H_INCLUDED
+#define CYCLE_COUNTER_H_INCLUDED
 
-#ifndef RTC_COUNT_INTERRUPT_H_INCLUDED
-#define RTC_COUNT_INTERRUPT_H_INCLUDED
-
-#include "rtc_count.h"
+#include <compiler.h>
+#include <clock.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /**
- * \addtogroup asfdoc_sam0_rtc_count_group
+ * \name Convenience functions for busy-wait delay loops
+ *
  * @{
  */
 
- /**
- * \name Callbacks
- * @{
+/**
+ * \brief Delay loop to delay n number of cycles
+ * Delay program execution for at least the specified number of CPU cycles.
+ *
+ * \param n  Number of cycles to delay
  */
-enum status_code rtc_count_register_callback(
-		struct rtc_module *const module,
-		rtc_count_callback_t callback,
-		enum rtc_count_callback callback_type);
+static inline void delay_cycles(
+		const uint32_t n)
+{
+	if (n > 0) {
+		SysTick->LOAD = n;
+		SysTick->VAL = 0;
 
-enum status_code rtc_count_unregister_callback(
-		struct rtc_module *const module,
-		enum rtc_count_callback callback_type);
+		while (!(SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk)) {
+		};
+	}
+}
 
-void rtc_count_enable_callback(
-		struct rtc_module *const module,
-		enum rtc_count_callback callback_type);
+void delay_cycles_us(uint32_t n);
 
-void rtc_count_disable_callback(
-		struct rtc_module *const module,
-		enum rtc_count_callback callback_type);
+void delay_cycles_ms(uint32_t n);
 
-/** @} */
+/**
+ * \brief Delay program execution for at least the specified number of microseconds.
+ *
+ * \param delay  number of microseconds to wait
+ */
+#define cpu_delay_us(delay)      delay_cycles_us(delay)
 
-/** @} */
+/**
+ * \brief Delay program execution for at least the specified number of milliseconds.
+ *
+ * \param delay  number of milliseconds to wait
+ */
+#define cpu_delay_ms(delay)      delay_cycles_ms(delay)
+
+/**
+ * \brief Delay program execution for at least the specified number of seconds.
+ *
+ * \param delay  number of seconds to wait
+ */
+#define cpu_delay_s(delay)       delay_cycles_ms(1000 * delay)
+
+/**
+ * @}
+ */
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* RTC_COUNT_INTERRUPT_H_INCLUDED */
+#endif /* CYCLE_COUNTER_H_INCLUDED */

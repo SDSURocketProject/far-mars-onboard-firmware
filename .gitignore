@@ -91,3 +91,5 @@ Release
 *.txt
 *.png
 *.css
+_main_sdmmc_test.c
+debugger_serial_config.h
