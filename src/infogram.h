@@ -40,18 +40,18 @@ struct infogram
 	int32_t temp_cpu,
 	int32_t temp_imu,
 	//Four point quaternion output, Quanterniun units
-	int32_t quan_a,
-	int32_t quan_b,
-	int32_t quan_c,
-	int32_t quan_d,
+	float quan_a,
+	float quan_b,
+	float quan_c,
+	float quan_d,
 	//Three axis of gravitational acceleration,  m/s^2
-	int32_t grav_x,
-	int32_t grav_y,
-	int32_t grav_z,
+	float grav_x,
+	float grav_y,
+	float grav_z,
 	//Three axis of magnetic field, micro Tesla
-	int32_t mag_x,
-	int32_t mag_y,
-	int32_t mag_z,
+	float mag_x,
+	float mag_y,
+	float mag_z,
 	//Warnings - NEED TO NAME
 	
 }infogram;
