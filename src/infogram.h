@@ -72,6 +72,6 @@ struct infogram
 	
 }infogram;
 
-char * infogram_to_json(infogram * , info_header);
+void infogram_to_json(infogram * , info_header);
 
 #endif /* INFOGRAM_H_ */
