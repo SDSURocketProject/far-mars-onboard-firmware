@@ -83,7 +83,6 @@ $RECYCLE.BIN/
 *.lnk
 
 #Atmel Studio Files and Directories
-*.xml
 *.html
 *.txt
 *.png
