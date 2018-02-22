@@ -83,16 +83,19 @@ $RECYCLE.BIN/
 *.lnk
 
 #Atmel Studio Files and Directories
+*.cproj
 *.xml
 *.html
 *.txt
 *.png
 *.css
-*/Debug
-*/Release
-.vs
+*.bin
+*.eep
+*.map
+*.srec
+*.d
+*.lss
+*.map
 
-
-*_main_test_*
-*_main_sdmmc_test.c
-*debugger_serial_config.h
+_main_sdmmc_test.c
+debugger_serial_config.h
