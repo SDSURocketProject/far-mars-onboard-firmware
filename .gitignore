@@ -91,7 +91,3 @@ $RECYCLE.BIN/
 */Release
 .vs
 
-
-*_main_test_*
-*_main_sdmmc_test.c
-*debugger_serial_config.h
