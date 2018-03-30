@@ -5,7 +5,7 @@
  *  Author: Jake Carver
  */ 
 
-
+/*
 #ifndef INFOGRAM_H_
 #define INFOGRAM_H_
 
@@ -75,3 +75,5 @@ struct infogram
 void infogram_to_json(infogram * , info_header);
 
 #endif /* INFOGRAM_H_ */
+
+*/

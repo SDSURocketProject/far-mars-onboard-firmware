@@ -7,9 +7,9 @@
 
 
 #include <asf.h>
-int _main_sdmmc_test(void);
+int _main_imu_test(void);
 
 int main(void)
 {
-	return _main_sdmmc_test();
+	return _main_imu_test();
 }

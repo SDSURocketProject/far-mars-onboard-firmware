@@ -1,9 +1,9 @@
 /**
  * \file
  *
- * \brief SD/MMC stack configuration file.
+ * \brief SAM TCC - Timer Counter for Control Applications Callback Driver
  *
- * Copyright (c) 2014-2015 Atmel Corporation. All rights reserved.
+ * Copyright (C) 2013-2015 Atmel Corporation. All rights reserved.
  *
  * \asf_license_start
  *
@@ -44,40 +44,50 @@
  * Support and FAQ: visit <a href="http://www.atmel.com/design-support/">Atmel Support</a>
  */
 
-#ifndef CONF_SD_MMC_H_INCLUDED
-#define CONF_SD_MMC_H_INCLUDED
 
-// Define to enable the SPI mode instead of Multimedia Card interface mode
-#define SD_MMC_SPI_MODE
+#ifndef TCC_CALLBACK_H_INCLUDED
+#define TCC_CALLBACK_H_INCLUDED
 
-// Define to enable the SDIO support
-//#define SDIO_SUPPORT_ENABLE
+#include "tcc.h"
+#include <system_interrupt.h>
 
-// Define to enable the debug trace to the current standard output (stdio)
-//#define SD_MMC_DEBUG
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-// Define to memory count
-#define SD_MMC_SPI_MEM_CNT          1
+#if !defined(__DOXYGEN__)
+extern void *_tcc_instances[TCC_INST_NUM];
+#endif
 
-//! Select the SPI module SD/MMC is connected to
-#define SD_MMC_SPI                 SERCOM0
 
-#define SD_MMC_SPI_PINMUX_SETTING  SPI_SIGNAL_MUX_SETTING_I
-#define SD_MMC_SPI_PINMUX_PAD0     PINMUX_PA08C_SERCOM0_PAD0
-#define SD_MMC_SPI_PINMUX_PAD1     PINMUX_PA09C_SERCOM0_PAD1
-#define SD_MMC_SPI_PINMUX_PAD2     PINMUX_UNUSED//PINMUX_PB10D_SERCOM4_PAD2
-#define SD_MMC_SPI_PINMUX_PAD3     PINMUX_PA11C_SERCOM0_PAD3
+/**
+ * \name Callback Management
+ * {@
+ */
 
-#define SD_MMC_CS                  PIN_PB10
+enum status_code tcc_register_callback(
+		struct tcc_module *const module,
+		tcc_callback_t callback_func,
+		const enum tcc_callback callback_type);
 
-#define SD_MMC_0_CD_GPIO           (PIN_PA07)
-#define SD_MMC_0_CD_DETECT_VALUE   0
+enum status_code tcc_unregister_callback(
+		struct tcc_module *const module,
+		const enum tcc_callback callback_type);
 
-// Define the SPI clock source
-#define SD_MMC_SPI_SOURCE_CLOCK    GCLK_GENERATOR_0
+void tcc_enable_callback(
+		struct tcc_module *const module,
+		const enum tcc_callback callback_type);
 
-// Define the SPI max clock
-#define SD_MMC_SPI_MAX_CLOCK       10000000
+void tcc_disable_callback(
+		struct tcc_module *const module,
+		const enum tcc_callback callback_type);
 
-#endif /* CONF_SD_MMC_H_INCLUDED */
+/**
+ * @}
+ */
 
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* TCC_CALLBACK_H_INCLUDED */

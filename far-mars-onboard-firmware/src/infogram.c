@@ -5,7 +5,7 @@
  *  Author: Jake Carver
  */ 
 
-
+/*
 #include "infogram.h"
 
 void infogram_to_json(infogram * state, info_header info_type, char * buffer)
@@ -51,3 +51,4 @@ void infogram_to_json(infogram * state, info_header info_type, char * buffer)
 			break;
 	}
 }
+*/
