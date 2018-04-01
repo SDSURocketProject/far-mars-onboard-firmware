@@ -73,25 +73,29 @@ void bno_api_init(void)
 
 s8 BNO055_I2C_bus_write(u8 dev_addr, u8 reg_addr, u8 *reg_data, u8 cnt)
 {
-	packet.address = dev_addr;
-	packet.data_length = cnt;
-	packet.data = reg_data;
+
 	
+	char extd_data[2] = {reg_addr, *reg_data};
+		
+		
+	packet.address = dev_addr;
+	packet.data_length = 2;
+	packet.data = extd_data;	
 
 	uint16_t timeout = 10;
 
 
-	reg_addr_packet.address = dev_addr;
-	reg_addr_packet.data = &reg_addr;
-
+	//reg_addr_packet.address = dev_addr;
+	//reg_addr_packet.data = &reg_addr;
+	/*
 	while (i2c_master_write_packet_wait(&i2c_master_instance, &reg_addr_packet) != STATUS_OK) 
 	{
-		/* Increment timeout counter and check if timed out. */
+		// Increment timeout counter and check if timed out.
 		if (timeout++ == TIMEOUT) {
 			return -1;
 		}
 	}
-
+	*/
 	while (i2c_master_write_packet_wait(&i2c_master_instance, &packet) != STATUS_OK) 
 	{
 		/* Increment timeout counter and check if timed out. */

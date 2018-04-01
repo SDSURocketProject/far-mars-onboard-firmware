@@ -70,15 +70,15 @@ void _main_imu_test(void)
 		int8_t error_result = 0;
 
 		delay_ms(1000);
-		//error_result += bno055_get_accel_calib_stat(&accel_calib_status);
-		//error_result += bno055_get_gyro_calib_stat(&gyro_calib_status);
+		error_result += bno055_get_accel_calib_stat(&accel_calib_status);
+		error_result += bno055_get_gyro_calib_stat(&gyro_calib_status);
 		error_result += bno055_get_mag_calib_stat(&mag_calib_status);
-		//error_result += bno055_get_sys_calib_stat(&sys_calib_status);
+		error_result += bno055_get_sys_calib_stat(&sys_calib_status);
 
 
-		error_result += bno055_read_accel_rev_id(&accel_calib_status);
-		error_result += bno055_read_gyro_rev_id(&gyro_calib_status);
-		error_result += bno055_read_mag_rev_id(&mag_calib_status);
+		//error_result += bno055_read_accel_rev_id(&accel_calib_status);
+		//error_result += bno055_read_gyro_rev_id(&gyro_calib_status);
+		//error_result += bno055_read_mag_rev_id(&mag_calib_status);
 		//error_result += bno055_read_sw_rev_id(&sys_calib_status);
 		error_result += bno055_get_selftest(&self_test);
 		//error_result += bno055_read_chip_id(&chip_id);
