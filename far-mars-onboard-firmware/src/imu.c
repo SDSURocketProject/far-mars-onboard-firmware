@@ -7,6 +7,8 @@
 
  #include "imu.h"
 
+ //#include "i2c.h"
+
 
 
 struct i2c_master_module i2c_master_instance;
@@ -116,8 +118,13 @@ s8 BNO055_I2C_bus_write(u8 dev_addr, u8 reg_addr, u8 *reg_data, u8 cnt)
  *   which is hold in an array
  *	\param cnt : The no of byte of data to be read
  */
+
+
 s8 BNO055_I2C_bus_read(u8 dev_addr, u8 reg_addr, u8 *reg_data, u8 cnt)
 {
+
+	
+
 	packet.address = dev_addr;
 	packet.data_length = cnt;
 	packet.data = reg_data;

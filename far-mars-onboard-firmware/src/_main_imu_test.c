@@ -81,7 +81,7 @@ void _main_imu_test(void)
 		//error_result += bno055_read_mag_rev_id(&mag_calib_status);
 		//error_result += bno055_read_sw_rev_id(&sys_calib_status);
 		error_result += bno055_get_selftest(&self_test);
-		//error_result += bno055_read_chip_id(&chip_id);
+		error_result += bno055_read_chip_id(&chip_id);
 
 		//printf("chip_id: %x\r\n", chip_id);
 		printf("self_test: %d\r\n", self_test);
