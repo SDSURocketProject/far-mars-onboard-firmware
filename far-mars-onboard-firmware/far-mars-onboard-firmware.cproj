@@ -33,9 +33,12 @@
   <options>
     <option id="common.boards" value="Add" config="" content-id="Atmel.ASF" />
     <option id="sam0.drivers.system" value="Add" config="" content-id="Atmel.ASF" />
+    <option id="thirdparty.os.freertos.version" value="Add" config="10.0.0" content-id="Atmel.ASF" />
     <option id="sam0.utils.linker_scripts" value="Add" config="" content-id="Atmel.ASF" />
   </options>
-  <configurations />
+  <configurations>
+    <configuration key="config.thirdparty.os.freertos-10_0_0.memory_manager" value="1_static_allocation" default="1_static_allocation" content-id="Atmel.ASF" />
+  </configurations>
   <files>
     <file path="src/main.c" framework="" version="" source="common2/applications/user_application/main.c" changed="False" content-id="Atmel.ASF" />
     <file path="src/config/conf_board.h" framework="" version="" source="common2/applications/user_application/user_board/config_samc21/conf_board.h" changed="False" content-id="Atmel.ASF" />
@@ -187,6 +190,36 @@
     <file path="src/ASF/thirdparty/CMSIS/Lib/license.txt" framework="" version="" source="thirdparty/CMSIS/Lib/license.txt" changed="False" content-id="Atmel.ASF" />
     <file path="src/ASF/thirdparty/CMSIS/README.txt" framework="" version="" source="thirdparty/CMSIS/README.txt" changed="False" content-id="Atmel.ASF" />
     <file path="src/ASF/thirdparty/CMSIS/license.txt" framework="" version="" source="thirdparty/CMSIS/license.txt" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/Source/queue.c" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\Source\queue.c" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/Source/tasks.c" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\Source\tasks.c" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/Source/event_groups.c" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\Source\event_groups.c" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/Source/croutine.c" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\Source\croutine.c" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/Source/stream_buffer.c" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\Source\stream_buffer.c" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/Source/timers.c" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\Source\timers.c" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/Source/list.c" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\Source\list.c" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/Source/readme.txt" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\Source\readme.txt" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/readme.txt" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\readme.txt" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/Source/include/projdefs.h" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\Source\include\projdefs.h" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/Source/include/list.h" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\Source\include\list.h" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/Source/include/queue.h" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\Source\include\queue.h" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/Source/include/StackMacros.h" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\Source\include\StackMacros.h" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/Source/include/timers.h" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\Source\include\timers.h" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/Source/include/portable.h" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\Source\include\portable.h" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/Source/include/stack_macros.h" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\Source\include\stack_macros.h" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/Source/include/event_groups.h" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\Source\include\event_groups.h" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/Source/include/FreeRTOS.h" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\Source\include\FreeRTOS.h" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/Source/include/mpu_wrappers.h" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\Source\include\mpu_wrappers.h" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/Source/include/stream_buffer.h" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\Source\include\stream_buffer.h" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/Source/include/task.h" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\Source\include\task.h" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/Source/include/semphr.h" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\Source\include\semphr.h" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/Source/include/message_buffer.h" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\Source\include\message_buffer.h" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/Source/include/croutine.h" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\Source\include\croutine.h" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/Source/include/deprecated_definitions.h" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\Source\include\deprecated_definitions.h" changed="False" content-id="Atmel.ASF" />
+    <file path="src/Config/FreeRTOSConfig.h" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\module_config\FreeRTOSConfig.h" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/Source/portable/readme.txt" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\Source\portable\readme.txt" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/Source/portable/GCC/ARM_CM0/port.c" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\Source\portable\GCC\ARM_CM0\port.c" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/Source/portable/GCC/ARM_CM0/portmacro.h" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\Source\portable\GCC\ARM_CM0\portmacro.h" changed="False" content-id="Atmel.ASF" />
+    <file path="src/ASF/thirdparty/freertos/freertos-10.0.0/Source/portable/MemMang/heap_1.c" framework="" version="3.40.0" source="thirdparty\freertos\freertos-10.0.0\Source\portable\MemMang\heap_1.c" changed="False" content-id="Atmel.ASF" />
   </files>
   <documentation help="http://asf.atmel.com/docs/3.40.0/common.applications.user_application.sam0_system.user_board.atsamc21g18a/html/index.html" />
   <offline-documentation help="" />
@@ -197,6 +230,10 @@
   <board id="board.user_board.samc21g" value="Add" config="" content-id="Atmel.ASF" />
 </framework-data>
     </AsfFrameworkConfig>
+    <AAFDebugger>
+      <AAFDebugFiles xmlns="">
+      </AAFDebugFiles>
+    </AAFDebugger>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
@@ -211,6 +248,7 @@
       <Value>NDEBUG</Value>
       <Value>BOARD=USER_BOARD</Value>
       <Value>ARM_MATH_CM0PLUS=true</Value>
+      <Value>__FREERTOS__</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
   <armgcc.compiler.directories.IncludePaths>
@@ -237,6 +275,8 @@
       <Value>../src/ASF/common2/boards/user_board</Value>
       <Value>../src</Value>
       <Value>../src/config</Value>
+      <Value>../src/ASF/thirdparty/freertos/freertos-10.0.0/Source/include</Value>
+      <Value>../src/ASF/thirdparty/freertos/freertos-10.0.0/Source/portable/GCC/ARM_CM0</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.level>Optimize for size (-Os)</armgcc.compiler.optimization.level>
@@ -282,9 +322,11 @@
       <Value>../src/ASF/common2/boards/user_board</Value>
       <Value>../src</Value>
       <Value>../src/config</Value>
+      <Value>../src/ASF/thirdparty/freertos/freertos-10.0.0/Source/include</Value>
+      <Value>../src/ASF/thirdparty/freertos/freertos-10.0.0/Source/portable/GCC/ARM_CM0</Value>
     </ListValues>
   </armgcc.assembler.general.IncludePaths>
-  <armgcc.preprocessingassembler.general.AssemblerFlags>-DARM_MATH_CM0PLUS=true -DBOARD=USER_BOARD</armgcc.preprocessingassembler.general.AssemblerFlags>
+  <armgcc.preprocessingassembler.general.AssemblerFlags>-DARM_MATH_CM0PLUS=true -DBOARD=USER_BOARD -D__FREERTOS__</armgcc.preprocessingassembler.general.AssemblerFlags>
   <armgcc.preprocessingassembler.general.IncludePaths>
     <ListValues>
       <Value>../src/ASF/common/boards</Value>
@@ -309,6 +351,8 @@
       <Value>../src/ASF/common2/boards/user_board</Value>
       <Value>../src</Value>
       <Value>../src/config</Value>
+      <Value>../src/ASF/thirdparty/freertos/freertos-10.0.0/Source/include</Value>
+      <Value>../src/ASF/thirdparty/freertos/freertos-10.0.0/Source/portable/GCC/ARM_CM0</Value>
     </ListValues>
   </armgcc.preprocessingassembler.general.IncludePaths>
 </ArmGcc>
@@ -327,6 +371,7 @@
       <Value>DEBUG</Value>
       <Value>BOARD=USER_BOARD</Value>
       <Value>ARM_MATH_CM0PLUS=true</Value>
+      <Value>__FREERTOS__</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
   <armgcc.compiler.directories.IncludePaths>
@@ -353,6 +398,8 @@
       <Value>../src/ASF/common2/boards/user_board</Value>
       <Value>../src</Value>
       <Value>../src/config</Value>
+      <Value>../src/ASF/thirdparty/freertos/freertos-10.0.0/Source/include</Value>
+      <Value>../src/ASF/thirdparty/freertos/freertos-10.0.0/Source/portable/GCC/ARM_CM0</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.level>Optimize (-O1)</armgcc.compiler.optimization.level>
@@ -399,10 +446,12 @@
       <Value>../src/ASF/common2/boards/user_board</Value>
       <Value>../src</Value>
       <Value>../src/config</Value>
+      <Value>../src/ASF/thirdparty/freertos/freertos-10.0.0/Source/include</Value>
+      <Value>../src/ASF/thirdparty/freertos/freertos-10.0.0/Source/portable/GCC/ARM_CM0</Value>
     </ListValues>
   </armgcc.assembler.general.IncludePaths>
   <armgcc.assembler.debugging.DebugLevel>Default (-g)</armgcc.assembler.debugging.DebugLevel>
-  <armgcc.preprocessingassembler.general.AssemblerFlags>-DARM_MATH_CM0PLUS=true -DBOARD=USER_BOARD</armgcc.preprocessingassembler.general.AssemblerFlags>
+  <armgcc.preprocessingassembler.general.AssemblerFlags>-DARM_MATH_CM0PLUS=true -DBOARD=USER_BOARD -D__FREERTOS__</armgcc.preprocessingassembler.general.AssemblerFlags>
   <armgcc.preprocessingassembler.general.IncludePaths>
     <ListValues>
       <Value>../src/ASF/common/boards</Value>
@@ -427,6 +476,8 @@
       <Value>../src/ASF/common2/boards/user_board</Value>
       <Value>../src</Value>
       <Value>../src/config</Value>
+      <Value>../src/ASF/thirdparty/freertos/freertos-10.0.0/Source/include</Value>
+      <Value>../src/ASF/thirdparty/freertos/freertos-10.0.0/Source/portable/GCC/ARM_CM0</Value>
     </ListValues>
   </armgcc.preprocessingassembler.general.IncludePaths>
   <armgcc.preprocessingassembler.debugging.DebugLevel>Default (-Wa,-g)</armgcc.preprocessingassembler.debugging.DebugLevel>
@@ -478,9 +529,101 @@
     <Folder Include="src\ASF\thirdparty\CMSIS\Include\" />
     <Folder Include="src\ASF\thirdparty\CMSIS\Lib\" />
     <Folder Include="src\ASF\thirdparty\CMSIS\Lib\GCC\" />
+    <Folder Include="src\ASF\thirdparty\freertos\" />
+    <Folder Include="src\ASF\thirdparty\freertos\freertos-10.0.0\" />
+    <Folder Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\" />
+    <Folder Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\include\" />
+    <Folder Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\portable\" />
+    <Folder Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\portable\GCC\" />
+    <Folder Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\portable\GCC\ARM_CM0\" />
+    <Folder Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\portable\MemMang\" />
     <Folder Include="src\config\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\croutine.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\event_groups.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\portable\GCC\ARM_CM0\port.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\portable\MemMang\heap_1.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <None Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\portable\GCC\ARM_CM0\portmacro.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\portable\readme.txt">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\config\FreeRTOSConfig.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\include\deprecated_definitions.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\include\croutine.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\include\message_buffer.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\include\semphr.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\include\task.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\include\stream_buffer.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\include\mpu_wrappers.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\include\FreeRTOS.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\include\event_groups.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\include\stack_macros.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\include\portable.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\include\timers.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\include\StackMacros.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\include\queue.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\include\list.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\include\projdefs.h">
+      <SubType>compile</SubType>
+    </None>
+    <Compile Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\list.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\queue.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\stream_buffer.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\tasks.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\timers.c">
+      <SubType>compile</SubType>
+    </Compile>
     <None Include="src\asf.h">
       <SubType>compile</SubType>
     </None>
@@ -653,6 +796,12 @@
       <SubType>compile</SubType>
     </None>
     <None Include="src\ASF\thirdparty\CMSIS\README.txt">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\thirdparty\freertos\freertos-10.0.0\readme.txt">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\thirdparty\freertos\freertos-10.0.0\Source\readme.txt">
       <SubType>compile</SubType>
     </None>
     <None Include="src\config\conf_board.h">

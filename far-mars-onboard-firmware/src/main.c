@@ -29,9 +29,25 @@
  */
 #include <asf.h>
 
+/**
+ * @brief		Entry point for the program.
+ * @return		never returns if working properly.
+ */
 int main (void)
 {
 	system_init();
 
 	/* Insert application code here, after the board has been initialized. */
+}
+
+/**
+ * @brief		Pauses program if a stack overflow is detected.
+ * @param[in]	xTask contains the hook of the task that overflowed
+ * @param[in]	*pcTaskName contains the name of the task that overflowed
+ * @return		none.
+ */
+void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName ) {
+	while(1) {
+		configASSERT(0);
+	}
 }
