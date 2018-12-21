@@ -28,6 +28,11 @@
  * Support and FAQ: visit <a href="https://www.microchip.com/support/">Microchip Support</a>
  */
 #include <asf.h>
+#include "led.h"
+
+void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName );
+
+#define ledTaskPriority (tskIDLE_PRIORITY + 1)
 
 /**
  * @brief		Entry point for the program.
@@ -36,8 +41,20 @@
 int main (void)
 {
 	system_init();
+	BaseType_t xReturned;
+	TaskHandle_t xLedHandle = NULL;
+
+	xReturned = xTaskCreate(ledTask,
+							"LED Task",
+							configMINIMAL_STACK_SIZE,
+							NULL,
+							ledTaskPriority,
+							&xLedHandle);
 
 	/* Insert application code here, after the board has been initialized. */
+	vTaskStartScheduler();
+	// Should never reach here
+	while(1);
 }
 
 /**
