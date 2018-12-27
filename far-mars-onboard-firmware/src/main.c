@@ -29,10 +29,12 @@
  */
 #include <asf.h>
 #include "led.h"
+#include "logger.h"
 
 void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName );
 
 #define ledTaskPriority (tskIDLE_PRIORITY + 1)
+#define loggerTaskPriority (tskIDLE_PRIORITY + 1)
 
 /**
  * @brief		Entry point for the program.
@@ -43,6 +45,7 @@ int main (void)
 	system_init();
 	BaseType_t xReturned;
 	TaskHandle_t xLedHandle = NULL;
+	TaskHandle_t xloggerHandle = NULL;
 
 	xReturned = xTaskCreate(ledTask,
 							"LED Task",
@@ -50,7 +53,20 @@ int main (void)
 							NULL,
 							ledTaskPriority,
 							&xLedHandle);
-
+	if (xReturned != pdPASS) {
+		configASSERT(0);
+	}
+	
+	xReturned = xTaskCreate(loggerTask,
+							"Logger Task",
+							configMINIMAL_STACK_SIZE,
+							NULL,
+							loggerTaskPriority,
+							&xloggerHandle);
+	
+	if (xReturned != pdPASS) {
+		configASSERT(0);
+	}
 	/* Insert application code here, after the board has been initialized. */
 	vTaskStartScheduler();
 	// Should never reach here

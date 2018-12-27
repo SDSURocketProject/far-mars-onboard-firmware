@@ -582,6 +582,9 @@
     <Compile Include="src\ASF\sam0\drivers\port\port.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\far_mars_onboard_firmware.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\led.c">
       <SubType>compile</SubType>
     </Compile>
@@ -1129,6 +1132,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\ASF\sam0\utils\syscalls\gcc\syscalls.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\logger.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\logger.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\main.c">
