@@ -33,7 +33,7 @@ void loggerTask(void *pvParameters) {
 
 	/* Task code */
 	while (1) {
-		vTaskDelay(pdMS_TO_TICKS(4000));
+		vTaskDelay(pdMS_TO_TICKS(1000));
 		messagesWaiting = uxQueueMessagesWaiting(messageQueue);
 		for(; messagesWaiting > 0; messagesWaiting--) {
 			if (sdCardWriteBufferIdx+sizeof(struct loggerMessage) >= sizeof(sdCardWriteBuffer)) {
