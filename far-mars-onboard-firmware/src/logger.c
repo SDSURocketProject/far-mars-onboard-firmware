@@ -78,11 +78,11 @@ static int appendMessage(void) {
 
 /**
  * @brief			Puts a message on the queue to be logged to the SD card.
- * @param[in] msg	Contains message to be logged
+ * @param[in] *msg	Contains message to be logged
  * @param[in] level Contains the logging level of the message
  * @return			Returns FMOF_SUCCESS, FMOF_LOGGER_LOW_LOGGING_LEVEL, FMOF_LOGGER_MESSAGE_QUEUE_FULL, or FMOF_LOGGER_MESSAGE_QUEUE_NOT_INIT.
  */
-int logMessage(struct loggerMessage msg, uint8_t level) {
+int logMessage(struct loggerMessage *msg, uint8_t level) {
 	if (level < LOGGING_LEVEL) {
 		return FMOF_LOGGER_LOW_LOGGING_LEVEL;
 	}
@@ -90,7 +90,7 @@ int logMessage(struct loggerMessage msg, uint8_t level) {
 		return FMOF_LOGGER_MESSAGE_QUEUE_NOT_INIT;
 	}
 	
-	if (xQueueSendToBack(messageQueue, (void *)&msg, (TickType_t) 0)) {
+	if (xQueueSendToBack(messageQueue, (void *)msg, (TickType_t) 0)) {
 		return FMOF_LOGGER_MESSAGE_QUEUE_FULL;
 	}
 	return FMOF_SUCCESS;
@@ -98,7 +98,7 @@ int logMessage(struct loggerMessage msg, uint8_t level) {
 
 /**
  * @brief			Puts a message on the queue to be logged to the SD card.
- * @param[in] msg	Contains message to be logged
+ * @param[in] *msg	Contains message to be logged
  * @param[in] level Contains the logging level of the message
  * @return			Returns FMOF_SUCCESS, FMOF_LOGGER_LOW_LOGGING_LEVEL, FMOF_LOGGER_MESSAGE_QUEUE_FULL, or FMOF_LOGGER_MESSAGE_QUEUE_NOT_INIT.
  */
@@ -110,5 +110,5 @@ int logMessageString(const char *msg, uint8_t level) {
 	strncpy((char *)messageToLog.data, msg, sizeof(messageToLog.data));
 	messageToLog.msgID = genericMessage;
 	messageToLog.timestamp = 0;
-	return logMessage(messageToLog, level);
+	return logMessage(&messageToLog, level);
 }
