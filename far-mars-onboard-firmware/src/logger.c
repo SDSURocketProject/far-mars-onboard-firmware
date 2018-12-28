@@ -17,9 +17,9 @@ volatile static uint16_t sdCardWriteBufferIdx;
 static int appendMessage(void);
 
 /**
- * @brief		Task that logs messages to the SD card.
- * @param[in]	*pvParameters Contains task parameters
- * @return		none.
+ * @brief	                Task that logs messages to the SD card.
+ * @param[in] *pvParameters Contains task parameters
+ * @return	                none.
  */
 void loggerTask(void *pvParameters) {
 	/* Initialization */
@@ -28,7 +28,7 @@ void loggerTask(void *pvParameters) {
 	sdCardWriteBufferIdx = 0;
 	messageQueue = xQueueCreate(MESSAGE_QUEUE_LENGTH, sizeof(struct loggerMessage));
 	if (!messageQueue) {
-		//configASSERT(0);
+		configASSERT(0);
 	}
 
 	/* Task code */

@@ -11,10 +11,12 @@
 
 #include <stdint.h>
 
+#warning SD Card and FatFS stuff has not yet been implemented
+
 //! @brief Logging levels for messages sent to SD card
 enum loggingLevels {
 	ALL = 0,
-	DEBUGLEVEL = 10,
+	LDEBUG = 10,
 	INFO = 20,
 	WARN = 30,
 	ERROR = 40,

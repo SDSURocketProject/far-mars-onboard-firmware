@@ -582,6 +582,12 @@
     <Compile Include="src\ASF\sam0\drivers\port\port.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\daq_comp_send.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\daq_comp_send.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\far_mars_onboard_firmware.h">
       <SubType>compile</SubType>
     </Compile>
