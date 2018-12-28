@@ -30,11 +30,13 @@
 #include <asf.h>
 #include "led.h"
 #include "logger.h"
+#include "daq_send.h"
 
 void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName );
 
 #define ledTaskPriority (tskIDLE_PRIORITY + 1)
 #define loggerTaskPriority (tskIDLE_PRIORITY + 1)
+#define daqSendTaskPriority (tskIDLE_PRIORITY + 3)
 
 /**
  * @brief		Entry point for the program.
@@ -46,6 +48,7 @@ int main (void)
 	BaseType_t xReturned;
 	TaskHandle_t xLedHandle = NULL;
 	TaskHandle_t xloggerHandle = NULL;
+	TaskHandle_t xDaqSendHandle = NULL;
 
 	xReturned = xTaskCreate(ledTask,
 							"LED Task",
@@ -56,14 +59,21 @@ int main (void)
 	if (xReturned != pdPASS) {
 		configASSERT(0);
 	}
-	
 	xReturned = xTaskCreate(loggerTask,
 							"Logger Task",
 							configMINIMAL_STACK_SIZE,
 							NULL,
 							loggerTaskPriority,
 							&xloggerHandle);
-	
+	if (xReturned != pdPASS) {
+		configASSERT(0);
+	}
+	xReturned = xTaskCreate(daqSendTask,
+	                        "DAQ send",
+							configMINIMAL_STACK_SIZE,
+							NULL,
+							daqSendTaskPriority,
+							&xDaqSendHandle);
 	if (xReturned != pdPASS) {
 		configASSERT(0);
 	}
