@@ -8,7 +8,6 @@
 #include <asf.h>
 #include <string.h>
 #include "logger.h"
-#include "far_mars_onboard_firmware.h"
 
 static QueueHandle_t messageQueue = NULL;
 volatile static uint8_t sdCardWriteBuffer[sizeof(struct loggerMessage)*10];
@@ -81,14 +80,14 @@ static int appendMessage(void) {
  * @brief			Puts a message on the queue to be logged to the SD card.
  * @param[in] msg	Contains message to be logged
  * @param[in] level Contains the logging level of the message
- * @return			Returns FMOF_SUCCESS, FMOF_LOGGER_LOW_LOGGING_LEVEL, FMOF_LOGGER_MESSAGE_QUEUE_FULL, or FMOF_FAILURE.
+ * @return			Returns FMOF_SUCCESS, FMOF_LOGGER_LOW_LOGGING_LEVEL, FMOF_LOGGER_MESSAGE_QUEUE_FULL, or FMOF_LOGGER_MESSAGE_QUEUE_NOT_INIT.
  */
 int logMessage(struct loggerMessage msg, uint8_t level) {
 	if (level < LOGGING_LEVEL) {
 		return FMOF_LOGGER_LOW_LOGGING_LEVEL;
 	}
 	if (!messageQueue) {
-		return FMOF_FAILURE;
+		return FMOF_LOGGER_MESSAGE_QUEUE_NOT_INIT;
 	}
 	
 	if (xQueueSendToBack(messageQueue, (void *)&msg, (TickType_t) 0)) {
@@ -101,7 +100,7 @@ int logMessage(struct loggerMessage msg, uint8_t level) {
  * @brief			Puts a message on the queue to be logged to the SD card.
  * @param[in] msg	Contains message to be logged
  * @param[in] level Contains the logging level of the message
- * @return			Returns FMOF_SUCCESS, FMOF_LOGGER_LOW_LOGGING_LEVEL, FMOF_LOGGER_MESSAGE_QUEUE_FULL, or FMOF_FAILURE.
+ * @return			Returns FMOF_SUCCESS, FMOF_LOGGER_LOW_LOGGING_LEVEL, FMOF_LOGGER_MESSAGE_QUEUE_FULL, or FMOF_LOGGER_MESSAGE_QUEUE_NOT_INIT.
  */
 int logMessageString(const char *msg, uint8_t level) {
 	struct loggerMessage messageToLog;

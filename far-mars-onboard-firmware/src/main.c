@@ -51,7 +51,7 @@ int main (void)
 	TaskHandle_t xDaqSendHandle = NULL;
 
 	xReturned = xTaskCreate(ledTask,
-							"LED Task",
+							"LED",
 							configMINIMAL_STACK_SIZE,
 							NULL,
 							ledTaskPriority,
@@ -60,7 +60,7 @@ int main (void)
 		configASSERT(0);
 	}
 	xReturned = xTaskCreate(loggerTask,
-							"Logger Task",
+							"Logger",
 							configMINIMAL_STACK_SIZE,
 							NULL,
 							loggerTaskPriority,

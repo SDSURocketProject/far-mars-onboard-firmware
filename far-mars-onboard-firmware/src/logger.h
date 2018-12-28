@@ -10,6 +10,7 @@
 #define LOGGER_H_
 
 #include <stdint.h>
+#include "far_mars_onboard_firmware.h"
 
 #warning SD Card and FatFS stuff has not yet been implemented
 
@@ -28,16 +29,6 @@ enum loggingLevels {
 #define LOGGING_LEVEL ALL
 //! @brief Length of the message queue
 #define MESSAGE_QUEUE_LENGTH 25
-
-//! @brief All of the valid messages to be sent
-enum messageIDs {
-	pressureData,
-	gyroscopeData,
-	accelerometerData,
-	cpuTemperatureData,
-	IMUTemperatureData,
-	genericMessage, // Just a string
-};
 
 //! @brief Structure for message to be sent to SD card
 struct loggerMessage {
