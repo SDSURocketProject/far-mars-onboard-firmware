@@ -26,12 +26,12 @@ enum FMOF_returns {
 
 //! @brief All of the valid messages that can be sent to logger and daq
 enum messageIDs {
-	pressureData,
-	gyroscopeData,
-	accelerometerData,
-	cpuTemperatureData,
-	IMUTemperatureData,
-	genericMessage, // Just a string
+	pressureDataID,
+	gyroscopeDataID,
+	accelerometerDataID,
+	cpuTemperatureDataID,
+	IMUTemperatureDataID,
+	genericMessageID, // Just a string
 };
 
 #endif /* FAR_MARS_ONBOARD_FIRMWARE_H_ */

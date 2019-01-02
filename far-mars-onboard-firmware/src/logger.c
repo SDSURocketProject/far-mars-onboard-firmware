@@ -58,12 +58,12 @@ static int appendMessage(void) {
 	sdCardWriteBuffer[sdCardWriteBufferIdx++] = msg.msgID;
 	switch(msg.msgID) {
 		// Fall through is intentional, each case will need to be implemented to ensure data is packed properly
-		case pressureData:
-		case gyroscopeData:
-		case accelerometerData:
-		case cpuTemperatureData:
-		case IMUTemperatureData:
-		case genericMessage:
+		case pressureDataID:
+		case gyroscopeDataID:
+		case accelerometerDataID:
+		case cpuTemperatureDataID:
+		case IMUTemperatureDataID:
+		case genericMessageID:
 		default:
 			{
 				uint8_t i = 0;
@@ -108,7 +108,7 @@ int logMessageString(const char *msg, uint8_t level) {
 		return FMOF_LOGGER_LOW_LOGGING_LEVEL;
 	}
 	strncpy((char *)messageToLog.data, msg, sizeof(messageToLog.data));
-	messageToLog.msgID = genericMessage;
+	messageToLog.msgID = genericMessageID;
 	messageToLog.timestamp = 0;
 	return logMessage(&messageToLog, level);
 }

@@ -53,7 +53,7 @@ void daqSendTask(void *pvParameters) {
  * @return none.
  */
 void daqSendCallback(struct usart_module *const module) {
-	xTaskNotifyGive(xDaqSendHandle);
+	vTaskNotifyGiveFromISR(xDaqSendHandle, NULL);
 }
 
 /**
