@@ -28,6 +28,7 @@
  * Support and FAQ: visit <a href="https://www.microchip.com/support/">Microchip Support</a>
  */
 #include <asf.h>
+#include "timestamp.h"
 #include "led.h"
 #include "logger.h"
 #include "daq_send.h"
@@ -47,6 +48,8 @@ void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName );
 int main (void)
 {
 	system_init();
+	configRTC();
+
 	BaseType_t xReturned;
 	TaskHandle_t xLedHandle = NULL;
 	TaskHandle_t xloggerHandle = NULL;
