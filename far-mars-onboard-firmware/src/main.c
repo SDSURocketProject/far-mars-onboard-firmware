@@ -31,12 +31,14 @@
 #include "led.h"
 #include "logger.h"
 #include "daq_send.h"
+#include "pressure.h"
 
 void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName );
 
 #define ledTaskPriority (tskIDLE_PRIORITY + 1)
 #define loggerTaskPriority (tskIDLE_PRIORITY + 1)
 #define daqSendTaskPriority (tskIDLE_PRIORITY + 3)
+#define pressureTaskPriority (tskIDLE_PRIORITY + 4)
 
 /**
  * @brief		Entry point for the program.
@@ -49,6 +51,7 @@ int main (void)
 	TaskHandle_t xLedHandle = NULL;
 	TaskHandle_t xloggerHandle = NULL;
 	TaskHandle_t xDaqSendHandle = NULL;
+	TaskHandle_t xPressureHandle = NULL;
 
 	xReturned = xTaskCreate(ledTask,
 							"LED",
@@ -77,6 +80,17 @@ int main (void)
 	if (xReturned != pdPASS) {
 		configASSERT(0);
 	}
+
+	xReturned = xTaskCreate(pressureTask,
+							"Pressure",
+							configMINIMAL_STACK_SIZE,
+							NULL,
+							pressureTaskPriority,
+							xPressureHandle);
+	if (xReturned != pdPASS) {
+		configASSERT(0);
+	}
+
 	/* Insert application code here, after the board has been initialized. */
 	vTaskStartScheduler();
 	// Should never reach here
