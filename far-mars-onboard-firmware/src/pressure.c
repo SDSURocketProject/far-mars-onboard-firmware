@@ -59,7 +59,7 @@ void pressureTask(void *pvParameters) {
 			logMessageString("ADC Fail", LOG_LEVEL_ERROR);
 		}
 
-		pressureMessage.timestamp = 0;
+		pressureMessage.timestamp = getTimestamp();
 		for(; i < NUM_SAMPLES; i++) {
 			avg += adcBuffer[i];
 		}

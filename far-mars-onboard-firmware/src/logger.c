@@ -109,6 +109,6 @@ int logMessageString(const char *msg, uint8_t level) {
 	}
 	strncpy((char *)messageToLog.data, msg, sizeof(messageToLog.data));
 	messageToLog.msgID = genericMessageID;
-	messageToLog.timestamp = 0;
+	messageToLog.timestamp = getTimestamp();
 	return logMessage(&messageToLog, level);
 }

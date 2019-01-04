@@ -11,8 +11,9 @@
 
 #include <stdint.h>
 #include "far_mars_onboard_firmware.h"
+#include "timestamp.h"
 
-#warning SD Card, FatFS, and timestamp logMessageString have not yet been implemented
+#warning SD Card and FatFS logMessageString have not yet been implemented
 
 //! @brief Logging levels for messages sent to SD card
 enum loggingLevels {
