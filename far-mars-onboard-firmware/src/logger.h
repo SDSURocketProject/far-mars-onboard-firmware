@@ -16,17 +16,17 @@
 
 //! @brief Logging levels for messages sent to SD card
 enum loggingLevels {
-	ALL = 0,
-	LDEBUG = 10,
-	INFO = 20,
-	WARN = 30,
-	ERROR = 40,
-	FATAL = 50,
-	OFF = 255
+	LOG_LEVEL_ALL = 0,
+	LOG_LEVEL_DEBUG = 10,
+	LOG_LEVEL_INFO = 20,
+	LOG_LEVEL_WARN = 30,
+	LOG_LEVEL_ERROR = 40,
+	LOG_LEVEL_FATAL = 50,
+	LOG_LEVEL_OFF = 255
 };
 
 //! @brief Current logging level
-#define LOGGING_LEVEL ALL
+#define LOGGING_LEVEL LOG_LEVEL_ALL
 //! @brief Length of the message queue
 #define MESSAGE_QUEUE_LENGTH 25
 
