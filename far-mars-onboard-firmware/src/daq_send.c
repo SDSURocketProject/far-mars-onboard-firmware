@@ -48,9 +48,9 @@ void daqSendTask(void *pvParameters) {
 }
 
 /**
- * @brief Callback for USART write.
+ * @brief             Callback for USART write.
  * @param[in] *module Needed for callback registration
- * @return none.
+ * @return            none.
  */
 void daqSendCallback(struct usart_module *const module) {
 	vTaskNotifyGiveFromISR(xDaqSendHandle, NULL);

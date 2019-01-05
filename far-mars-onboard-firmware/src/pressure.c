@@ -10,12 +10,18 @@
 #include "daq_send.h"
 #include "logger.h"
 
+//! @brief Number of samples to be read in from ADC.
 #define NUM_SAMPLES 32
 static uint16_t adcBuffer[NUM_SAMPLES];
 static TaskHandle_t xPressureTaskHandle = NULL;
 
 void pressureAdcCallback(struct adc_module *const module);
 
+/**
+ * @brief	                Task that reads pressure data.
+ * @param[in] *pvParameters Contains task parameters
+ * @return	                none.
+ */
 void pressureTask(void *pvParameters) {
 	struct adc_module adcModule;
 	struct adc_config adcConfig;
@@ -75,6 +81,11 @@ void pressureTask(void *pvParameters) {
 	}
 }
 
+/**
+ * @brief	          Callback for the ADC.
+ * @param[in] *module Needed for callback registration
+ * @return	          none.
+ */
 void pressureAdcCallback(struct adc_module *const module) {
 	vTaskNotifyGiveFromISR(xPressureTaskHandle, NULL);
 }

@@ -11,6 +11,10 @@
 
 static struct rtc_module rtc_instance;
 
+/**
+ * @brief  Initializes the RTC used for timestamps.
+ * @return Returns FMOF_SUCCESS.
+ */
 int configRTC(void) {
 	struct rtc_count_config config_rtc_count;
 	rtc_count_get_config_defaults(&config_rtc_count);
@@ -21,6 +25,10 @@ int configRTC(void) {
 	return FMOF_SUCCESS;
 }
 
+/**
+ * @brief  Initializes the RTC used for timestamps.
+ * @return Returns the number of milliseconds since last power on.
+ */
 uint32_t getTimestamp(void) {
 	return rtc_count_get_count(&rtc_instance);
 }
