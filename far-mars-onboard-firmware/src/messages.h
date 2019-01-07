@@ -33,7 +33,8 @@ enum sensorMessageIDs {
 	cpuTemperatureKelvinDataID,
 	pressureRawDataID,
 	pressurePSIADataID,
-	pressurePSIGDataID
+	pressurePSIGDataID,
+	NUM_SENSOR_MESSAGES
 };
 
 //! @brief Struct containing raw CPU temperature data
@@ -91,5 +92,6 @@ struct __attribute__((packed, aligned(1))) sensorMessage {
 	};
 };
 
+extern uint16_t sensorMessageSizes[];
 
 #endif /* MESSAGES_H_ */

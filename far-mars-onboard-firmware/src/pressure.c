@@ -28,10 +28,10 @@ void pressureTask(void *pvParameters) {
 	struct system_pinmux_config config;
 	uint32_t avg = 0;
 	uint8_t i = 0;
-	struct loggerMessage pressureMessage;
+	struct sensorMessage pressureMessage;
 
 	xPressureTaskHandle = xTaskGetCurrentTaskHandle();
-	pressureMessage.msgID = pressureDataID;
+	pressureMessage.msgID = pressureRawDataID;
 
 	/* Config adc */
 	adc_get_config_defaults(&adcConfig);
@@ -72,7 +72,7 @@ void pressureTask(void *pvParameters) {
 
 		avg /= NUM_SAMPLES;
 
-		pressureMessage.data[0] = avg;
+		pressureMessage.pressureRaw.P2 = avg;
 
 		/*
 		daqSendMessage((struct daqSendMsg *)&pressureMessage);

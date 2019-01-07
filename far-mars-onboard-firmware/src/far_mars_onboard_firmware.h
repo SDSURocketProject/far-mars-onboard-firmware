@@ -24,14 +24,4 @@ enum FMOF_returns {
 	FMOF_FAILURE                      //! Generic failure
 };
 
-//! @brief All of the valid messages that can be sent to logger and daq
-enum messageIDs {
-	pressureDataID,
-	gyroscopeDataID,
-	accelerometerDataID,
-	cpuTemperatureDataID,
-	IMUTemperatureDataID,
-	genericMessageID, // Just a string
-};
-
 #endif /* FAR_MARS_ONBOARD_FIRMWARE_H_ */
