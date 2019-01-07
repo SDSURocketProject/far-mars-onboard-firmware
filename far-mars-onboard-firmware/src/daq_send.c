@@ -59,7 +59,7 @@ void daqSendCallback(struct usart_module *const module) {
 /**
  * @brief             Puts a message on the queue to be sent over RS485.
  * @param[in] *msg    Contains a message to be sent
- * @return    returns FMOF_SUCCESS, FMOF_LOGGER_MESSAGE_QUEUE_FULL, or FMOF_DAQ_SEND_QUEUE_NOT_INIT.
+ * @return    returns FMOF_SUCCESS, FMOF_DAQ_SEND_MESSAGE_QUEUE_FULL, or FMOF_DAQ_SEND_QUEUE_NOT_INIT.
  */
 int daqSendMessage(struct daqSendMsg *msg) {
 	if (!sendQueue) {
@@ -67,7 +67,7 @@ int daqSendMessage(struct daqSendMsg *msg) {
 	}
 	
 	if (xQueueSendToBack(sendQueue, (void *)msg, (TickType_t) 0)) {
-		return FMOF_LOGGER_MESSAGE_QUEUE_FULL;
+		return FMOF_DAQ_SEND_MESSAGE_QUEUE_FULL;
 	}
 	return FMOF_SUCCESS;
 }
