@@ -34,6 +34,7 @@ enum sensorMessageIDs {
 	pressureRawDataID,
 	pressurePSIADataID,
 	pressurePSIGDataID,
+	strDataID,
 	NUM_SENSOR_MESSAGES
 };
 
@@ -57,12 +58,18 @@ struct pressureFloatData {
 	float P1, P2, P3;
 };
 
+//! @brief Struct containing a pointer to a string. Be very careful when using to hold strings that are not string literals.
+struct strData {
+	uint32_t size;   // Optional parameter, set to zero when unused
+	const char *str; // str designed to point to string literals, there is no synchronization between tasks
+};
+
 /**
  * @brief Struct that contains all messages that can be sent, must be packed for communication.
  */
 struct __attribute__((packed, aligned(1))) sensorMessage {
-	uint32_t timestamp;
 	uint8_t msgID;
+	uint32_t timestamp;
 
 	// Data
 	union {
@@ -89,6 +96,8 @@ struct __attribute__((packed, aligned(1))) sensorMessage {
 		struct pressureData                pressureRaw;
 		struct pressureFloatData           pressurePSIA; // Absolute pressure
 		struct pressureFloatData           pressurePSIG; // Gauge pressure
+
+		struct strData                     str;
 	};
 };
 
