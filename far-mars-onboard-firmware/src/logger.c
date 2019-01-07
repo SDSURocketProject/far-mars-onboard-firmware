@@ -33,7 +33,6 @@ static int sendSdCardWriteBuffer(void);
 void loggerTask(void *pvParameters) {
 	/* Initialization */
 	// Init SD MMC
-	uint8_t messagesWaiting = 0;
 	sdCardWriteBufferIdx = 0;
 	sensorMessageQueue = xQueueCreate(MESSAGE_QUEUE_LENGTH, sizeof(struct sensorMessage));
 	if (!sensorMessageQueue) {
@@ -54,7 +53,7 @@ void loggerTask(void *pvParameters) {
 }
 
 /**
- * @brief  Appends a message to the sdCardWriteBuffer.
+ * @brief  Logs all the sensor messages in the sensorMessageQueue to the SD Card.
  * @return Returns FMOF_SUCCESS.
  */
 static int logSensorMessages(void) {
@@ -83,7 +82,7 @@ static int logSensorMessages(void) {
 		
 		// Write data
 		bytesToCopy = sensorMessageSizes[msg.msgID];
-		dest = &msg.accelerationRaw; // All union members start at the same memory location in C99
+		dest = &msg.accelerationRaw; // All union members start at the same memory location
 		if (sdCardWriteBufferIdx + bytesToCopy >= sizeof(sdCardWriteBuffer)) {
 			sendSdCardWriteBuffer();
 		}
@@ -143,6 +142,7 @@ static int sendSdCardWriteBuffer(void) {
  * @brief			Puts a sensor message on the queue to be logged to the SD card.
  * @param[in] *msg	Contains sensor message to be logged
  * @param[in] level Contains the logging level of the message
+ *
  * @return Status of the logging attempt.
  * @retval FMOF_SUCCESS                  The logging was successful
  * @retval FMOF_LOGGER_LOW_LOGGING_LEVEL The logging level of the message was too low
