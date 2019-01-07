@@ -13,7 +13,7 @@
 #include "far_mars_onboard_firmware.h"
 #include "timestamp.h"
 
-#warning SD Card and FatFS logMessageString have not yet been implemented
+#warning SD Card and FatFS have not yet been implemented
 
 //! @brief Logging levels for messages sent to SD card
 enum loggingLevels {
@@ -30,6 +30,8 @@ enum loggingLevels {
 #define LOGGING_LEVEL LOG_LEVEL_ALL
 //! @brief Length of the message queue
 #define MESSAGE_QUEUE_LENGTH 25
+//! @brief Length of the message queue
+#define STRING_QUEUE_LENGTH 25
 
 //! @brief Structure for message to be sent to SD card
 struct loggerMessage {
@@ -40,6 +42,6 @@ struct loggerMessage {
 
 void loggerTask(void *pvParameters);
 int logMessage(struct loggerMessage *msg, uint8_t level);
-int logMessageString(const char *msg, uint8_t level);
+int logString(const char *msg, uint8_t level);
 
 #endif /* LOGGER_H_ */

@@ -62,7 +62,7 @@ void pressureTask(void *pvParameters) {
 		vTaskDelay(pdMS_TO_TICKS(10));
 		adc_read_buffer_job(&adcModule, adcBuffer, NUM_SAMPLES);
 		if (!ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(50))) {
-			logMessageString("ADC Fail", LOG_LEVEL_ERROR);
+			logString("ADC Fail", LOG_LEVEL_ERROR);
 		}
 
 		pressureMessage.timestamp = getTimestamp();
