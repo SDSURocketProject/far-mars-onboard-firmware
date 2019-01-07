@@ -12,17 +12,10 @@
 #define SD_CARD_WRITE_BUFFER_SIZE 256
 
 static QueueHandle_t sensorMessageQueue = NULL;
-static QueueHandle_t stringQueue = NULL;
 volatile static uint8_t sdCardWriteBuffer[SD_CARD_WRITE_BUFFER_SIZE];
 volatile static uint16_t sdCardWriteBufferIdx;
 
-struct stringMessage {
-	uint32_t timestamp;
-	const char *str;
-};
-
 static int logSensorMessages(void);
-static int logStrings(void);
 static int sendSdCardWriteBuffer(void);
 
 /**
@@ -38,16 +31,11 @@ void loggerTask(void *pvParameters) {
 	if (!sensorMessageQueue) {
 		configASSERT(0);
 	}
-	stringQueue = xQueueCreate(STRING_QUEUE_LENGTH, sizeof(struct stringMessage));
-	if (!stringQueue) {
-		configASSERT(0);
-	}
 
 	/* Task code */
 	while (1) {
 		vTaskDelay(pdMS_TO_TICKS(1000));
 		logSensorMessages();
-		logStrings();
 		sendSdCardWriteBuffer();
 	}
 }
@@ -59,10 +47,16 @@ void loggerTask(void *pvParameters) {
 static int logSensorMessages(void) {
 	struct sensorMessage msg;
 	uint16_t bytesToCopy;
-	uint8_t *dest;
+	uint8_t *src;
 	uint8_t messagesWaiting = uxQueueMessagesWaiting(sensorMessageQueue);
 	for (; messagesWaiting; messagesWaiting--) {
 		xQueueReceive(sensorMessageQueue, &msg, (TickType_t)0);
+
+		// Write msgID
+		if (sdCardWriteBufferIdx >= sizeof(sdCardWriteBuffer)) {
+			sendSdCardWriteBuffer();
+		}
+		sdCardWriteBuffer[sdCardWriteBufferIdx++] = msg.msgID;
 
 		// Check if timestamp will overflow the write buffer
 		if (sdCardWriteBufferIdx + sizeof(msg.timestamp) >= sizeof(sdCardWriteBuffer)) {
@@ -73,58 +67,34 @@ static int logSensorMessages(void) {
 		sdCardWriteBuffer[sdCardWriteBufferIdx++] = (msg.timestamp >>  8) & 0xFF;
 		sdCardWriteBuffer[sdCardWriteBufferIdx++] = (msg.timestamp >> 16) & 0xFF;
 		sdCardWriteBuffer[sdCardWriteBufferIdx++] = (msg.timestamp >> 24) & 0xFF;
-
-		// Write msgID
-		if (sdCardWriteBufferIdx >= sizeof(sdCardWriteBuffer)) {
-			sendSdCardWriteBuffer();
-		}
-		sdCardWriteBuffer[sdCardWriteBufferIdx++] = msg.msgID;
 		
 		// Write data
-		bytesToCopy = sensorMessageSizes[msg.msgID];
-		dest = &msg.accelerationRaw; // All union members start at the same memory location
-		if (sdCardWriteBufferIdx + bytesToCopy >= sizeof(sdCardWriteBuffer)) {
-			sendSdCardWriteBuffer();
-		}
-		for(; bytesToCopy > 0; bytesToCopy--) {
-			sdCardWriteBuffer[sdCardWriteBufferIdx++] = *dest++;
-		}
-
-	}
-
-	return FMOF_SUCCESS;
-}
-
-/**
- * @brief  Logs all of the strings in the stringQueue to the SD Card.
- * @return Returns FMOF_SUCCESS.
- */
-static int logStrings(void) {
-	struct stringMessage msg;
-	uint8_t i;
-	uint8_t messagesWaiting = uxQueueMessagesWaiting(stringQueue);
-	for (; messagesWaiting; messagesWaiting--) {
-		xQueueReceive(stringQueue, &msg, (TickType_t)0);
-
-		// Check if timestamp will overflow the write buffer
-		if (sdCardWriteBufferIdx + sizeof(msg.timestamp) >= sizeof(sdCardWriteBuffer)) {
-			sendSdCardWriteBuffer();
-		}
-		// Write the timestamp to the write buffer
-		sdCardWriteBuffer[sdCardWriteBufferIdx++] = (msg.timestamp >> 24) & 0xFF;
-		sdCardWriteBuffer[sdCardWriteBufferIdx++] = (msg.timestamp >> 16) & 0xFF;
-		sdCardWriteBuffer[sdCardWriteBufferIdx++] = (msg.timestamp >>  8) & 0xFF;
-		sdCardWriteBuffer[sdCardWriteBufferIdx++] = (msg.timestamp >>  0) & 0xFF;
-
-		// Write the string to the write buffer
-		for(i = 0; msg.str[i] != 0; i++) {
-			// Check for overflow
+		if (msg.msgID == strDataID) {
+			src = (uint8_t *)msg.str.str;
+			while (*src != '\0') {
+				if (sdCardWriteBufferIdx >= sizeof(sdCardWriteBuffer)) {
+					sendSdCardWriteBuffer();
+				}
+				sdCardWriteBuffer[sdCardWriteBufferIdx++] = *src++;
+			}
+			// Write the null terminator
 			if (sdCardWriteBufferIdx >= sizeof(sdCardWriteBuffer)) {
 				sendSdCardWriteBuffer();
 			}
-			sdCardWriteBuffer[sdCardWriteBufferIdx++] = msg.str[i];
-		} 
+			sdCardWriteBuffer[sdCardWriteBufferIdx++] = *src++;
+		}
+		else {
+			bytesToCopy = sensorMessageSizes[msg.msgID];
+			src = (uint8_t *)&msg.accelerationRaw; // All union members start at the same memory location
+			if (sdCardWriteBufferIdx + bytesToCopy >= sizeof(sdCardWriteBuffer)) {
+				sendSdCardWriteBuffer();
+			}
+			for(; bytesToCopy > 0; bytesToCopy--) {
+				sdCardWriteBuffer[sdCardWriteBufferIdx++] = *src++;
+			}
+		}
 	}
+
 	return FMOF_SUCCESS;
 }
 
@@ -179,18 +149,20 @@ int logSensorMessage(struct sensorMessage *msg, uint8_t level) {
  */
 int logString(const char *msg, uint8_t level) {
 	configASSERT(msg);
-	struct stringMessage messageToLog;
+	struct sensorMessage messageToLog;
 	if (level < LOGGING_LEVEL) {
 		return FMOF_LOGGER_LOW_LOGGING_LEVEL;
 	}
-	if (!stringQueue) {
+	if (!sensorMessageQueue) {
 		return FMOF_LOGGER_QUEUE_NOT_INIT;
 	}
 	
 	messageToLog.timestamp = getTimestamp();
-	messageToLog.str = msg;
+	messageToLog.msgID = strDataID;
+	messageToLog.str.str = msg;
+	messageToLog.str.size = 0;
 
-	if (xQueueSendToBack(stringQueue, (void *)&messageToLog, (TickType_t) 0)) {
+	if (xQueueSendToBack(sensorMessageQueue, (void *)&messageToLog, (TickType_t) 0)) {
 		return FMOF_LOGGER_QUEUE_FULL;
 	}
 	return FMOF_SUCCESS;
