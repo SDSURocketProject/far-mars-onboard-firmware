@@ -65,9 +65,9 @@ struct strData {
 };
 
 /**
- * @brief Struct that contains all messages that can be sent, must be packed for communication.
+ * @brief Struct that contains all messages that can be sent.
  */
-struct __attribute__((packed, aligned(1))) sensorMessage {
+struct sensorMessage {
 	uint8_t msgID;
 	uint32_t timestamp;
 
