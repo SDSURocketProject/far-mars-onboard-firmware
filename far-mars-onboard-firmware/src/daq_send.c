@@ -10,8 +10,12 @@
 #include "far_mars_onboard_firmware.h"
 
 static QueueHandle_t sendQueue = NULL;
-static uint8_t sendBuffer[sizeof(struct daqSendMsg)*2]; // *2 in case we need to escape characters
+static struct sensorMessage sendMessage;
+volatile static uint8_t sendBuffer[DAQ_MAX_MESSAGE_SIZE*2]; // *2 in case we need to escape characters
+volatile static uint8_t sendBufferIdx;
 static TaskHandle_t xDaqSendHandle = NULL;
+
+static int daqPackSendBuffer(void);
 
 /**
  * @brief	                Task that sends messages to the data acquisition computer.
@@ -27,7 +31,7 @@ void daqSendTask(void *pvParameters) {
 
 	// init USART
 
-	sendQueue = xQueueCreate(DAQ_SEND_QUEUE_LENGTH, sizeof(struct daqSendMsg));
+	sendQueue = xQueueCreate(DAQ_SEND_QUEUE_LENGTH, sizeof(struct sensorMessage));
 	if (!sendQueue) {
 		configASSERT(0);
 	}
@@ -36,9 +40,10 @@ void daqSendTask(void *pvParameters) {
 	
 	port_pin_set_output_level(USART_DATA_DIR, USART_DATA_DIR_RE);
 	while (1) {
-		if (xQueueReceive(sendQueue, sendBuffer, portMAX_DELAY) != pdTRUE) {
+		if (xQueueReceive(sendQueue, &sendMessage, portMAX_DELAY) != pdTRUE) {
 			configASSERT(0);
 		}
+		daqPackSendBuffer();
 		// escape sendBuffer if necessary
 		port_pin_set_output_level(USART_DATA_DIR, USART_DATA_DIR_DE);
 		// pass sendBuffer to RS485 peripheral (SERCOM USART), usart_write_buffer_job
@@ -57,16 +62,79 @@ void daqSendCallback(struct usart_module *const module) {
 }
 
 /**
- * @brief             Puts a message on the queue to be sent over RS485.
- * @param[in] *msg    Contains a message to be sent
- * @return    returns FMOF_SUCCESS, FMOF_DAQ_SEND_MESSAGE_QUEUE_FULL, or FMOF_DAQ_SEND_QUEUE_NOT_INIT.
+ * @brief             Packs the sendMessage into the sendBuffer.
+ * @return            Returns FMOF_SUCCESS.
  */
-int daqSendMessage(struct daqSendMsg *msg) {
+static int daqPackSendBuffer(void) {
+	uint8_t *src;
+	uint8_t bytesToCopy;
+	sendBufferIdx = 0;
+
+	sendBuffer[sendBufferIdx++] = sendMessage.msgID;
+	sendBuffer[sendBufferIdx++] = (sendMessage.timestamp >>  0) & 0xFF;
+	sendBuffer[sendBufferIdx++] = (sendMessage.timestamp >>  8) & 0xFF;
+	sendBuffer[sendBufferIdx++] = (sendMessage.timestamp >> 16) & 0xFF;
+	sendBuffer[sendBufferIdx++] = (sendMessage.timestamp >> 24) & 0xFF;
+	
+	// Write data
+	if (sendMessage.msgID == strDataID) {
+		src = (uint8_t *)sendMessage.str.str;
+		while (*src != '\0') {
+			sendBuffer[sendBufferIdx++] = *src++;
+		}
+		// Write the null terminator
+		sendBuffer[sendBufferIdx++] = *src++;
+	}
+	else {
+		bytesToCopy = sensorMessageSizes[sendMessage.msgID];
+		src = (uint8_t *)&sendMessage.accelerationRaw; // All union members start at the same memory location
+		for(; bytesToCopy > 0; bytesToCopy--) {
+			sendBuffer[sendBufferIdx++] = *src++;
+		}
+	}
+	return FMOF_SUCCESS;
+}
+
+/**
+ * @brief          Puts a message on the queue to be sent over RS485.
+ * @param[in] *msg Contains a message to be sent
+ * 
+ * @return Status of the send attempt.
+ * @retval FMOF_SUCCESS                     The send was successful
+ * @retval FMOF_DAQ_SEND_MESSAGE_QUEUE_FULL The send queue is full
+ * @retval FMOF_DAQ_SEND_QUEUE_NOT_INIT     The send queue has not yet been initialized
+ */
+int daqSendSensorMessage(struct sensorMessage *msg) {
 	if (!sendQueue) {
 		return FMOF_DAQ_SEND_QUEUE_NOT_INIT;
 	}
-	
+
 	if (xQueueSendToBack(sendQueue, (void *)msg, (TickType_t) 0)) {
+		return FMOF_DAQ_SEND_MESSAGE_QUEUE_FULL;
+	}
+	return FMOF_SUCCESS;
+}
+
+/**
+ * @brief          Puts a string on the queue to be sent over RS485.
+ * @param[in] *msg Contains a string to be sent
+ * 
+ * @return Status of the send attempt.
+ * @retval FMOF_SUCCESS                     The send was successful
+ * @retval FMOF_DAQ_SEND_MESSAGE_QUEUE_FULL The send queue is full
+ * @retval FMOF_DAQ_SEND_QUEUE_NOT_INIT     The send queue has not yet been initialized
+ */
+int daqSendString(const char *str) {
+	if (!sendQueue) {
+		return FMOF_DAQ_SEND_QUEUE_NOT_INIT;
+	}
+	struct sensorMessage msg;
+	msg.msgID = strDataID;
+	msg.timestamp = getTimestamp();
+	msg.str.str = str;
+	msg.str.size = 0;
+
+	if (xQueueSendToBack(sendQueue, (void *)&msg, (TickType_t) 0)) {
 		return FMOF_DAQ_SEND_MESSAGE_QUEUE_FULL;
 	}
 	return FMOF_SUCCESS;

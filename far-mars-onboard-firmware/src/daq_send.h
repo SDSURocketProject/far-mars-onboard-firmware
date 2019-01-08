@@ -8,11 +8,13 @@
 
 #ifndef DAQ_SEND_H_
 #define DAQ_SEND_H_
-
-#include "logger.h"
+#include "messages.h"
+#include "timestamp.h"
 
 #warning SERCOM USART has not yet been implemented
 
+//! @brief Maximum length of a message to be sent in bytes
+#define DAQ_MAX_MESSAGE_SIZE 50
 //! @brief Length of the daq send queue
 #define DAQ_SEND_QUEUE_LENGTH 10
 //! @brief Pin used to control DATA_DIR on RS485 transceiver
@@ -20,14 +22,9 @@
 #define USART_DATA_DIR_DE 1
 #define USART_DATA_DIR_RE 0
 
-//! @brief Structure for message to be sent to daq
-struct daqSendMsg {
-	uint8_t msgID;
-	uint8_t data[3+8]; // Change size of data so daqSendMsg is aligned to 4 bytes
-};
-
 void daqSendTask(void *pvParameters);
 void daqSendCallback(struct usart_module *const module);
-int daqSendMessage(struct daqSendMsg *msg);
+int daqSendSensorMessage(struct sensorMessage *msg);
+int daqSendString(const char *str);
 
 #endif /* DAQ_SEND_H_ */
