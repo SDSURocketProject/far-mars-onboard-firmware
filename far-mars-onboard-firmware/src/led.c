@@ -8,7 +8,6 @@
 #include <asf.h>
 #include "led.h"
 #include "logger.h"
-#include "pressure.h"
 
 //! @brief Red LED
 #define LED0 PIN_PA12
@@ -31,8 +30,6 @@ void ledTask(void *pvParameters) {
 	port_pin_set_output_level(LED0, 1);
 	port_pin_set_output_level(LED1, 1);
 
-	struct sensorMessage stuff;
-
 	/* Task code */
 	while(1) {
 		port_pin_set_output_level(LED0, 1);
@@ -41,9 +38,5 @@ void ledTask(void *pvParameters) {
 		port_pin_set_output_level(LED0, 0);
 		port_pin_set_output_level(LED1, 1);
 		vTaskDelay(pdMS_TO_TICKS(500));
-		pressureStartConversion(10);
-		vTaskDelay(pdMS_TO_TICKS(100));
-		pressureReadConversion(&stuff, 10);
-		logSensorMessage(&stuff, LOG_LEVEL_DATA);
 	}
 }
