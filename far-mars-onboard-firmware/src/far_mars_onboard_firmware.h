@@ -21,6 +21,8 @@ enum FMOF_returns {
 	FMOF_LOGGER_INVALID_MSGID,	      //! An invalid message ID was passed to the message logger
 	FMOF_DAQ_SEND_MESSAGE_QUEUE_FULL, //! The send queue is completely full of messages
 	FMOF_DAQ_SEND_QUEUE_NOT_INIT,     //! The send queue is not yet initialized
+	FMOF_PRESSURE_SENSOR_IN_USE,      //! The pressure sensor is being used by another task
+	FMOF_PRESSURE_QUEUE_FULL,         //! The pressure sensor is unavailable
 	FMOF_FAILURE                      //! Generic failure
 };
 
