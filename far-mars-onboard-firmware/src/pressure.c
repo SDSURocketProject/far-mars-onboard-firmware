@@ -41,10 +41,10 @@ int pressureInit(void) {
 	adcConfig.divide_result = ADC_DIVIDE_RESULT_16;
 	
 	adcConfig.positive_input_sequence_mask_enable = (1 << ADC_POSITIVE_INPUT_PIN0) |
-	                                                (1 << ADC_POSITIVE_INPUT_PIN1) |
-													(1 << ADC_POSITIVE_INPUT_PIN2);
+	                                                (1 << ADC_POSITIVE_INPUT_PIN2) |
+													(1 << ADC_POSITIVE_INPUT_PIN3);
 	
-	if ((returned = adc_init(&pressureADCModule, ADC1, &adcConfig)) != STATUS_OK) {
+	if ((returned = adc_init(&pressureADCModule, ADC0, &adcConfig)) != STATUS_OK) {
 		configASSERT(0);
 	}
 	adc_enable(&pressureADCModule);
