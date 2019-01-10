@@ -23,6 +23,7 @@ enum FMOF_returns {
 	FMOF_DAQ_SEND_QUEUE_NOT_INIT,     //! The send queue is not yet initialized
 	FMOF_PRESSURE_SENSOR_IN_USE,      //! The pressure sensor is being used by another task
 	FMOF_PRESSURE_QUEUE_FULL,         //! The pressure sensor is unavailable
+	FMOF_PRESSURE_START_CONVERSION,   //! Read conversion was called before start conversion
 	FMOF_FAILURE                      //! Generic failure
 };
 

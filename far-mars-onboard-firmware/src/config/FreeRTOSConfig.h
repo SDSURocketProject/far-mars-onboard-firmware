@@ -71,6 +71,8 @@
 #define configUSE_APPLICATION_TASK_TAG			0
 #define configUSE_COUNTING_SEMAPHORES			1
 
+#define INCLUDE_xSemaphoreGetMutexHolder 1
+
 /* The full demo always has tasks to run so the tick will never be turned off.
 The blinky demo will use the default tickless idle implementation to turn the
 tick off. */

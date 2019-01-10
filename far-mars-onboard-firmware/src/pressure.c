@@ -30,7 +30,7 @@ int pressureInit(void) {
 		configASSERT(0);
 	}
 
-	pressureADCSemaphore = xSemaphoreCreateBinary();
+	pressureADCSemaphore = xSemaphoreCreateMutex();
 
 	adc_get_config_defaults(&adcConfig);
 	adcConfig.clock_prescaler = ADC_CLOCK_PRESCALER_DIV16;
@@ -58,10 +58,16 @@ int pressureInit(void) {
 
 /**
  * @brief Starts ADC conversions for the pressure sensors.
- * @param[in] wait Maximum amount of time in milliseconds to wait for the ADC be become available.
+ * @param[in] wait Maximum amount of time in milliseconds to wait for the ADC be become available
+ * 
+ * @return Status of the conversion.
+ * @retval FMOF_SUCCESS The conversion has been successfully started
+ * @retval FMOF_FAILURE The conversion has failed to start
  */
 int pressureStartConversion(uint8_t wait) {
-	xSemaphoreTake(pressureADCSemaphore, pdMS_TO_TICKS(wait));
+	if (xSemaphoreTake(pressureADCSemaphore, pdMS_TO_TICKS(0)) != pdTRUE) {
+		return FMOF_FAILURE;
+	}
 	if (uxQueueSpacesAvailable(pressureQueue) != numPressureSensors) {
 		xQueueReset(pressureQueue);
 	}
@@ -75,9 +81,16 @@ int pressureStartConversion(uint8_t wait) {
  * @brief Reads all the pressure sensors after a conversion has been started.
  * @param[out] *pressures Contains pressure values upon return
  * @param[in]  wait       Maximum amount of time in milliseconds to wait for a single pressure sensor to be received
- * @return Returns FMOF_SUCCESS upon success or FMOF_FAILURE upon failure.
+ * 
+ * @retval FMOF_SUCCESS                   Successfully read conversion
+ * @retval FMOF_PRESSURE_START_CONVERSION Read conversion was called before start conversion
+ * @retval FMOF_FAILURE                   Failed to read conversion before timeout
  */
 int pressureReadConversion(struct sensorMessage *pressures, uint8_t wait) {
+	if (xSemaphoreGetMutexHolder(pressureADCSemaphore) != xTaskGetCurrentTaskHandle()) {
+		return FMOF_PRESSURE_START_CONVERSION;
+	}
+
 	if (xQueueReceive(pressureQueue, (void *)&(pressures->pressureRaw.P1), pdMS_TO_TICKS(wait)) != pdTRUE) {
 		xSemaphoreGive(pressureADCSemaphore);
 		return FMOF_FAILURE;
