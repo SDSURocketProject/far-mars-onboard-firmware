@@ -37,6 +37,8 @@ void navigationTask(void *pvParameters) {
 			}
 		}
 
+		pressureRawToPSIG(&pressure, &pressure);
+
 		// Log conversions
 		if (pressureReturn == FMOF_SUCCESS) {
 			daqSendSensorMessage(&pressure);

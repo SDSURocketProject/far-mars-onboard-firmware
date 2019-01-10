@@ -12,9 +12,9 @@
 #include "messages.h"
 
 enum pressureSensors {
-	P1,
-	P2,
-	P3,
+	pressureMethane,
+	pressureLOX,
+	pressureHelium,
 	numPressureSensors
 };
 

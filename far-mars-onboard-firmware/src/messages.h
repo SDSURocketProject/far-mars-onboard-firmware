@@ -50,12 +50,12 @@ struct cpuTemperatureFloatData {
 
 //! @brief Struct containing pressure sensor data
 struct pressureData {
-	uint16_t P1, P2, P3;
+	uint16_t methane, LOX, helium;
 };
 
 //! @brief Struct containing pressure sensor data
 struct pressureFloatData {
-	float P1, P2, P3;
+	float methane, LOX, helium;
 };
 
 //! @brief Struct containing a pointer to a string. Be very careful when using to hold strings that are not string literals.

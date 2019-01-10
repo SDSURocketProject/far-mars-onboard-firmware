@@ -10,6 +10,13 @@
 #include "daq_send.h"
 #include "logger.h"
 
+//! Constant by which each pressure reading is divided by when converting to PSI. Defined as 2^(adc resolution).
+#define PRESSURE_DIVISION_CONSTANT 4096.0f
+
+#define PRESSURE_METHANE_MAX_PRESSURE 1500.0f
+#define PRESSURE_LOX_MAX_PRESSURE 1500.0f
+#define PRESSURE_HELIUM_MAX_PRESSURE 5800.0f
+
 struct adc_module pressureADCModule;
 static uint16_t adcBuffer[numPressureSensors];
 static uint32_t lastTimestamp;
@@ -40,9 +47,9 @@ int pressureInit(void) {
 	adcConfig.accumulate_samples = ADC_ACCUMULATE_SAMPLES_16;
 	adcConfig.divide_result = ADC_DIVIDE_RESULT_16;
 	
-	adcConfig.positive_input_sequence_mask_enable = (1 << ADC_POSITIVE_INPUT_PIN0) |
-	                                                (1 << ADC_POSITIVE_INPUT_PIN2) |
-													(1 << ADC_POSITIVE_INPUT_PIN3);
+	adcConfig.positive_input_sequence_mask_enable = (1 << ADC_POSITIVE_INPUT_PIN0) | // Methane
+	                                                (1 << ADC_POSITIVE_INPUT_PIN2) | // LOX
+													(1 << ADC_POSITIVE_INPUT_PIN3);  // Helium
 	
 	if ((returned = adc_init(&pressureADCModule, ADC0, &adcConfig)) != STATUS_OK) {
 		configASSERT(0);
@@ -91,15 +98,15 @@ int pressureReadConversion(struct sensorMessage *pressures, uint8_t wait) {
 		return FMOF_PRESSURE_START_CONVERSION;
 	}
 
-	if (xQueueReceive(pressureQueue, (void *)&(pressures->pressureRaw.P1), pdMS_TO_TICKS(wait)) != pdTRUE) {
+	if (xQueueReceive(pressureQueue, (void *)&(pressures->pressureRaw.methane), pdMS_TO_TICKS(wait)) != pdTRUE) {
 		xSemaphoreGive(pressureADCSemaphore);
 		return FMOF_FAILURE;
 	}
-	if (xQueueReceive(pressureQueue, (void *)&(pressures->pressureRaw.P2), pdMS_TO_TICKS(wait)) != pdTRUE) {
+	if (xQueueReceive(pressureQueue, (void *)&(pressures->pressureRaw.LOX), pdMS_TO_TICKS(wait)) != pdTRUE) {
 		xSemaphoreGive(pressureADCSemaphore);
 		return FMOF_FAILURE;
 	}
-	if (xQueueReceive(pressureQueue, (void *)&(pressures->pressureRaw.P3), pdMS_TO_TICKS(wait)) != pdTRUE) {
+	if (xQueueReceive(pressureQueue, (void *)&(pressures->pressureRaw.helium), pdMS_TO_TICKS(wait)) != pdTRUE) {
 		xSemaphoreGive(pressureADCSemaphore);
 		return FMOF_FAILURE;
 	}
@@ -124,46 +131,103 @@ void pressureAdcCallback(struct adc_module *const module) {
 	lastTimestamp = getTimestamp();
 }
 
+/**
+ * @brief Converts a RAW pressure from pressureReadConversion into PSIA.
+ * @param[in]  *RAW  The pressure to be converted
+ * @param[out] *PSIA The converted pressure
+ *
+ * @return Returns the status of the conversion.
+ * @retval FMOF_SUCCESS The conversion was successful
+ * @retval FMOF_FAILURE The message passed in does not contain RAW pressure data
+ */
 int pressureRawToPSIA(struct sensorMessage *RAW, struct sensorMessage *PSIA) {
-	return FMOF_SUCCESS;
+	struct sensorMessage PSIG;
+	int returned;
+	
+	if (RAW->msgID != pressureRawDataID) {
+		configASSERT(0);
+		return FMOF_FAILURE;
+	}
+
+	returned = pressureRawToPSIG(RAW, &PSIG);
+	if (returned != FMOF_SUCCESS) {
+		return returned;
+	}
+	return pressurePSIGToPSIA(&PSIG, PSIA);;
 }
 
+/**
+ * @brief Converts a RAW pressure from pressureReadConversion into PSIG.
+ * @param[in]  *RAW  The pressure to be converted
+ * @param[out] *PSIG The converted pressure
+ *
+ * @return Returns the status of the conversion.
+ * @retval FMOF_SUCCESS The conversion was successful
+ * @retval FMOF_FAILURE The message passed in does not contain RAW pressure data
+ */
 int pressureRawToPSIG(struct sensorMessage *RAW, struct sensorMessage *PSIG) {
+	if (RAW->msgID != pressureRawDataID) {
+		configASSERT(0);
+		return FMOF_FAILURE;
+	}
+
+	float methane, LOX, helium;
+
+	methane = (float)RAW->pressureRaw.methane;
+	LOX = (float)RAW->pressureRaw.LOX;
+	helium = (float)RAW->pressureRaw.helium;
+
+	PSIG->pressurePSIG.methane = ((methane/(PRESSURE_DIVISION_CONSTANT))*(4.5f/4.0f) - (0.5f/4.0f))*PRESSURE_METHANE_MAX_PRESSURE;
+	PSIG->pressurePSIG.LOX = ((LOX/(PRESSURE_DIVISION_CONSTANT))*(4.5f/4.0f) - (0.5f/4.0f))*PRESSURE_LOX_MAX_PRESSURE;
+	PSIG->pressurePSIG.helium = ((helium/(PRESSURE_DIVISION_CONSTANT))*(5.0f/4.0f) - (1.0f/4.0f))*PRESSURE_HELIUM_MAX_PRESSURE;
+
+	PSIG->msgID = pressurePSIGDataID;
+	PSIG->timestamp = RAW->timestamp;
 	return FMOF_SUCCESS;
 }
 
 /**
  * @brief Converts pressures in PSIA to PSIG.
- * @param[in] *PSIA The pressure to be converted
+ * @param[in]  *PSIA The pressure to be converted
  * @param[out] *PSIG The converted pressure
- * @return Returns FMOF_SUCCESS upon successful conversion, otherwise returns FMOF_FAILURE.
+ *
+ * @return Returns the status of the conversion.
+ * @retval FMOF_SUCCESS The conversion was successful
+ * @retval FMOF_FAILURE The message passed in does not contain PSIA data
  */
 int pressurePSIAToPSIG(struct sensorMessage *PSIA, struct sensorMessage *PSIG) {
 	if (PSIA->msgID != pressurePSIADataID) {
 		configASSERT(0);
 		return FMOF_FAILURE;
 	}
-	PSIG->pressurePSIG.P1 = PSIA->pressurePSIA.P1+14.7;
-	PSIG->pressurePSIG.P2 = PSIA->pressurePSIA.P2+14.7;
-	PSIG->pressurePSIG.P3 = PSIA->pressurePSIA.P3+14.7;
+
+	PSIG->pressurePSIG.methane = PSIA->pressurePSIA.methane+14.7f;
+	PSIG->pressurePSIG.LOX     = PSIA->pressurePSIA.LOX+14.7f;
+	PSIG->pressurePSIG.helium  = PSIA->pressurePSIA.helium+14.7f;
 	PSIG->msgID = pressurePSIGDataID;
+	PSIG->timestamp = PSIA->timestamp;
 	return FMOF_SUCCESS;
 }
 
 /**
  * @brief Converts pressures in PSIG to PSIA.
- * @param[in] *PSIG The pressure to be converted
+ * @param[in]  *PSIG The pressure to be converted
  * @param[out] *PSIA The converted pressure
- * @return Returns FMOF_SUCCESS upon successful conversion, otherwise returns FMOF_FAILURE.
+ *
+ * @return Returns the status of the conversion.
+ * @retval FMOF_SUCCESS The conversion was successful
+ * @retval FMOF_FAILURE The message passed in does not contain PSIG data
  */
 int pressurePSIGToPSIA(struct sensorMessage *PSIG, struct sensorMessage *PSIA) {
 	if (PSIG->msgID != pressurePSIGDataID) {
 		configASSERT(0);
 		return FMOF_FAILURE;
 	}
-	PSIA->pressurePSIA.P1 = PSIG->pressurePSIG.P1-14.7;
-	PSIA->pressurePSIA.P2 = PSIG->pressurePSIG.P2-14.7;
-	PSIA->pressurePSIA.P3 = PSIG->pressurePSIG.P3-14.7;
-	PSIG->msgID = pressurePSIADataID;
+
+	PSIA->pressurePSIA.methane = PSIG->pressurePSIG.methane-14.7f;
+	PSIA->pressurePSIA.LOX     = PSIG->pressurePSIG.LOX-14.7f;
+	PSIA->pressurePSIA.helium  = PSIG->pressurePSIG.helium-14.7f;
+	PSIA->msgID = pressurePSIADataID;
+	PSIA->timestamp = PSIG->timestamp;
 	return FMOF_SUCCESS;
 }
