@@ -681,6 +681,12 @@
     <Compile Include="src\messages.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\navigation.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\navigation.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\timestamp.c">
       <SubType>compile</SubType>
     </Compile>

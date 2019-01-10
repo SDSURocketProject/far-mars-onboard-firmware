@@ -33,12 +33,14 @@
 #include "logger.h"
 #include "daq_send.h"
 #include "pressure.h"
+#include "navigation.h"
 
 void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName );
 
-#define ledTaskPriority (tskIDLE_PRIORITY + 1)
-#define loggerTaskPriority (tskIDLE_PRIORITY + 1)
-#define daqSendTaskPriority (tskIDLE_PRIORITY + 3)
+#define ledTaskPriority        (tskIDLE_PRIORITY + 1)
+#define loggerTaskPriority     (tskIDLE_PRIORITY + 1)
+#define daqSendTaskPriority    (tskIDLE_PRIORITY + 3)
+#define navigationTaskPriority (tskIDLE_PRIORITY + 4)
 
 /**
  * @brief		Entry point for the program.
@@ -54,6 +56,7 @@ int main (void)
 	TaskHandle_t xLedHandle = NULL;
 	TaskHandle_t xloggerHandle = NULL;
 	TaskHandle_t xDaqSendHandle = NULL;
+	TaskHandle_t xNavigationHandle = NULL;
 
 	xReturned = xTaskCreate(ledTask,
 							"LED",
@@ -79,6 +82,16 @@ int main (void)
 							NULL,
 							daqSendTaskPriority,
 							&xDaqSendHandle);
+	if (xReturned != pdPASS) {
+		configASSERT(0);
+	}
+
+	xReturned = xTaskCreate(navigationTask,
+	                        "Navigation",
+							configMINIMAL_STACK_SIZE,
+							NULL,
+							navigationTaskPriority,
+							&xNavigationHandle);
 	if (xReturned != pdPASS) {
 		configASSERT(0);
 	}
