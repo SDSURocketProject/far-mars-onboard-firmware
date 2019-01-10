@@ -38,7 +38,7 @@
 void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName );
 
 #define ledTaskPriority        (tskIDLE_PRIORITY + 1)
-#define loggerTaskPriority     (tskIDLE_PRIORITY + 1)
+#define loggerTaskPriority     (tskIDLE_PRIORITY + 2)
 #define daqSendTaskPriority    (tskIDLE_PRIORITY + 3)
 #define navigationTaskPriority (tskIDLE_PRIORITY + 4)
 
