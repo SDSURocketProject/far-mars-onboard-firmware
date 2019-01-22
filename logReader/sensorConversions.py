@@ -2,7 +2,7 @@ import sensorMessage as sm
 from collections import Iterable
 
 #------------------------------------------------------------------------------
-# Convert all messages
+# Stuff that can be used outside of this module
 #------------------------------------------------------------------------------
 
 # Returns a list of messages with messages of type inputID converted to type outputID
@@ -44,6 +44,7 @@ def convertMessages(messages, inputID, outputID):
 def filterMessages(messages, filter, IDs):
     if not (isinstance(IDs, Iterable)):
         IDs = [IDs]
+        
     filteredMessages = []
     if (filter == "Keep"):
         for i in range(len(messages)):
@@ -88,7 +89,7 @@ def pressureConvert(message, outputID):
         pass
     return message
 
-# Convert the input to RAW
+# Convert the message to RAW
 def pressureConvertRAW(message):
     if (message[0] ==  sm.pressurePSIGDataID):
         message = pressurePSIGToRaw(message)
@@ -97,7 +98,7 @@ def pressureConvertRAW(message):
     else:
         pass
     return message
-# Convert the input to PSIA
+# Convert the message to PSIA
 def pressureConvertPSIA(message):
     if (message[0] ==  sm.pressureRawDataID):
         message = pressureRawToPSIA(message)
@@ -107,7 +108,7 @@ def pressureConvertPSIA(message):
     else:
         pass
     return message
-# Convert the input to PSIG
+# Convert the message to PSIG
 def pressureConvertPSIG(message):
     if (message[0] ==  sm.pressureRawDataID):
         message = pressureRawToPSIG(message)
@@ -275,7 +276,6 @@ def isCpuTemp(message):
     elif (message[0] == sm.cpuTemperatureCelciusDataID):
         out = True
     return out
-
 
 # Returns CPU temperature message converted to the type specified by outputID
 def cpuTempConvert(message, outputID):

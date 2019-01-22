@@ -97,7 +97,7 @@ messageLogFormats = [
 "Raw Pressures - Methane=%i, LOX=%i, Helium=%i\n", #pressureRawDataID
 "PSI absolute - Methane=%f, LOX=%f, Helium=%f\n",  #pressurePSIADataID
 "PSI guage - Methane=%f, LOX=%f, Helium=%f\n",     #pressurePSIGDataID
-"%s\n"                                             #strDataID
+"%s"                                             #strDataID
 ]
 
 messageCSVHeaders = [

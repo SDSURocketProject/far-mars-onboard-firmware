@@ -214,3 +214,6 @@ dmypy.json
 # Log file stuff
 *.log
 *.csv
+
+# Visual Studio Code
+.vscode/*
