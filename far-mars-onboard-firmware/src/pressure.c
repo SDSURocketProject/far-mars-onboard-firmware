@@ -41,7 +41,7 @@ int pressureInit(void) {
 
 	adc_get_config_defaults(&adcConfig);
 	adcConfig.clock_prescaler = ADC_CLOCK_PRESCALER_DIV16;
-	adcConfig.reference = ADC_REFERENCE_INTVCC1;
+	adcConfig.reference = ADC_REFERENCE_INTVCC2; // VDDANA
 	adcConfig.positive_input = ADC_POSITIVE_INPUT_PIN0;
 	adcConfig.resolution = ADC_RESOLUTION_CUSTOM;
 	adcConfig.accumulate_samples = ADC_ACCUMULATE_SAMPLES_16;
@@ -174,12 +174,19 @@ int pressureRawToPSIG(struct sensorMessage *RAW, struct sensorMessage *PSIG) {
 	float methane, LOX, helium;
 
 	methane = (float)RAW->pressureRaw.methane;
-	LOX = (float)RAW->pressureRaw.LOX;
-	helium = (float)RAW->pressureRaw.helium;
+	LOX     = (float)RAW->pressureRaw.LOX;
+	helium  = (float)RAW->pressureRaw.helium;
 
-	PSIG->pressurePSIG.methane = ((methane/(PRESSURE_DIVISION_CONSTANT))*(4.5f/4.0f) - (0.5f/4.0f))*PRESSURE_METHANE_MAX_PRESSURE;
-	PSIG->pressurePSIG.LOX = ((LOX/(PRESSURE_DIVISION_CONSTANT))*(4.5f/4.0f) - (0.5f/4.0f))*PRESSURE_LOX_MAX_PRESSURE;
-	PSIG->pressurePSIG.helium = ((helium/(PRESSURE_DIVISION_CONSTANT))*(5.0f/4.0f) - (1.0f/4.0f))*PRESSURE_HELIUM_MAX_PRESSURE;
+	// Untested, will best tested during cryo on 1/29/2019
+	methane = methane-PRESSURE_DIVISION_CONSTANT*.1f; // Remove .5v DC bias
+	PSIG->pressurePSIG.methane = (methane/PRESSURE_DIVISION_CONSTANT)*PRESSURE_METHANE_MAX_PRESSURE;
+
+	// Untested, will best tested during cryo on 1/29/2019
+	LOX = LOX-PRESSURE_DIVISION_CONSTANT*.1f; // Remove .5v DC bias
+	PSIG->pressurePSIG.LOX = (LOX/PRESSURE_DIVISION_CONSTANT)*PRESSURE_LOX_MAX_PRESSURE;
+	
+	// Tested
+	PSIG->pressurePSIG.helium = (helium/PRESSURE_DIVISION_CONSTANT)*PRESSURE_HELIUM_MAX_PRESSURE;
 
 	PSIG->msgID = pressurePSIGDataID;
 	PSIG->timestamp = RAW->timestamp;
