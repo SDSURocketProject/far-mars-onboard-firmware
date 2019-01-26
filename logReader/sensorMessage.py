@@ -97,7 +97,7 @@ messageLogFormats = [
 "Raw Pressures - Methane=%i, LOX=%i, Helium=%i\n", #pressureRawDataID
 "PSI absolute - Methane=%f, LOX=%f, Helium=%f\n",  #pressurePSIADataID
 "PSI guage - Methane=%f, LOX=%f, Helium=%f\n",     #pressurePSIGDataID
-"%s"                                             #strDataID
+"%s"                                               #strDataID
 ]
 
 messageCSVHeaders = [
@@ -172,12 +172,13 @@ def unpackMessages(fileName):
 def unpackMessage(dataIdx, data):
     ( msgID, timestamp ) = struct.unpack_from(sensorMessageHeaderFmt, data, dataIdx)
     
-    if (msgID != 20):
-        ( msg ) = struct.unpack_from(messagePackedFormats[msgID], data, dataIdx+5)
-        dataIdx = dataIdx + messageSizes[msgID]
-    else:
+    if (msgID == strDataID):
         dataIdx = dataIdx + 5
         (msg, dataIdx) = unpackString(dataIdx, data)
+    else:
+        ( msg ) = struct.unpack_from(messagePackedFormats[msgID], data, dataIdx+5)
+        dataIdx = dataIdx + messageSizes[msgID]
+
     return (msgID, timestamp, msg, dataIdx)
 
 def unpackString(dataIdx, data):

@@ -36,8 +36,13 @@ void navigationTask(void *pvParameters) {
 				logString("Reading pressure conversion timed out\n", LOG_LEVEL_ERROR);
 			}
 		}
-
-		pressureRawToPSIG(&pressure, &pressure);
+		
+		// Read conversions
+		if(pressureReturn == FMOF_SUCCESS) {
+			if (pressureRawToPSIG(&pressure, &pressure) != FMOF_SUCCESS) {
+				logString("Converting pressure failed\n", LOG_LEVEL_ERROR);
+			}
+		}
 
 		// Log conversions
 		if (pressureReturn == FMOF_SUCCESS) {
