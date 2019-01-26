@@ -13,6 +13,7 @@
 *.a
 *.la
 *.lo
+!libarm_cortexM0l_math.a
 
 # Shared objects (inc. Windows DLLs)
 *.dll
