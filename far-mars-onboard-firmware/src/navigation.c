@@ -17,7 +17,7 @@
  * @return none.
  */
 void navigationTask(void *pvParameters) {
-	const TickType_t xFrequency = pdMS_TO_TICKS(10);
+	const TickType_t xFrequency = pdMS_TO_TICKS(50);
 	TickType_t xLastWakeupTime;
 	struct sensorMessage pressure;
 	uint32_t pressureReturn;
@@ -38,11 +38,11 @@ void navigationTask(void *pvParameters) {
 		}
 		
 		// Read conversions
-		if(pressureReturn == FMOF_SUCCESS) {
-			if (pressureRawToPSIG(&pressure, &pressure) != FMOF_SUCCESS) {
-				logString("Converting pressure failed\n", LOG_LEVEL_ERROR);
-			}
-		}
+		//if(pressureReturn == FMOF_SUCCESS) {
+		//	if (pressureRawToPSIG(&pressure, &pressure) != FMOF_SUCCESS) {
+		//		logString("Converting pressure failed\n", LOG_LEVEL_ERROR);
+		//	}
+		//}
 
 		// Log conversions
 		if (pressureReturn == FMOF_SUCCESS) {

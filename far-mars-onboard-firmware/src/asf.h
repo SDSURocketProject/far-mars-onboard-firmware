@@ -124,4 +124,7 @@
 // From module: SYSTEM - Reset Management for SAM C20/C21
 #include <reset.h>
 
+// From module: USART - Serial interface- SAM implementation for devices with only USART
+#include <serial.h>
+
 #endif // ASF_H

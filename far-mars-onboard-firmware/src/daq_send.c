@@ -11,10 +11,11 @@
 
 static QueueHandle_t sendQueue = NULL;
 static struct sensorMessage sendMessage;
-volatile static uint8_t sendBuffer[DAQ_MAX_MESSAGE_SIZE*2]; // *2 in case we need to escape characters
+volatile static uint8_t sendBuffer[DAQ_MAX_MESSAGE_SIZE];
 volatile static uint8_t sendBufferIdx;
 static TaskHandle_t xDaqSendHandle = NULL;
 
+static int configRS485(struct usart_module *module);
 static int daqPackSendBuffer(void);
 
 /**
@@ -29,7 +30,8 @@ void daqSendTask(void *pvParameters) {
 	port_pin_set_config(USART_DATA_DIR, &config_port_pin);
 	port_pin_set_output_level(USART_DATA_DIR, USART_DATA_DIR_DE);
 
-	// init USART
+	struct usart_module rs485_module;
+	configRS485(&rs485_module);
 
 	sendQueue = xQueueCreate(DAQ_SEND_QUEUE_LENGTH, sizeof(struct sensorMessage));
 	if (!sendQueue) {
@@ -44,12 +46,34 @@ void daqSendTask(void *pvParameters) {
 			configASSERT(0);
 		}
 		daqPackSendBuffer();
-		// escape sendBuffer if necessary
 		port_pin_set_output_level(USART_DATA_DIR, USART_DATA_DIR_DE);
-		// pass sendBuffer to RS485 peripheral (SERCOM USART), usart_write_buffer_job
+		usart_write_buffer_job(&rs485_module, sendBuffer, sendBufferIdx);
 		ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(100)); // returns zero if write didn't finish before timeout, put into a do-while loop later
 		port_pin_set_output_level(USART_DATA_DIR, USART_DATA_DIR_RE);
 	}
+}
+
+static int configRS485(struct usart_module *module) {
+	struct usart_config config_usart;
+
+	usart_get_config_defaults(&config_usart);
+	config_usart.baudrate    = 9600;
+	config_usart.mux_setting = USART_RX_3_TX_2_XCK_3;
+	config_usart.pinmux_pad0 = PINMUX_UNUSED;
+	config_usart.pinmux_pad1 = PINMUX_UNUSED;
+	config_usart.pinmux_pad2 = PINMUX_PA20C_SERCOM5_PAD2;
+	config_usart.pinmux_pad3 = PINMUX_PA21C_SERCOM5_PAD3;
+	config_usart.rs485_guard_time = RS485_GUARD_TIME_1_BIT;
+	config_usart.character_size = USART_CHARACTER_SIZE_8BIT;
+	config_usart.stopbits = USART_STOPBITS_1;
+	config_usart.parity = USART_PARITY_NONE;
+	while (usart_init(module, SERCOM5, &config_usart) != STATUS_OK){};
+	usart_enable(module);
+
+	usart_register_callback(module, daqSendCallback, USART_CALLBACK_BUFFER_TRANSMITTED);
+	usart_enable_callback(module, USART_CALLBACK_BUFFER_TRANSMITTED);
+
+	return FMOF_SUCCESS;
 }
 
 /**
