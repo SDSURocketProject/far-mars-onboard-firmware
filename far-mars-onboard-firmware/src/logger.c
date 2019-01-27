@@ -129,7 +129,7 @@ int logSensorMessage(struct sensorMessage *msg, uint8_t level) {
 		return FMOF_LOGGER_QUEUE_NOT_INIT;
 	}
 
-	if (xQueueSendToBack(sensorMessageQueue, (void *)msg, (TickType_t) 0)) {
+	if (xQueueSendToBack(sensorMessageQueue, (void *)msg, (TickType_t) 0) != pdPASS) {
 		return FMOF_LOGGER_QUEUE_FULL;
 	}
 	
@@ -162,7 +162,7 @@ int logString(const char *msg, uint8_t level) {
 	messageToLog.str.str = msg;
 	messageToLog.str.size = 0;
 
-	if (xQueueSendToBack(sensorMessageQueue, (void *)&messageToLog, (TickType_t) 0)) {
+	if (xQueueSendToBack(sensorMessageQueue, (void *)&messageToLog, (TickType_t) 0) != pdPASS) {
 		return FMOF_LOGGER_QUEUE_FULL;
 	}
 	return FMOF_SUCCESS;

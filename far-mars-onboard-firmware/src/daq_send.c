@@ -133,7 +133,7 @@ int daqSendSensorMessage(struct sensorMessage *msg) {
 		return FMOF_DAQ_SEND_QUEUE_NOT_INIT;
 	}
 
-	if (xQueueSendToBack(sendQueue, (void *)msg, (TickType_t) 0)) {
+	if (xQueueSendToBack(sendQueue, (void *)msg, (TickType_t) 0) != pdPASS) {
 		return FMOF_DAQ_SEND_MESSAGE_QUEUE_FULL;
 	}
 	return FMOF_SUCCESS;
@@ -158,7 +158,7 @@ int daqSendString(const char *str) {
 	msg.str.str = str;
 	msg.str.size = 0;
 
-	if (xQueueSendToBack(sendQueue, (void *)&msg, (TickType_t) 0)) {
+	if (xQueueSendToBack(sendQueue, (void *)&msg, (TickType_t) 0) != pdPASS) {
 		return FMOF_DAQ_SEND_MESSAGE_QUEUE_FULL;
 	}
 	return FMOF_SUCCESS;
