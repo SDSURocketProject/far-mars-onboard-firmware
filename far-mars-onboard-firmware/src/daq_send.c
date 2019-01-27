@@ -40,16 +40,17 @@ void daqSendTask(void *pvParameters) {
 	
 	xDaqSendHandle = xTaskGetCurrentTaskHandle();
 	
-	port_pin_set_output_level(USART_DATA_DIR, USART_DATA_DIR_RE);
+	//port_pin_set_output_level(USART_DATA_DIR, USART_DATA_DIR_RE);
+	port_pin_set_output_level(USART_DATA_DIR, USART_DATA_DIR_DE);
 	while (1) {
 		if (xQueueReceive(sendQueue, &sendMessage, portMAX_DELAY) != pdTRUE) {
 			configASSERT(0);
 		}
 		daqPackSendBuffer();
-		port_pin_set_output_level(USART_DATA_DIR, USART_DATA_DIR_DE);
+		//port_pin_set_output_level(USART_DATA_DIR, USART_DATA_DIR_DE);
 		usart_write_buffer_job(&rs485_module, sendBuffer, sendBufferIdx);
 		ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(100)); // returns zero if write didn't finish before timeout, put into a do-while loop later
-		port_pin_set_output_level(USART_DATA_DIR, USART_DATA_DIR_RE);
+		//port_pin_set_output_level(USART_DATA_DIR, USART_DATA_DIR_RE);
 	}
 }
 
@@ -57,7 +58,7 @@ static int configRS485(struct usart_module *module) {
 	struct usart_config config_usart;
 
 	usart_get_config_defaults(&config_usart);
-	config_usart.baudrate    = 9600;
+	config_usart.baudrate    = 38400;
 	config_usart.mux_setting = USART_RX_3_TX_2_XCK_3;
 	config_usart.pinmux_pad0 = PINMUX_UNUSED;
 	config_usart.pinmux_pad1 = PINMUX_UNUSED;
