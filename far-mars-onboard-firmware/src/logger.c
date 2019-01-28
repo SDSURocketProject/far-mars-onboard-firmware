@@ -14,7 +14,10 @@
 static QueueHandle_t sensorMessageQueue = NULL;
 volatile static uint8_t sdCardWriteBuffer[SD_CARD_WRITE_BUFFER_SIZE];
 volatile static uint16_t sdCardWriteBufferIdx;
+FIL logFile;
+const char *fileName = "data.log";
 
+static int initFatFS();
 static int logSensorMessages(void);
 static int sendSdCardWriteBuffer(void);
 
@@ -25,7 +28,7 @@ static int sendSdCardWriteBuffer(void);
  */
 void loggerTask(void *pvParameters) {
 	/* Initialization */
-	// Init SD MMC
+	initFatFS();
 	sdCardWriteBufferIdx = 0;
 	sensorMessageQueue = xQueueCreate(MESSAGE_QUEUE_LENGTH, sizeof(struct sensorMessage));
 	if (!sensorMessageQueue) {
@@ -34,10 +37,54 @@ void loggerTask(void *pvParameters) {
 
 	/* Task code */
 	while (1) {
-		vTaskDelay(pdMS_TO_TICKS(1000));
+		vTaskDelay(pdMS_TO_TICKS(200));
 		logSensorMessages();
 		sendSdCardWriteBuffer();
 	}
+}
+
+static int initFatFS() {
+	Ctrl_status status;
+	FRESULT res;
+	FATFS fs;
+	
+	sd_mmc_init();
+	
+	/* Wait card present and ready */
+	do {
+		status = sd_mmc_test_unit_ready(0);
+		if (CTRL_FAIL == status) {
+			while (CTRL_NO_PRESENT != sd_mmc_check(0)) {
+			}
+		}
+	} while (CTRL_GOOD != status);
+	
+	//memset(&fs, 0, sizeof(FATFS));
+	//arm_fill_q7((q7_t)0, (q7_t)&fs, sizeof(FATFS));
+	uint32_t bytesToCopy = sizeof(FATFS);
+	uint8_t *writePtr = (uint8_t *)&fs;
+	while (bytesToCopy--) {
+		*writePtr++ = 0;
+	}
+	
+	res = f_mount(LUN_ID_SD_MMC_0_MEM, &fs);
+	if (FR_INVALID_DRIVE == res) {
+		//goto main_end_of_test;
+		return FMOF_FAILURE;
+	}
+	
+	res = f_open(&logFile, fileName, FA_CREATE_ALWAYS | FA_WRITE);
+	if (res != FR_OK) {
+		//goto main_end_of_test;
+		return FMOF_FAILURE;
+	}
+	if (0 == f_puts("Test SD/MMC stack\n", &logFile)) {
+		f_close(&logFile);
+		//goto main_end_of_test;
+		return FMOF_FAILURE;
+	}
+	f_close(&logFile);
+	return FMOF_SUCCESS;
 }
 
 /**
