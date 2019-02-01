@@ -11,8 +11,6 @@
 #include "messages.h"
 #include "timestamp.h"
 
-#warning SERCOM USART has not yet been implemented
-
 //! @brief Maximum length of a message to be sent in bytes
 #define DAQ_MAX_MESSAGE_SIZE 50
 //! @brief Length of the daq send queue
