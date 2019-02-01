@@ -52,6 +52,9 @@
  * running the ASF driver selector tool. Any changes will be discarded.
  */
 
+// From module: CMSIS
+#include <arm_math.h>
+
 // From module: ADC - Analog-to-Digital Converter (Callback APIs)
 #include <adc.h>
 #include <adc_callback.h>

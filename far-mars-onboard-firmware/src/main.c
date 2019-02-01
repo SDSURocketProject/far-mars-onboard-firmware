@@ -38,8 +38,7 @@
 void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName );
 
 #define ledTaskPriority        (tskIDLE_PRIORITY + 1)
-//Fix this, logger is set to highest priority so context switch cannot happen during write operation and cause stack oflow error. 
-#define loggerTaskPriority     5//(tskIDLE_PRIORITY + 2)
+#define loggerTaskPriority     (tskIDLE_PRIORITY + 2)
 #define daqSendTaskPriority    (tskIDLE_PRIORITY + 3)
 #define navigationTaskPriority (tskIDLE_PRIORITY + 4)
 
@@ -70,7 +69,7 @@ int main (void)
 	}
 	xReturned = xTaskCreate(loggerTask,
 							"Logger",
-							configMINIMAL_STACK_SIZE*2,
+							configMINIMAL_STACK_SIZE*5,
 							NULL,
 							loggerTaskPriority,
 							&xloggerHandle);
