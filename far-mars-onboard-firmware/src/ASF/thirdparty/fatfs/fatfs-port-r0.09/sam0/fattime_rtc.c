@@ -1,7 +1,7 @@
 /**
  * \file
  *
- * \brief SAM RTC Driver Configuration Header
+ * \brief Implementation of low level disk I/O module skeleton for FatFS.
  *
  * Copyright (c) 2014-2018 Microchip Technology Inc. and its subsidiaries.
  *
@@ -30,16 +30,46 @@
  * \asf_license_stop
  *
  */
-/*
- * Support and FAQ: visit <a href="https://www.microchip.com/support/">Microchip Support</a>
+#include "compiler.h"
+#include "rtc_calendar.h"
+
+extern struct rtc_module rtc_instance;
+
+uint32_t get_fattime(void);
+/**
+ * \brief Current time returned is packed into a DWORD value.
+ *
+ * The bit field is as follows:
+ *
+ * bit31:25  Year from 1980 (0..127)
+ *
+ * bit24:21  Month (1..12)
+ *
+ * bit20:16  Day in month(1..31)
+ *
+ * bit15:11  Hour (0..23)
+ *
+ * bit10:5   Minute (0..59)
+ *
+ * bit4:0    Second (0..29)
+ *
+ * \return Current time.
  */
+uint32_t get_fattime(void)
+{
+	uint32_t ul_time;
+	struct rtc_calendar_time current_time;
 
-#ifndef CONF_RTC_H_INCLUDED
-#define CONF_RTC_H_INCLUDED
+	/* Retrieve date and time */
+	rtc_calendar_get_time(&rtc_instance, &current_time);
 
-/** Select RTC clock. Use 1.024kHz from 32kHz internal ULP oscillator(OSCULP32K)
- *  for RTC clock.
- */
-#  define RTC_CLOCK_SOURCE    RTC_CLOCK_SELECTION_ULP1K
+	ul_time = ((current_time.year - 1980) << 25)
+			| (current_time.month << 21)
+			| (current_time.day << 16)
+			| (current_time.hour << 11)
+			| (current_time.minute << 5)
+			| ((current_time.second >> 1) << 0);
 
-#endif
+	return ul_time;
+}
+

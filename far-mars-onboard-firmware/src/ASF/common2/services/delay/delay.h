@@ -1,9 +1,9 @@
 /**
  * \file
  *
- * \brief SAM RTC Driver Configuration Header
+ * \brief Common Delay Service
  *
- * Copyright (c) 2014-2018 Microchip Technology Inc. and its subsidiaries.
+ * Copyright (c) 2013-2018 Microchip Technology Inc. and its subsidiaries.
  *
  * \asf_license_start
  *
@@ -33,13 +33,59 @@
 /*
  * Support and FAQ: visit <a href="https://www.microchip.com/support/">Microchip Support</a>
  */
+#ifndef DELAY_H_INCLUDED
+#define DELAY_H_INCLUDED
 
-#ifndef CONF_RTC_H_INCLUDED
-#define CONF_RTC_H_INCLUDED
-
-/** Select RTC clock. Use 1.024kHz from 32kHz internal ULP oscillator(OSCULP32K)
- *  for RTC clock.
- */
-#  define RTC_CLOCK_SOURCE    RTC_CLOCK_SELECTION_ULP1K
-
+#ifdef __cplusplus
+extern "C" {
 #endif
+
+/**
+ * @defgroup group_common_services_delay Busy-Wait Delay Routines
+ *
+ * This module provides simple loop-based delay routines for those
+ * applications requiring a brief wait during execution. Common for
+ * API ver. 2.
+ *
+ * @{
+ */
+
+#ifdef SYSTICK_MODE
+#include "sam0/systick_counter.h"
+#endif
+#ifdef CYCLE_MODE
+#include "sam0/cycle_counter.h"
+#endif
+
+void delay_init(void);
+
+/**
+ * \def delay_s
+ * \brief Delay in at least specified number of seconds.
+ * \param delay Delay in seconds
+ */
+#define delay_s(delay)          ((delay) ? cpu_delay_s(delay) : cpu_delay_us(1))
+
+/**
+ * \def delay_ms
+ * \brief Delay in at least specified number of milliseconds.
+ * \param delay Delay in milliseconds
+ */
+#define delay_ms(delay)         ((delay) ? cpu_delay_ms(delay) : cpu_delay_us(1))
+
+/**
+ * \def delay_us
+ * \brief Delay in at least specified number of microseconds.
+ * \param delay Delay in microseconds
+ */
+#define delay_us(delay)         ((delay) ? cpu_delay_us(delay) : cpu_delay_us(1))
+
+#ifdef __cplusplus
+}
+#endif
+
+/**
+ * @}
+ */
+
+#endif /* DELAY_H_INCLUDED */

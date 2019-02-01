@@ -14,7 +14,11 @@
 static QueueHandle_t sensorMessageQueue = NULL;
 volatile static uint8_t sdCardWriteBuffer[SD_CARD_WRITE_BUFFER_SIZE];
 volatile static uint16_t sdCardWriteBufferIdx;
+static FIL logFile;
+static FATFS fs;
+const char *fileName = "data.log";
 
+static int initFatFS(void);
 static int logSensorMessages(void);
 static int sendSdCardWriteBuffer(void);
 
@@ -25,19 +29,55 @@ static int sendSdCardWriteBuffer(void);
  */
 void loggerTask(void *pvParameters) {
 	/* Initialization */
-	// Init SD MMC
+	FRESULT sdCardStatus = 0;
+	initFatFS();
 	sdCardWriteBufferIdx = 0;
 	sensorMessageQueue = xQueueCreate(MESSAGE_QUEUE_LENGTH, sizeof(struct sensorMessage));
 	if (!sensorMessageQueue) {
 		configASSERT(0);
 	}
+	
+	taskENTER_CRITICAL();
+	sdCardStatus = f_open(&logFile, fileName, FA_CREATE_ALWAYS | FA_WRITE);
+	f_sync(&logFile);
+	taskEXIT_CRITICAL();
 
 	/* Task code */
 	while (1) {
-		vTaskDelay(pdMS_TO_TICKS(1000));
+		vTaskDelay(pdMS_TO_TICKS(200));
 		logSensorMessages();
 		sendSdCardWriteBuffer();
 	}
+	// Never reached, change to close file in the future
+	f_close(&logFile);
+}
+
+/**
+ * @brief  Initializes the sd card and fatfs.
+ * @return Returns FMOF_SUCCESS or FMOF_FAILURE if failed to mount file system.
+ */
+static int initFatFS(void) {
+	Ctrl_status status;
+	FRESULT res;
+	
+	sd_mmc_init();
+	
+	/* Wait card present and ready */
+	do {
+		status = sd_mmc_test_unit_ready(0);
+		if (CTRL_FAIL == status) {
+			while (CTRL_NO_PRESENT != sd_mmc_check(0)) {
+			}
+		}
+	} while (CTRL_GOOD != status);
+	
+	arm_fill_q7((q7_t)0, (q7_t *)&fs, sizeof(FATFS));
+	
+	res = f_mount(LUN_ID_SD_MMC_0_MEM, &fs);
+	if (FR_INVALID_DRIVE == res) {
+		return FMOF_FAILURE;
+	}	
+	return FMOF_SUCCESS;
 }
 
 /**
@@ -103,7 +143,21 @@ static int logSensorMessages(void) {
  * @return Returns FMOF_SUCCESS.
  */
 static int sendSdCardWriteBuffer(void) {
-	// Implement later
+	UINT bytesWritten = 0;
+	FRESULT result = 0;
+
+	taskENTER_CRITICAL();
+	result = f_write(&logFile, (void *)sdCardWriteBuffer, sdCardWriteBufferIdx, &bytesWritten);
+	f_sync(&logFile);
+	taskEXIT_CRITICAL();
+
+	if (result != FR_OK) {
+		return FMOF_FAILURE;
+	}
+	
+	if (sdCardWriteBufferIdx != bytesWritten) {
+		return FMOF_FAILURE;
+	}
 	sdCardWriteBufferIdx = 0;
 	return FMOF_SUCCESS;
 }

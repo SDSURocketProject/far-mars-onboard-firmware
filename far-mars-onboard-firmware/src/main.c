@@ -69,7 +69,7 @@ int main (void)
 	}
 	xReturned = xTaskCreate(loggerTask,
 							"Logger",
-							configMINIMAL_STACK_SIZE,
+							configMINIMAL_STACK_SIZE*5,
 							NULL,
 							loggerTaskPriority,
 							&xloggerHandle);

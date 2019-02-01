@@ -14,8 +14,6 @@
 #include "messages.h"
 #include "timestamp.h"
 
-#warning SD Card and FatFS have not yet been implemented
-
 //! @brief Logging levels for messages sent to SD card
 enum loggingLevels {
 	LOG_LEVEL_ALL = 0,

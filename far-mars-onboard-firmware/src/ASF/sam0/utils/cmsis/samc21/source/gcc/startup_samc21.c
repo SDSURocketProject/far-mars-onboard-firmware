@@ -52,13 +52,18 @@ void __libc_init_array(void);
 
 /* Default empty handler */
 void Dummy_Handler(void);
+void NMI_Handler_temp(void);
+void HardFault_Handler_temp(void);
+void SVC_Handler_temp(void);
+void PendSV_Handler_temp(void);
+void SysTick_Handler_temp(void);
 
 /* Cortex-M0+ core handlers */
-void NMI_Handler             ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void HardFault_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void SVC_Handler             ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void PendSV_Handler          ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void SysTick_Handler         ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
+void NMI_Handler             ( void ) __attribute__ ((weak, alias("NMI_Handler_temp")));
+void HardFault_Handler       ( void ) __attribute__ ((weak, alias("HardFault_Handler_temp")));
+void SVC_Handler             ( void ) __attribute__ ((weak, alias("SVC_Handler_temp")));
+void PendSV_Handler          ( void ) __attribute__ ((weak, alias("PendSV_Handler_temp")));
+void SysTick_Handler         ( void ) __attribute__ ((weak, alias("SysTick_Handler_temp")));
 
 /* Peripherals handlers */
 void SYSTEM_Handler          ( void ) __attribute__ ((weak, alias("Dummy_Handler"))); /* MCLK, OSCCTRL, OSC32KCTRL, PAC, PM, SUPC, TAL */
@@ -272,4 +277,29 @@ void Dummy_Handler(void)
 {
         while (1) {
         }
+}
+void NMI_Handler_temp(void)
+{
+	while (1) {
+	}
+}
+void HardFault_Handler_temp(void)
+{
+	while (1) {
+	}
+}
+void SVC_Handler_temp(void)
+{
+	while (1) {
+	}
+}
+void PendSV_Handler_temp(void)
+{
+	while (1) {
+	}
+}
+void SysTick_Handler_temp(void)
+{
+	while (1) {
+	}
 }
