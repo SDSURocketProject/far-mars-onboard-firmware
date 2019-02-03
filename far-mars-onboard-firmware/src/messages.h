@@ -34,6 +34,8 @@ enum sensorMessageIDs {
 	pressureRawDataID,
 	pressurePSIADataID,
 	pressurePSIGDataID,
+	batteryRawDataID,
+	batteryFloatDataID,
 	strDataID,
 	NUM_SENSOR_MESSAGES
 };
@@ -56,6 +58,14 @@ struct pressureData {
 //! @brief Struct containing pressure sensor data
 struct pressureFloatData {
 	float methane, LOX, helium;
+};
+
+struct batteryData {
+	uint16_t voltage;
+};
+
+struct batteryFloatData {
+	uint16_t voltage;
 };
 
 //! @brief Struct containing a pointer to a string. Be very careful when using to hold strings that are not string literals.
@@ -96,6 +106,9 @@ struct sensorMessage {
 		struct pressureData                pressureRaw;
 		struct pressureFloatData           pressurePSIA; // Absolute pressure
 		struct pressureFloatData           pressurePSIG; // Gauge pressure
+
+		struct batteryData                 batteryRaw;
+		struct batteryFloatData            batteryVoltage;
 
 		struct strData                     str;
 	};
