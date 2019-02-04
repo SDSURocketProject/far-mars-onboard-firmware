@@ -23,8 +23,10 @@ cpuTemperatureKelvinDataID = 16
 pressureRawDataID = 17
 pressurePSIADataID = 18
 pressurePSIGDataID = 19
-strDataID = 20
-NUM_SENSOR_MESSAGES = 21
+batteryRawDataID = 20
+batteryFloatDataID = 21
+strDataID = 22
+NUM_SENSOR_MESSAGES = 23
 
 messageSizes = [
 11, #accelerationRawDataID
@@ -47,6 +49,8 @@ messageSizes = [
 11, #pressureRawDataID
 17, #pressurePSIADataID
 17, #pressurePSIGDataID
+7,  #batteryRawDataID
+9,  #batteryFloatDataID
 0   #strDataID
 ]
 
@@ -73,7 +77,9 @@ messagePackedFormats = [
 '<hhh',  #pressureRawDataID 17
 '<fff',  #pressurePSIADataID 18
 '<fff',  #pressurePSIGDataID 19
-'s'      #strDataID 20
+'<h',    #batteryRawDataID 20
+'<f',    #batteryFloatDataID 21
+'s'      #strDataID 22
 ]
 
 messageLogFormats = [
@@ -97,6 +103,8 @@ messageLogFormats = [
 "Raw Pressures - Methane=%i, LOX=%i, Helium=%i\n", #pressureRawDataID
 "PSI absolute - Methane=%f, LOX=%f, Helium=%f\n",  #pressurePSIADataID
 "PSI guage - Methane=%f, LOX=%f, Helium=%f\n",     #pressurePSIGDataID
+'Battery raw voltage - %i\n',                      #batteryRawDataID
+'Battery voltage - %f\n',                          #batteryFloatDataID
 "%s"                                               #strDataID
 ]
 
@@ -121,6 +129,8 @@ messageCSVHeaders = [
 "Timestamp, Methane Raw, LOX Raw, Helium Raw,\n", #pressureRawDataID
 "Timestamp, Methane, LOX, Helium,\n",             #pressurePSIADataID
 "Timestamp, Methane, LOX, Helium,\n",             #pressurePSIGDataID
+'Timestamp, Voltage Raw\n',                       #batteryRawDataID
+'Timestamp, Voltage\n',                           #batteryFloatDataID
 "Timestamp, Strings,\n"                           #strDataID
 ]
 
@@ -145,6 +155,8 @@ messageCSVFormats = [
 "%i, %i, %i,\n",     #pressureRawDataID
 "%f, %f, %f,\n",     #pressurePSIADataID
 "%f, %f, %f,\n",     #pressurePSIGDataID
+'%i\n',              #batteryRawDataID
+'%f\n',              #batteryFloatDataID
 "%s,\n"              #strDataID
 ]
 
