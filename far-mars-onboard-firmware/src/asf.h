@@ -52,9 +52,6 @@
  * running the ASF driver selector tool. Any changes will be discarded.
  */
 
-// From module: CMSIS
-#include <arm_math.h>
-
 // From module: ADC - Analog-to-Digital Converter (Callback APIs)
 #include <adc.h>
 #include <adc_callback.h>
@@ -145,6 +142,9 @@
 
 // From module: SYSTEM - Reset Management for SAM C20/C21
 #include <reset.h>
+
+// From module: Standard serial I/O (stdio)
+#include <stdio_serial.h>
 
 // From module: Supported ports of FatFS
 #include <diskio.h>

@@ -19,6 +19,7 @@
 
 struct adc_module pressureADCModule;
 static uint16_t adcBuffer[numPressureSensors];
+static int16_t adcCalibration[numPressureSensors] = {0, 0, 0};
 static uint32_t lastTimestamp;
 static QueueHandle_t pressureQueue;
 static SemaphoreHandle_t pressureADCSemaphore;
@@ -46,6 +47,10 @@ int pressureInit(void) {
 	adcConfig.resolution = ADC_RESOLUTION_CUSTOM;
 	adcConfig.accumulate_samples = ADC_ACCUMULATE_SAMPLES_16;
 	adcConfig.divide_result = ADC_DIVIDE_RESULT_16;
+	adcConfig.correction.offset_correction = -25;
+	adcConfig.correction.gain_correction = 0b011111110011;
+	//adcConfig.correction.gain_correction = 0b100000000000;
+	adcConfig.correction.correction_enable = true;
 	
 	adcConfig.positive_input_sequence_mask_enable = (1 << ADC_POSITIVE_INPUT_PIN0) | // Methane
 	                                                (1 << ADC_POSITIVE_INPUT_PIN2) | // LOX
@@ -178,16 +183,23 @@ int pressureRawToPSIG(struct sensorMessage *RAW, struct sensorMessage *PSIG) {
 	helium  = (float)RAW->pressureRaw.helium;
 
 	// Untested, will best tested during cryo on 1/29/2019
-	methane = methane-PRESSURE_DIVISION_CONSTANT*.1f; // Remove .5v DC bias
-	PSIG->pressurePSIG.methane = (methane/PRESSURE_DIVISION_CONSTANT)*PRESSURE_METHANE_MAX_PRESSURE;
-
-	// Untested, will best tested during cryo on 1/29/2019
-	LOX = LOX-PRESSURE_DIVISION_CONSTANT*.1f; // Remove .5v DC bias
-	PSIG->pressurePSIG.LOX = (LOX/PRESSURE_DIVISION_CONSTANT)*PRESSURE_LOX_MAX_PRESSURE;
+	//methane = methane-PRESSURE_DIVISION_CONSTANT*.1f; // Remove .5v DC bias
+	//PSIG->pressurePSIG.methane = (methane/PRESSURE_DIVISION_CONSTANT)*PRESSURE_METHANE_MAX_PRESSURE;
 	
+	methane = (methane/PRESSURE_DIVISION_CONSTANT)*5.0f-0.5f;
+	PSIG->pressurePSIG.methane = (methane/4.0f)*PRESSURE_METHANE_MAX_PRESSURE;
+	PSIG->pressurePSIG.methane -= 32.0f;
+	
+	// Untested, will best tested during cryo on 1/29/2019
+	//LOX = LOX-PRESSURE_DIVISION_CONSTANT*.1f; // Remove .5v DC bias
+	//PSIG->pressurePSIG.LOX = (LOX/PRESSURE_DIVISION_CONSTANT)*PRESSURE_LOX_MAX_PRESSURE;
+	LOX = (LOX/PRESSURE_DIVISION_CONSTANT)*5.0f-0.5f;
+	PSIG->pressurePSIG.LOX= (LOX/4.0f)*PRESSURE_LOX_MAX_PRESSURE;
+	PSIG->pressurePSIG.LOX -= 41.0f;
 	// Tested
 	PSIG->pressurePSIG.helium = (helium/PRESSURE_DIVISION_CONSTANT)*PRESSURE_HELIUM_MAX_PRESSURE;
-
+	PSIG->pressurePSIG.helium -= 33.0f;
+	
 	PSIG->msgID = pressurePSIGDataID;
 	PSIG->timestamp = RAW->timestamp;
 	return FMOF_SUCCESS;

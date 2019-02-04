@@ -71,8 +71,12 @@ static int initFatFS(void) {
 		}
 	} while (CTRL_GOOD != status);
 	
-	arm_fill_q7((q7_t)0, (q7_t *)&fs, sizeof(FATFS));
-	
+	//arm_fill_q7((q7_t)0, (q7_t *)&fs, sizeof(FATFS));
+	//int bytesToCopy = sizeof(FATFS);
+	//while (bytesToCopy--) {
+	//	&fs+bytesToCopy = 0;
+	//}
+	memset(&fs, 0, sizeof(FATFS));
 	res = f_mount(LUN_ID_SD_MMC_0_MEM, &fs);
 	if (FR_INVALID_DRIVE == res) {
 		return FMOF_FAILURE;

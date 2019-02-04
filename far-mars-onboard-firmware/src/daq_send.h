@@ -11,10 +11,12 @@
 #include "messages.h"
 #include "timestamp.h"
 
-#warning SERCOM USART has not yet been implemented
+//#warning SERCOM USART has not yet been implemented
+
+#define USE_SNPRINTF
 
 //! @brief Maximum length of a message to be sent in bytes
-#define DAQ_MAX_MESSAGE_SIZE 50
+#define DAQ_MAX_MESSAGE_SIZE 200
 //! @brief Length of the daq send queue
 #define DAQ_SEND_QUEUE_LENGTH 10
 //! @brief Pin used to control DATA_DIR on RS485 transceiver

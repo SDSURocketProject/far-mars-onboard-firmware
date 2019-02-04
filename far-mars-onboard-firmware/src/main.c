@@ -78,7 +78,7 @@ int main (void)
 	}
 	xReturned = xTaskCreate(daqSendTask,
 	                        "DAQ send",
-							configMINIMAL_STACK_SIZE,
+							configMINIMAL_STACK_SIZE*5,
 							NULL,
 							daqSendTaskPriority,
 							&xDaqSendHandle);

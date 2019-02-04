@@ -38,12 +38,12 @@ void navigationTask(void *pvParameters) {
 		}
 		
 		// Read conversions
-		//if(pressureReturn == FMOF_SUCCESS) {
-		//	if (pressureRawToPSIG(&pressure, &pressure) != FMOF_SUCCESS) {
-		//		logString("Converting pressure failed\n", LOG_LEVEL_ERROR);
-		//	}
-		//}
-
+		if(pressureReturn == FMOF_SUCCESS) {
+			if (pressureRawToPSIG(&pressure, &pressure) != FMOF_SUCCESS) {
+				logString("Converting pressure failed\n", LOG_LEVEL_ERROR);
+			}
+		}
+		
 		// Log conversions
 		if (pressureReturn == FMOF_SUCCESS) {
 			daqSendSensorMessage(&pressure);

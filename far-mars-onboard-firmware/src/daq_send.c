@@ -6,6 +6,7 @@
  */ 
 
 #include <asf.h>
+#include <stdio.h>
 #include "daq_send.h"
 #include "far_mars_onboard_firmware.h"
 
@@ -91,10 +92,17 @@ void daqSendCallback(struct usart_module *const module) {
  * @return            Returns FMOF_SUCCESS.
  */
 static int daqPackSendBuffer(void) {
+
+	sendBufferIdx = snprintf(sendBuffer, DAQ_MAX_MESSAGE_SIZE, "\fABC\r\nTIME:\t%05ims\r\nCH4:\t%04i\r\nLOX:\t%04i\r\nHelium:\t%04i\r\n", sendMessage.timestamp, (int)sendMessage.pressurePSIG.methane, (int)sendMessage.pressurePSIG.LOX, (int)sendMessage.pressurePSIG.helium);
+	//sendBufferIdx = snprintf(sendBuffer, DAQ_MAX_MESSAGE_SIZE, "\fABC%ims - %i, %i, %i", sendMessage.timestamp, sendMessage.pressureRaw.methane, sendMessage.pressureRaw.LOX, sendMessage.pressureRaw.helium);
+#if 0
 	uint8_t *src;
 	uint8_t bytesToCopy;
 	sendBufferIdx = 0;
-
+	
+	//sendBuffer[sendBufferIdx++] = 'A';
+	//sendBuffer[sendBufferIdx++] = 'B';
+	//sendBuffer[sendBufferIdx++] = 'C';
 	sendBuffer[sendBufferIdx++] = sendMessage.msgID;
 	sendBuffer[sendBufferIdx++] = (sendMessage.timestamp >>  0) & 0xFF;
 	sendBuffer[sendBufferIdx++] = (sendMessage.timestamp >>  8) & 0xFF;
@@ -117,6 +125,7 @@ static int daqPackSendBuffer(void) {
 			sendBuffer[sendBufferIdx++] = *src++;
 		}
 	}
+#endif
 	return FMOF_SUCCESS;
 }
 
