@@ -31,5 +31,5 @@ int configRTC(void) {
  */
 uint32_t getTimestamp(void) {
 	//return rtc_count_get_count(&rtc_instance);
-	return 0;
+	return xTaskGetTickCount();
 }
