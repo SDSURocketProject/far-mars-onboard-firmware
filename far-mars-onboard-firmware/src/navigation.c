@@ -20,6 +20,7 @@ void navigationTask(void *pvParameters) {
 	const TickType_t xFrequency = pdMS_TO_TICKS(50);
 	TickType_t xLastWakeupTime;
 	struct sensorMessage pressure;
+	struct sensorMessage voltage;
 	uint32_t pressureReturn;
 
 	xLastWakeupTime = xTaskGetTickCount();
@@ -32,7 +33,7 @@ void navigationTask(void *pvParameters) {
 
 		// Read conversions
 		if(pressureReturn == FMOF_SUCCESS) {
-			if (pressureReadConversion(&pressure, 10) != FMOF_SUCCESS) {
+			if (pressureReadConversion(&pressure, &voltage, 10) != FMOF_SUCCESS) {
 				logString("Reading pressure conversion timed out\n", LOG_LEVEL_ERROR);
 			}
 		}
@@ -48,6 +49,7 @@ void navigationTask(void *pvParameters) {
 		if (pressureReturn == FMOF_SUCCESS) {
 			daqSendSensorMessage(&pressure);
 			logSensorMessage(&pressure, LOG_LEVEL_DATA);
+			logSensorMessage(&voltage, LOG_LEVEL_DATA);
 		}
 	}
 }

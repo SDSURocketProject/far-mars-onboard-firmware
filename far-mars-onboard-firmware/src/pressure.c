@@ -46,8 +46,12 @@ int pressureInit(void) {
 	adcConfig.resolution = ADC_RESOLUTION_CUSTOM;
 	adcConfig.accumulate_samples = ADC_ACCUMULATE_SAMPLES_16;
 	adcConfig.divide_result = ADC_DIVIDE_RESULT_16;
+	//adcConfig.correction.correction_enable = true;
+	//adcConfig.correction.offset_correction = -25;
+	//adcConfig.correction.gain_correction = 0b011111110011;
 	
 	adcConfig.positive_input_sequence_mask_enable = (1 << ADC_POSITIVE_INPUT_PIN0) | // Methane
+	                                                (1 << ADC_POSITIVE_INPUT_PIN1) | // Battery Sense
 	                                                (1 << ADC_POSITIVE_INPUT_PIN2) | // LOX
 													(1 << ADC_POSITIVE_INPUT_PIN3);  // Helium
 	
@@ -93,12 +97,16 @@ int pressureStartConversion(uint8_t wait) {
  * @retval FMOF_PRESSURE_START_CONVERSION Read conversion was called before start conversion
  * @retval FMOF_FAILURE                   Failed to read conversion before timeout
  */
-int pressureReadConversion(struct sensorMessage *pressures, uint8_t wait) {
+int pressureReadConversion(struct sensorMessage *pressures, struct sensorMessage *voltage, uint8_t wait) {
 	if (xSemaphoreGetMutexHolder(pressureADCSemaphore) != xTaskGetCurrentTaskHandle()) {
 		return FMOF_PRESSURE_START_CONVERSION;
 	}
 
 	if (xQueueReceive(pressureQueue, (void *)&(pressures->pressureRaw.methane), pdMS_TO_TICKS(wait)) != pdTRUE) {
+		xSemaphoreGive(pressureADCSemaphore);
+		return FMOF_FAILURE;
+	}
+	if (xQueueReceive(pressureQueue, (void *)&(voltage->batteryRaw.voltage), pdMS_TO_TICKS(wait)) != pdTRUE) {
 		xSemaphoreGive(pressureADCSemaphore);
 		return FMOF_FAILURE;
 	}
@@ -110,8 +118,13 @@ int pressureReadConversion(struct sensorMessage *pressures, uint8_t wait) {
 		xSemaphoreGive(pressureADCSemaphore);
 		return FMOF_FAILURE;
 	}
+
 	pressures->msgID = pressureRawDataID;
 	pressures->timestamp = lastTimestamp;
+	
+	voltage->msgID = batteryRawDataID;
+	voltage->timestamp = lastTimestamp;
+	
 	xSemaphoreGive(pressureADCSemaphore);
 	return FMOF_SUCCESS;
 }

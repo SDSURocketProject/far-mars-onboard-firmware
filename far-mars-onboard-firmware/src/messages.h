@@ -14,29 +14,29 @@
 
 //! @brief IDs for all of the valid messages holding sensor data
 enum sensorMessageIDs {
-	accelerationRawDataID,
-	gyroscopeRawDataID,
-	eulerRawDataID,
-	quaternionRawDataID,
-	linearAccelerationRawDataID,
-	gravityRawDataID,
-	accelerationMpssDataID,
-	gyroscopeRpsDataID,
-	gyroscopeDpsDataID,
-	eulerRadianDataID,
-	eulerDegreeDataID,
-	linearAccelerationMpssDataID,
-	gravityMpssDataID,
-	cpuTemperatureRawDataID,
-	cpuTemperatureCelciusDataID,
-	cpuTemperatureFahrenheitDataID,
-	cpuTemperatureKelvinDataID,
-	pressureRawDataID,
-	pressurePSIADataID,
-	pressurePSIGDataID,
-	batteryRawDataID,
-	batteryFloatDataID,
-	strDataID,
+	accelerationRawDataID,          // 0
+	gyroscopeRawDataID,             // 1
+	eulerRawDataID,                 // 2
+	quaternionRawDataID,            // 3
+	linearAccelerationRawDataID,    // 4
+	gravityRawDataID,               // 5
+	accelerationMpssDataID,		    // 6
+	gyroscopeRpsDataID,			    // 7
+	gyroscopeDpsDataID,			    // 8
+	eulerRadianDataID,			    // 9
+	eulerDegreeDataID,			    // 10
+	linearAccelerationMpssDataID,   // 11
+	gravityMpssDataID,			    // 12
+	cpuTemperatureRawDataID,	    // 13
+	cpuTemperatureCelciusDataID,    // 14
+	cpuTemperatureFahrenheitDataID, // 15
+	cpuTemperatureKelvinDataID,	    // 16
+	pressureRawDataID,			    // 17
+	pressurePSIADataID,			    // 18
+	pressurePSIGDataID,			    // 19
+	batteryRawDataID,			    // 20
+	batteryFloatDataID,			    // 21
+	strDataID,					    // 22
 	NUM_SENSOR_MESSAGES
 };
 
@@ -65,7 +65,7 @@ struct batteryData {
 };
 
 struct batteryFloatData {
-	uint16_t voltage;
+	float voltage;
 };
 
 //! @brief Struct containing a pointer to a string. Be very careful when using to hold strings that are not string literals.
