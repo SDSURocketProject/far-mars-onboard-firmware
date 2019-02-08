@@ -65,8 +65,10 @@ static int initFatFS(void) {
 	/* Wait card present and ready */
 	do {
 		status = sd_mmc_test_unit_ready(0);
+		vTaskDelay(pdMS_TO_TICKS(25));
 		if (CTRL_FAIL == status) {
 			while (CTRL_NO_PRESENT != sd_mmc_check(0)) {
+				vTaskDelay(pdMS_TO_TICKS(25));
 			}
 		}
 	} while (CTRL_GOOD != status);
