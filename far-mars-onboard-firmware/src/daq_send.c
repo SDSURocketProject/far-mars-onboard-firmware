@@ -95,6 +95,9 @@ static int daqPackSendBuffer(void) {
 	uint8_t bytesToCopy;
 	sendBufferIdx = 0;
 
+	sendBuffer[sendBufferIdx++] = 'A';
+	sendBuffer[sendBufferIdx++] = 'B';
+	sendBuffer[sendBufferIdx++] = 'C';
 	sendBuffer[sendBufferIdx++] = sendMessage.msgID;
 	sendBuffer[sendBufferIdx++] = (sendMessage.timestamp >>  0) & 0xFF;
 	sendBuffer[sendBufferIdx++] = (sendMessage.timestamp >>  8) & 0xFF;
