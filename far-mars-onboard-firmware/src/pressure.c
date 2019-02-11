@@ -58,6 +58,9 @@ int pressureInit(void) {
 	if ((returned = adc_init(&pressureADCModule, ADC0, &adcConfig)) != STATUS_OK) {
 		configASSERT(0);
 	}
+
+	*((volatile uint16_t *)0x4200440A) |= (1<<7); // Enable Rail-to-rail mode
+
 	adc_enable(&pressureADCModule);
 	adc_enable_positive_input_sequence(&pressureADCModule, adcConfig.positive_input_sequence_mask_enable);
 
