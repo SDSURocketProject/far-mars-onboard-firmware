@@ -48,6 +48,8 @@
 	#include "board.h"
 #endif
 
+#define FREERTOS_USED
+
 #define configUSE_PREEMPTION					1
 
 #define configUSE_QUEUE_SETS					1

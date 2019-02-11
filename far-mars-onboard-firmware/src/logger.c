@@ -7,6 +7,7 @@
 
 #include <asf.h>
 #include <string.h>
+#include <arm_math.h>
 #include "logger.h"
 
 #define SD_CARD_WRITE_BUFFER_SIZE 256
@@ -29,7 +30,9 @@ static int openLog(void);
  */
 void loggerTask(void *pvParameters) {
 	/* Initialization */
-	initFatFS();
+	if (initFatFS() != FMOF_SUCCESS) {
+		configASSERT(0);
+	}
 	sdCardWriteBufferIdx = 0;
 	sensorMessageQueue = xQueueCreate(MESSAGE_QUEUE_LENGTH, sizeof(struct sensorMessage));
 	if (!sensorMessageQueue) {
@@ -61,9 +64,6 @@ static int initFatFS(void) {
 	/* Wait card present and ready */
 	do {
 		status = sd_mmc_test_unit_ready(0);
-		if (status == CTRL_NO_PRESENT) {
-			vTaskDelay(pdMS_TO_TICKS(25));	
-		}
 		if (CTRL_FAIL == status) {
 			while (CTRL_NO_PRESENT != sd_mmc_check(0)) {
 
@@ -166,10 +166,10 @@ static int sendSdCardWriteBuffer(void) {
 	UINT bytesWritten = 0;
 	FRESULT result = 0;
 
-	taskENTER_CRITICAL();
+	//taskENTER_CRITICAL();
 	result = f_write(&logFile, (void *)sdCardWriteBuffer, sdCardWriteBufferIdx, &bytesWritten);
 	f_sync(&logFile);
-	taskEXIT_CRITICAL();
+	//taskEXIT_CRITICAL();
 
 	if (result != FR_OK) {
 		return FMOF_FAILURE;

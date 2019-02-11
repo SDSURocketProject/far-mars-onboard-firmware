@@ -271,6 +271,7 @@ static bool sd_mmc_sam_systick_used;
 
 #ifdef FREERTOS_USED
 	static xTimeOutType xTimeOut;
+	static portTickType xTicksToWait;
 #endif
 
 static inline void SD_MMC_START_TIMEOUT(void)
@@ -286,6 +287,7 @@ static inline void SD_MMC_START_TIMEOUT(void)
 		// Note: the define INCLUDE_vTaskDelay must be set to one
 		// in FreeRTOSConfig.h file.
 		vTaskSetTimeOutState(&xTimeOut);
+		xTicksToWait = SD_MMC_DEBOUNCE_TIMEOUT / portTICK_RATE_MS;
 #else
 		delay_ms(SD_MMC_DEBOUNCE_TIMEOUT);
 #endif
@@ -296,8 +298,6 @@ static inline bool SD_MMC_IS_TIMEOUT(void)
 {
 	if (!sd_mmc_sam_systick_used) {
 #ifdef FREERTOS_USED
-		portTickType xTicksToWait =
-				SD_MMC_DEBOUNCE_TIMEOUT / portTICK_RATE_MS;
 		return (xTaskCheckForTimeOut( &xTimeOut, &xTicksToWait ) == pdTRUE);
 #else
 		return true;
@@ -1773,7 +1773,7 @@ uint8_t sd_mmc_nb_slot(void)
 sd_mmc_err_t sd_mmc_check(uint8_t slot)
 {
 	sd_mmc_err_t sd_mmc_err;
-
+	
 	sd_mmc_err = sd_mmc_select_slot(slot);
 	if (sd_mmc_err != SD_MMC_INIT_ONGOING) {
 		sd_mmc_deselect_slot();
