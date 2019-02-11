@@ -16,11 +16,11 @@ volatile static uint8_t sdCardWriteBuffer[SD_CARD_WRITE_BUFFER_SIZE];
 volatile static uint16_t sdCardWriteBufferIdx;
 static FIL logFile;
 static FATFS fs;
-const char *fileName = "data.log";
 
 static int initFatFS(void);
 static int logSensorMessages(void);
 static int sendSdCardWriteBuffer(void);
+static int openLog(void);
 
 /**
  * @brief	                Task that logs messages to the SD card.
@@ -29,19 +29,15 @@ static int sendSdCardWriteBuffer(void);
  */
 void loggerTask(void *pvParameters) {
 	/* Initialization */
-	FRESULT sdCardStatus = 0;
 	initFatFS();
 	sdCardWriteBufferIdx = 0;
 	sensorMessageQueue = xQueueCreate(MESSAGE_QUEUE_LENGTH, sizeof(struct sensorMessage));
 	if (!sensorMessageQueue) {
 		configASSERT(0);
 	}
-	
-	taskENTER_CRITICAL();
-	sdCardStatus = f_open(&logFile, fileName, FA_CREATE_ALWAYS | FA_WRITE);
-	f_sync(&logFile);
-	taskEXIT_CRITICAL();
 
+	openLog();
+	
 	/* Task code */
 	while (1) {
 		vTaskDelay(pdMS_TO_TICKS(200));
@@ -65,20 +61,42 @@ static int initFatFS(void) {
 	/* Wait card present and ready */
 	do {
 		status = sd_mmc_test_unit_ready(0);
-		vTaskDelay(pdMS_TO_TICKS(25));
+		if (status == CTRL_NO_PRESENT) {
+			vTaskDelay(pdMS_TO_TICKS(25));	
+		}
 		if (CTRL_FAIL == status) {
 			while (CTRL_NO_PRESENT != sd_mmc_check(0)) {
-				vTaskDelay(pdMS_TO_TICKS(25));
+
 			}
 		}
 	} while (CTRL_GOOD != status);
 	
 	arm_fill_q7((q7_t)0, (q7_t *)&fs, sizeof(FATFS));
-	
+
 	res = f_mount(LUN_ID_SD_MMC_0_MEM, &fs);
 	if (FR_INVALID_DRIVE == res) {
 		return FMOF_FAILURE;
 	}	
+	return FMOF_SUCCESS;
+}
+
+static int openLog(void) {
+	FRESULT sdCardStatus = FR_OK;
+	static uint16_t fileIdx = 0;
+	static char fileName[13];
+	snprintf(fileName, sizeof(fileName), "Data %i.log", fileIdx);
+
+	do {
+		if (sdCardStatus == FR_EXIST) {
+			fileIdx++;
+			snprintf(fileName, sizeof(fileName), "Data %i.log", fileIdx);
+		}
+		taskENTER_CRITICAL();
+		sdCardStatus = f_open(&logFile, fileName, FA_CREATE_NEW | FA_WRITE);
+		f_sync(&logFile);
+		taskEXIT_CRITICAL();
+	} while(sdCardStatus != FR_OK);
+
 	return FMOF_SUCCESS;
 }
 
