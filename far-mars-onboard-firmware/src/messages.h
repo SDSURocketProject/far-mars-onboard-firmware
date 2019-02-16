@@ -56,8 +56,8 @@ struct pressureData {
 };
 
 //! @brief Struct containing pressure sensor data
-struct pressureFloatData {
-	float methane, LOX, helium;
+struct pressureConvertedData {
+	uint32_t methane, LOX, helium;
 };
 
 struct batteryData {
@@ -104,8 +104,8 @@ struct sensorMessage {
 		struct cpuTemperatureFloatData     cpuTemperatureKelvin;
 
 		struct pressureData                pressureRaw;
-		struct pressureFloatData           pressurePSIA; // Absolute pressure
-		struct pressureFloatData           pressurePSIG; // Gauge pressure
+		struct pressureConvertedData       pressurePSIA; // Absolute pressure
+		struct pressureConvertedData       pressurePSIG; // Gauge pressure
 
 		struct batteryData                 batteryRaw;
 		struct batteryFloatData            batteryVoltage;

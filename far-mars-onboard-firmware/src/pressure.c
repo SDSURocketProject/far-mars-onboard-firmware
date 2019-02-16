@@ -11,11 +11,12 @@
 #include "logger.h"
 
 //! Constant by which each pressure reading is divided by when converting to PSI. Defined as 2^(adc resolution).
-#define PRESSURE_DIVISION_CONSTANT 4096.0f
+#define PRESSURE_DIVISION_CONSTANT 4096UL
+#define PRESSURE_DC_BIAS 409UL
 
-#define PRESSURE_METHANE_MAX_PRESSURE 1500.0f
-#define PRESSURE_LOX_MAX_PRESSURE 1500.0f
-#define PRESSURE_HELIUM_MAX_PRESSURE 5800.0f
+#define PRESSURE_METHANE_MAX_PRESSURE 1500UL
+#define PRESSURE_LOX_MAX_PRESSURE 1500UL
+#define PRESSURE_HELIUM_MAX_PRESSURE 5800UL
 
 struct adc_module pressureADCModule;
 static uint16_t adcBuffer[numPressureSensors];
@@ -187,22 +188,25 @@ int pressureRawToPSIG(struct sensorMessage *RAW, struct sensorMessage *PSIG) {
 		return FMOF_FAILURE;
 	}
 
-	float methane, LOX, helium;
+	int32_t methane, LOX, helium;
 
-	methane = (float)RAW->pressureRaw.methane;
-	LOX     = (float)RAW->pressureRaw.LOX;
-	helium  = (float)RAW->pressureRaw.helium;
+	methane = (int32_t)RAW->pressureRaw.methane;
+	LOX     = (int32_t)RAW->pressureRaw.LOX;
+	helium  = (int32_t)RAW->pressureRaw.helium;
 
-	// Untested, will best tested during cryo on 1/29/2019
-	methane = methane-PRESSURE_DIVISION_CONSTANT*.1f; // Remove .5v DC bias
-	PSIG->pressurePSIG.methane = (methane/PRESSURE_DIVISION_CONSTANT)*PRESSURE_METHANE_MAX_PRESSURE;
-
-	// Untested, will best tested during cryo on 1/29/2019
-	LOX = LOX-PRESSURE_DIVISION_CONSTANT*.1f; // Remove .5v DC bias
-	PSIG->pressurePSIG.LOX = (LOX/PRESSURE_DIVISION_CONSTANT)*PRESSURE_LOX_MAX_PRESSURE;
+	methane -= PRESSURE_DC_BIAS; // Remove .5v DC bias
+	if (methane < 0) { // Check overflow
+		methane = 0;
+	}
+	PSIG->pressurePSIG.methane = (methane*PRESSURE_METHANE_MAX_PRESSURE*5/4)/PRESSURE_DIVISION_CONSTANT;
 	
-	// Tested
-	PSIG->pressurePSIG.helium = (helium/PRESSURE_DIVISION_CONSTANT)*PRESSURE_HELIUM_MAX_PRESSURE;
+	LOX -= PRESSURE_DC_BIAS; // Remove .5v DC bias
+	if (LOX < 0) { // Check overflow
+		LOX = 0;
+	}
+	PSIG->pressurePSIG.LOX = (LOX*PRESSURE_LOX_MAX_PRESSURE*5/4)/PRESSURE_DIVISION_CONSTANT;
+
+	PSIG->pressurePSIG.helium = (helium*PRESSURE_HELIUM_MAX_PRESSURE)/PRESSURE_DIVISION_CONSTANT;
 
 	PSIG->msgID = pressurePSIGDataID;
 	PSIG->timestamp = RAW->timestamp;
@@ -224,9 +228,9 @@ int pressurePSIAToPSIG(struct sensorMessage *PSIA, struct sensorMessage *PSIG) {
 		return FMOF_FAILURE;
 	}
 
-	PSIG->pressurePSIG.methane = PSIA->pressurePSIA.methane+14.7f;
-	PSIG->pressurePSIG.LOX     = PSIA->pressurePSIA.LOX+14.7f;
-	PSIG->pressurePSIG.helium  = PSIA->pressurePSIA.helium+14.7f;
+	PSIG->pressurePSIG.methane = PSIA->pressurePSIA.methane+15;
+	PSIG->pressurePSIG.LOX     = PSIA->pressurePSIA.LOX+15;
+	PSIG->pressurePSIG.helium  = PSIA->pressurePSIA.helium+15;
 	PSIG->msgID = pressurePSIGDataID;
 	PSIG->timestamp = PSIA->timestamp;
 	return FMOF_SUCCESS;
@@ -247,9 +251,9 @@ int pressurePSIGToPSIA(struct sensorMessage *PSIG, struct sensorMessage *PSIA) {
 		return FMOF_FAILURE;
 	}
 
-	PSIA->pressurePSIA.methane = PSIG->pressurePSIG.methane-14.7f;
-	PSIA->pressurePSIA.LOX     = PSIG->pressurePSIG.LOX-14.7f;
-	PSIA->pressurePSIA.helium  = PSIG->pressurePSIG.helium-14.7f;
+	PSIA->pressurePSIA.methane = PSIG->pressurePSIG.methane-15;
+	PSIA->pressurePSIA.LOX     = PSIG->pressurePSIG.LOX-15;
+	PSIA->pressurePSIA.helium  = PSIG->pressurePSIG.helium-15;
 	PSIA->msgID = pressurePSIADataID;
 	PSIA->timestamp = PSIG->timestamp;
 	return FMOF_SUCCESS;
