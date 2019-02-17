@@ -52,12 +52,12 @@ struct cpuTemperatureFloatData {
 
 //! @brief Struct containing pressure sensor data
 struct pressureData {
-	uint16_t methane, LOX, helium;
+	int16_t methane, LOX, helium;
 };
 
 //! @brief Struct containing pressure sensor data
 struct pressureConvertedData {
-	uint32_t methane, LOX, helium;
+	int32_t methane, LOX, helium;
 };
 
 struct batteryData {

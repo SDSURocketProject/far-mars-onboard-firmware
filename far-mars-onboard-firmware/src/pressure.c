@@ -19,10 +19,30 @@
 #define PRESSURE_HELIUM_MAX_PRESSURE 5800UL
 
 struct adc_module pressureADCModule;
-static uint16_t adcBuffer[numPressureSensors];
+static int16_t adcBuffer[numPressureSensors];
 static uint32_t lastTimestamp;
 static QueueHandle_t pressureQueue;
 static SemaphoreHandle_t pressureADCSemaphore;
+
+#define OFFSET_TABLE_SIZE 16
+static const int16_t adcOffsetTable[OFFSET_TABLE_SIZE] = {
+	10,
+	7,
+	6,
+	6,
+	3,
+	2,
+	-6,
+	-11,
+	-19,
+	-19,
+	-21,
+	-25,
+	-26,
+	-34,
+	-34,
+	-35
+};
 
 void pressureAdcCallback(struct adc_module *const module);
 
@@ -140,8 +160,11 @@ int pressureReadConversion(struct sensorMessage *pressures, struct sensorMessage
  */
 void pressureAdcCallback(struct adc_module *const module) {
 	uint8_t i = 0;
+	int16_t temp;
 	for(; i < numPressureSensors; i++) {
-		if (xQueueSendFromISR(pressureQueue, (void *)&adcBuffer[i], NULL) != pdTRUE) {
+		temp = adcBuffer[i];
+		temp += adcOffsetTable[temp/(PRESSURE_DIVISION_CONSTANT/OFFSET_TABLE_SIZE)];
+		if (xQueueSendFromISR(pressureQueue, (void *)&temp, NULL) != pdTRUE) {
 			configASSERT(0);
 		}
 	}
@@ -190,9 +213,9 @@ int pressureRawToPSIG(struct sensorMessage *RAW, struct sensorMessage *PSIG) {
 
 	int32_t methane, LOX, helium;
 
-	methane = (int32_t)RAW->pressureRaw.methane;
-	LOX     = (int32_t)RAW->pressureRaw.LOX;
-	helium  = (int32_t)RAW->pressureRaw.helium;
+	methane = RAW->pressureRaw.methane;
+	LOX     = RAW->pressureRaw.LOX;
+	helium  = RAW->pressureRaw.helium;
 
 	methane -= PRESSURE_DC_BIAS; // Remove .5v DC bias
 	if (methane < 0) { // Check overflow
