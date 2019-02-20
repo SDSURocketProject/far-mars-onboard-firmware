@@ -194,7 +194,10 @@ static int sendSdCardWriteBuffer(void) {
  * @retval FMOF_LOGGER_QUEUE_NOT_INIT    The logging queue is full
  */
 int logSensorMessage(struct sensorMessage *msg, uint8_t level) {
-	configASSERT(msg);
+	if (!msg) {
+		configASSERT(0);
+		return FMOF_FAILURE;
+	}
 	configASSERT(msg->msgID < NUM_SENSOR_MESSAGES);
 	if (level < LOGGING_LEVEL) {
 		return FMOF_LOGGER_LOW_LOGGING_LEVEL;
@@ -222,7 +225,10 @@ int logSensorMessage(struct sensorMessage *msg, uint8_t level) {
  * @retval FMOF_LOGGER_QUEUE_FULL        The logging queue is full
  */
 int logString(const char *msg, uint8_t level) {
-	configASSERT(msg);
+	if (!msg) {
+		configASSERT(0);
+		return FMOF_FAILURE;
+	}
 	struct sensorMessage messageToLog;
 	if (level < LOGGING_LEVEL) {
 		return FMOF_LOGGER_LOW_LOGGING_LEVEL;

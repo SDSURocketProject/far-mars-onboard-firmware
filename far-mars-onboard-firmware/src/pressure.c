@@ -56,6 +56,7 @@ int pressureInit(void) {
 	pressureQueue = xQueueCreate(numPressureSensors, sizeof(uint16_t));
 	if (!pressureQueue) {
 		configASSERT(0);
+		return FMOF_FAILURE;
 	}
 
 	pressureADCSemaphore = xSemaphoreCreateMutex();
@@ -78,6 +79,7 @@ int pressureInit(void) {
 	
 	if ((returned = adc_init(&pressureADCModule, ADC0, &adcConfig)) != STATUS_OK) {
 		configASSERT(0);
+		return FMOF_FAILURE;
 	}
 
 	*((volatile uint16_t *)0x4200440A) |= (1<<7); // Enable Rail-to-rail mode
@@ -108,6 +110,7 @@ int pressureStartConversion(uint8_t wait) {
 	}
 	if (adc_read_buffer_job(&pressureADCModule, adcBuffer, numPressureSensors) != STATUS_OK) {
 		configASSERT(0);
+		return FMOF_FAILURE;
 	}
 	return FMOF_SUCCESS;
 }

@@ -133,6 +133,10 @@ static int daqPackSendBuffer(void) {
  * @retval FMOF_DAQ_SEND_QUEUE_NOT_INIT     The send queue has not yet been initialized
  */
 int daqSendSensorMessage(struct sensorMessage *msg) {
+	if (!msg) {
+		configASSERT(0);
+		return FMOF_FAILURE;
+	}
 	if (!sendQueue) {
 		return FMOF_DAQ_SEND_QUEUE_NOT_INIT;
 	}
@@ -153,6 +157,10 @@ int daqSendSensorMessage(struct sensorMessage *msg) {
  * @retval FMOF_DAQ_SEND_QUEUE_NOT_INIT     The send queue has not yet been initialized
  */
 int daqSendString(const char *str) {
+	if (!str) {
+		configASSERT(0);
+		return FMOF_FAILURE;
+	}
 	if (!sendQueue) {
 		return FMOF_DAQ_SEND_QUEUE_NOT_INIT;
 	}
