@@ -122,12 +122,19 @@ def pressureConvertPSIG(message):
 # Convert raw pressure to PSIG
 def pressureRawToPSIG(message):
     data = []
+
     # Methane
-    data.append(((message[2][0]/PRESSURE_DIVISION_CONSTANT)*(4.5/4.0) - (.5/4.0))*PRESSURE_METHANE_MAX_PRESSURE)
+    temp = (message[2][0]/PRESSURE_DIVISION_CONSTANT)*5.0-0.5
+    temp = (temp/4.0)*PRESSURE_METHANE_MAX_PRESSURE
+    data.append(temp)
     # LOX
-    data.append(((message[2][1]/PRESSURE_DIVISION_CONSTANT)*(4.5/4.0) - (.5/4.0))*PRESSURE_LOX_MAX_PRESSURE)
+    temp = (message[2][1]/PRESSURE_DIVISION_CONSTANT)*5.0-0.5
+    temp = (temp/4.0)*PRESSURE_LOX_MAX_PRESSURE
+    data.append(temp)
     # Helium
-    data.append(((message[2][2]/PRESSURE_DIVISION_CONSTANT)*(5.0/4.0) - (1.0/4.0))*PRESSURE_HELIUM_MAX_PRESSURE)
+    temp = (message[2][2]/PRESSURE_DIVISION_CONSTANT)*PRESSURE_HELIUM_MAX_PRESSURE
+    data.append(temp)
+
     return (sm.pressurePSIGDataID, message[1], tuple(data))
 # Convert raw pressure to PSIA
 def pressureRawToPSIA(message):
@@ -136,12 +143,19 @@ def pressureRawToPSIA(message):
 # Convert PSIG to raw pressure
 def pressurePSIGToRaw(message):
     data = []
+    
     # Methane
-    data += 0.111111*PRESSURE_DIVISION_CONSTANT*(PRESSURE_METHANE_MAX_PRESSURE + 8*message[2][0])
+    temp = (PRESSURE_METHANE_MAX_PRESSURE+8*message[2][0])
+    temp = (0.1*PRESSURE_DIVISION_CONSTANT*temp)/PRESSURE_METHANE_MAX_PRESSURE
+    data.append(temp)
     # LOX
-    data += 0.111111*PRESSURE_DIVISION_CONSTANT*(PRESSURE_LOX_MAX_PRESSURE + 8*message[2][0])
+    temp = (PRESSURE_LOX_MAX_PRESSURE+8*message[2][1])
+    temp = (0.1*PRESSURE_DIVISION_CONSTANT*temp)/PRESSURE_LOX_MAX_PRESSURE
+    data.append(temp)
     # Helium
-    data += 0.111111*PRESSURE_DIVISION_CONSTANT*(PRESSURE_HELIUM_MAX_PRESSURE + 8*message[2][0])
+    temp = (PRESSURE_DIVISION_CONSTANT*message[2][2])/PRESSURE_HELIUM_MAX_PRESSURE
+    data.append(temp)
+
     return (sm.pressureRawDataID, message[1], tuple(data))
 # Convert PSIA to raw pressure
 def pressurePSIAToRaw(message):
