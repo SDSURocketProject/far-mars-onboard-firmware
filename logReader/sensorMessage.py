@@ -75,8 +75,8 @@ messagePackedFormats = [
 '<f',    #cpuTemperatureFahrenheitDataID 15
 '<f',    #cpuTemperatureKelvinDataID 16
 '<hhh',  #pressureRawDataID 17
-'<fff',  #pressurePSIADataID 18
-'<fff',  #pressurePSIGDataID 19
+'<III',  #pressurePSIADataID 18
+'<III',  #pressurePSIGDataID 19
 '<h',    #batteryRawDataID 20
 '<f',    #batteryFloatDataID 21
 's'      #strDataID 22
@@ -101,8 +101,8 @@ messageLogFormats = [
 "CPU Fahrenheit - %f\n",                           #cpuTemperatureFahrenheitDataID
 "CPU Kelvin - %f\n",                               #cpuTemperatureKelvinDataID
 "Raw Pressures - Methane=%i, LOX=%i, Helium=%i\n", #pressureRawDataID
-"PSI absolute - Methane=%f, LOX=%f, Helium=%f\n",  #pressurePSIADataID
-"PSI guage - Methane=%f, LOX=%f, Helium=%f\n",     #pressurePSIGDataID
+"PSI absolute - Methane=%i, LOX=%i, Helium=%i\n",  #pressurePSIADataID
+"PSI guage - Methane=%i, LOX=%i, Helium=%i\n",     #pressurePSIGDataID
 'Battery raw voltage - %i\n',                      #batteryRawDataID
 'Battery voltage - %f\n',                          #batteryFloatDataID
 "%s"                                               #strDataID
@@ -153,8 +153,8 @@ messageCSVFormats = [
 "%f,\n",             #cpuTemperatureFahrenheitDataID
 "%f,\n",             #cpuTemperatureKelvinDataID
 "%i, %i, %i,\n",     #pressureRawDataID
-"%f, %f, %f,\n",     #pressurePSIADataID
-"%f, %f, %f,\n",     #pressurePSIGDataID
+"%i, %i, %i,\n",     #pressurePSIADataID
+"%i, %i, %i,\n",     #pressurePSIGDataID
 '%i\n',              #batteryRawDataID
 '%f\n',              #batteryFloatDataID
 "%s,\n"              #strDataID

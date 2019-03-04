@@ -62,9 +62,9 @@ def filterMessages(messages, filter, IDs):
 # Pressure Conversions
 #------------------------------------------------------------------------------
 PRESSURE_DIVISION_CONSTANT = 2**12 #(2^adc bit rate)
-PRESSURE_METHANE_MAX_PRESSURE = 1500.0
-PRESSURE_LOX_MAX_PRESSURE = 1500.0
-PRESSURE_HELIUM_MAX_PRESSURE = 5800.0
+PRESSURE_METHANE_MAX_PRESSURE = 1500
+PRESSURE_LOX_MAX_PRESSURE = 1500
+PRESSURE_HELIUM_MAX_PRESSURE = 5800
 
 # Returns true if the message contains pressure data
 def isPressure(message):
