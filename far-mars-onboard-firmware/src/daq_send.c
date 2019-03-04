@@ -8,6 +8,7 @@
 #include <asf.h>
 #include "daq_send.h"
 #include "far_mars_onboard_firmware.h"
+#include "com.h"
 
 static QueueHandle_t sendQueue = NULL;
 static struct sensorMessage sendMessage;

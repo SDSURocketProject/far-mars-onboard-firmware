@@ -9,6 +9,7 @@
 #include <string.h>
 #include <arm_math.h>
 #include "logger.h"
+#include "com.h"
 
 #define SD_CARD_WRITE_BUFFER_SIZE 256
 

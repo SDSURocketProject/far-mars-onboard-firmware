@@ -1149,6 +1149,12 @@
     <None Include="src\config\conf_spi.h">
       <SubType>compile</SubType>
     </None>
+    <Compile Include="src\com.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\com.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\messages.c">
       <SubType>compile</SubType>
     </Compile>
