@@ -1,0 +1,4 @@
+
+# Don't ignore log file stuff in this folder
+!*.log
+!*.csv
