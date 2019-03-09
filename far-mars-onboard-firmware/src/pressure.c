@@ -21,8 +21,8 @@
 struct adc_module pressureADCModule;
 static int16_t adcBuffer[numPressureSensors];
 static uint32_t lastTimestamp;
-static QueueHandle_t pressureQueue;
 static SemaphoreHandle_t pressureADCSemaphore;
+static SemaphoreHandle_t pressureSyncSemaphore;
 
 // Updated 3-8-2019
 #define OFFSET_TABLE_SIZE 16
@@ -42,13 +42,14 @@ int pressureInit(void) {
 	struct adc_config adcConfig;
 	uint32_t returned;
 
-	pressureQueue = xQueueCreate(numPressureSensors, sizeof(uint16_t));
-	if (!pressureQueue) {
-		configASSERT(0);
-		return FMOF_FAILURE;
-	}
-
 	pressureADCSemaphore = xSemaphoreCreateMutex();
+	if (pressureADCSemaphore == NULL) {
+		configASSERT(0);
+	}
+	pressureSyncSemaphore = xSemaphoreCreateBinary();
+	if (pressureSyncSemaphore == NULL) {
+		configASSERT(0);
+	}
 
 	adc_get_config_defaults(&adcConfig);
 	adcConfig.clock_prescaler = ADC_CLOCK_PRESCALER_DIV16;
@@ -57,9 +58,6 @@ int pressureInit(void) {
 	adcConfig.resolution = ADC_RESOLUTION_CUSTOM;
 	adcConfig.accumulate_samples = ADC_ACCUMULATE_SAMPLES_16;
 	adcConfig.divide_result = ADC_DIVIDE_RESULT_16;
-	//adcConfig.correction.correction_enable = true;
-	//adcConfig.correction.offset_correction = -25;
-	//adcConfig.correction.gain_correction = 0b011111110011;
 	
 	adcConfig.positive_input_sequence_mask_enable = (1 << ADC_POSITIVE_INPUT_PIN0) | // Methane
 	                                                (1 << ADC_POSITIVE_INPUT_PIN1) | // Battery Sense
@@ -91,14 +89,14 @@ int pressureInit(void) {
  * @retval FMOF_FAILURE The conversion has failed to start
  */
 int pressureStartConversion(uint8_t wait) {
-	if (xSemaphoreTake(pressureADCSemaphore, pdMS_TO_TICKS(0)) != pdTRUE) {
+	if (xSemaphoreTake(pressureADCSemaphore, pdMS_TO_TICKS(0)) != pdPASS) {
 		return FMOF_FAILURE;
 	}
-	if (uxQueueSpacesAvailable(pressureQueue) != numPressureSensors) {
-		xQueueReset(pressureQueue);
-	}
+
 	if (adc_read_buffer_job(&pressureADCModule, adcBuffer, numPressureSensors) != STATUS_OK) {
 		configASSERT(0);
+		xSemaphoreGive(pressureADCSemaphore);
+		xSemaphoreGive(pressureSyncSemaphore);
 		return FMOF_FAILURE;
 	}
 	return FMOF_SUCCESS;
@@ -117,23 +115,16 @@ int pressureReadConversion(struct sensorMessage *pressures, struct sensorMessage
 	if (xSemaphoreGetMutexHolder(pressureADCSemaphore) != xTaskGetCurrentTaskHandle()) {
 		return FMOF_PRESSURE_START_CONVERSION;
 	}
+	// Synchronize with ISR
+	if (xSemaphoreTake(pressureSyncSemaphore, pdMS_TO_TICKS(wait)) != pdPASS) {
+		xSemaphoreGive(pressureADCSemaphore);
+		return FMOF_FAILURE;
+	}
 
-	if (xQueueReceive(pressureQueue, (void *)&(pressures->pressureRaw.methane), pdMS_TO_TICKS(wait)) != pdTRUE) {
-		xSemaphoreGive(pressureADCSemaphore);
-		return FMOF_FAILURE;
-	}
-	if (xQueueReceive(pressureQueue, (void *)&(voltage->batteryRaw.voltage), pdMS_TO_TICKS(wait)) != pdTRUE) {
-		xSemaphoreGive(pressureADCSemaphore);
-		return FMOF_FAILURE;
-	}
-	if (xQueueReceive(pressureQueue, (void *)&(pressures->pressureRaw.LOX), pdMS_TO_TICKS(wait)) != pdTRUE) {
-		xSemaphoreGive(pressureADCSemaphore);
-		return FMOF_FAILURE;
-	}
-	if (xQueueReceive(pressureQueue, (void *)&(pressures->pressureRaw.helium), pdMS_TO_TICKS(wait)) != pdTRUE) {
-		xSemaphoreGive(pressureADCSemaphore);
-		return FMOF_FAILURE;
-	}
+	pressures->pressureRaw.methane = adcBuffer[pressureMethane];
+	voltage->batteryRaw.voltage = adcBuffer[volts];
+	pressures->pressureRaw.LOX = adcBuffer[pressureLOX];
+	pressures->pressureRaw.helium = adcBuffer[pressureHelium];
 
 	pressures->msgID = pressureRawDataID;
 	pressures->timestamp = lastTimestamp;
@@ -152,15 +143,14 @@ int pressureReadConversion(struct sensorMessage *pressures, struct sensorMessage
  */
 void pressureAdcCallback(struct adc_module *const module) {
 	uint8_t i = 0;
-	int16_t temp;
+	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 	for(; i < numPressureSensors; i++) {
-		temp = adcBuffer[i];
-		temp += adcOffsetTable[temp/(PRESSURE_DIVISION_CONSTANT/OFFSET_TABLE_SIZE)];
-		if (xQueueSendFromISR(pressureQueue, (void *)&temp, NULL) != pdTRUE) {
-			configASSERT(0);
-		}
+		adcBuffer[i] += adcOffsetTable[adcBuffer[i]/(PRESSURE_DIVISION_CONSTANT/OFFSET_TABLE_SIZE)];
 	}
 	lastTimestamp = getTimestamp();
+	// Synchronize with processing task
+	xSemaphoreGiveFromISR(pressureSyncSemaphore, &xHigherPriorityTaskWoken);
+	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
 /**
