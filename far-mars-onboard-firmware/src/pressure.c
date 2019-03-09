@@ -24,24 +24,13 @@ static uint32_t lastTimestamp;
 static QueueHandle_t pressureQueue;
 static SemaphoreHandle_t pressureADCSemaphore;
 
+// Updated 3-8-2019
 #define OFFSET_TABLE_SIZE 16
 static const int16_t adcOffsetTable[OFFSET_TABLE_SIZE] = {
-	10,
-	7,
-	6,
-	6,
-	3,
-	2,
-	-6,
-	-11,
-	-19,
-	-19,
-	-21,
-	-25,
-	-26,
-	-34,
-	-34,
-	-35
+	11, 11, 12, 13,
+	13, 13, 13, 13,
+	 5,  5,  6,  6,
+	 5,  5,  5,  6
 };
 
 void pressureAdcCallback(struct adc_module *const module);
