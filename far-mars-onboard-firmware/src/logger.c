@@ -11,7 +11,7 @@
 #include "logger.h"
 #include "com.h"
 
-#define SD_CARD_WRITE_BUFFER_SIZE 256
+#define SD_CARD_WRITE_BUFFER_SIZE 1024
 
 static QueueHandle_t sensorMessageQueue = NULL;
 volatile static uint8_t sdCardWriteBuffer[SD_CARD_WRITE_BUFFER_SIZE];
@@ -34,6 +34,9 @@ void loggerTask(void *pvParameters) {
 	if (initFatFS() != FMOF_SUCCESS) {
 		configASSERT(0);
 	}
+	TickType_t xLastWakeupTime;
+	const TickType_t xFrequency = pdMS_TO_TICKS(200);
+
 	sdCardWriteBufferIdx = 0;
 	sensorMessageQueue = xQueueCreate(MESSAGE_QUEUE_LENGTH, sizeof(struct sensorMessage));
 	if (!sensorMessageQueue) {
@@ -43,8 +46,9 @@ void loggerTask(void *pvParameters) {
 	openLog();
 	
 	/* Task code */
+	xLastWakeupTime = xTaskGetTickCount();
 	while (1) {
-		vTaskDelay(pdMS_TO_TICKS(200));
+		vTaskDelayUntil(&xLastWakeupTime, xFrequency);
 		logSensorMessages();
 		sendSdCardWriteBuffer();
 	}

@@ -17,11 +17,12 @@
  * @return none.
  */
 void navigationTask(void *pvParameters) {
-	const TickType_t xFrequency = pdMS_TO_TICKS(50);
+	const TickType_t xFrequency = pdMS_TO_TICKS(10);
 	TickType_t xLastWakeupTime;
 	struct sensorMessage pressure;
 	struct sensorMessage voltage;
 	uint32_t pressureReturn;
+	int32_t loopCounter = 0;
 
 	xLastWakeupTime = xTaskGetTickCount();
 	while(1) {
@@ -47,9 +48,15 @@ void navigationTask(void *pvParameters) {
 
 		// Log conversions
 		if (pressureReturn == FMOF_SUCCESS) {
-			daqSendSensorMessage(&pressure);
+			if (loopCounter % 5 == 0) {
+				daqSendSensorMessage(&pressure);
+			}
 			logSensorMessage(&pressure, LOG_LEVEL_DATA);
 			logSensorMessage(&voltage, LOG_LEVEL_DATA);
+		}
+		loopCounter++;
+		if (loopCounter >= 100) {
+			loopCounter = 0;
 		}
 	}
 }
