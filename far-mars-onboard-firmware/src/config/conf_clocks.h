@@ -40,7 +40,7 @@
 #  define CONF_CLOCK_CPU_DIVIDER                  SYSTEM_MAIN_CLOCK_DIV_1
 
 /* SYSTEM_CLOCK_SOURCE_OSC48M configuration - Internal 48MHz oscillator */
-#  define CONF_CLOCK_OSC48M_FREQ_DIV              SYSTEM_OSC48M_DIV_12
+#  define CONF_CLOCK_OSC48M_FREQ_DIV              SYSTEM_OSC48M_DIV_2
 #  define CONF_CLOCK_OSC48M_ON_DEMAND             true
 #  define CONF_CLOCK_OSC48M_RUN_IN_STANDBY        false
 

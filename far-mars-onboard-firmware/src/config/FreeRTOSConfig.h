@@ -55,7 +55,7 @@
 #define configUSE_QUEUE_SETS					1
 #define configUSE_IDLE_HOOK						0
 #define configUSE_TICK_HOOK						0
-#define configCPU_CLOCK_HZ						( 4000000 )
+#define configCPU_CLOCK_HZ						( 24000000 )
 #define configTICK_RATE_HZ						( 1000 )
 #define configMAX_PRIORITIES					( 6 )
 #define configMINIMAL_STACK_SIZE				( ( unsigned short ) 130 )
