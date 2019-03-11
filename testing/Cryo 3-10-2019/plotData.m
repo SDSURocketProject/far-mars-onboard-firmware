@@ -8,7 +8,7 @@ load ("Cryo PT 3-10-2019.mat")
 min = 1530000; % ~5:45pm
 max = 1670000; % ~23 minutes total
 plot(timestamp(min:max), methane(min:max), timestamp(min:max), lox(min:max), timestamp(min:max), helium(min:max));
-legend("Timestamp", "Methane", "LOX", "Helium")
+legend("Methane", "LOX", "Helium")
 xlabel("Time (ms)")
 ylabel("Pressure (PSIG)")
 title("Cryo Data 3/10/2019")
