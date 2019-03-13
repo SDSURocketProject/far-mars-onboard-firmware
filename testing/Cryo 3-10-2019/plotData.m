@@ -7,6 +7,8 @@ load ("Cryo PT 3-10-2019.mat")
 % Cryo
 min = 1530000; % ~5:45pm
 max = 1670000; % ~23 minutes total
+methane = methane - 30; % PT bias correction
+lox = lox - 41; % PT bias correction
 plot(timestamp(min:max), methane(min:max), timestamp(min:max), lox(min:max), timestamp(min:max), helium(min:max));
 legend("Methane", "LOX", "Helium")
 xlabel("Time (ms)")
