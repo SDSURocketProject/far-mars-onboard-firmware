@@ -13,10 +13,15 @@
 
 #define SD_CARD_WRITE_BUFFER_SIZE 256
 
+//! Queue that holds the messages that need to be logged to the SD card.
 static QueueHandle_t sensorMessageQueue = NULL;
+//! Buffer that holds the messages prior to writing to the SD card.
 volatile static uint8_t sdCardWriteBuffer[SD_CARD_WRITE_BUFFER_SIZE];
+//! Tracks the size of the sdCardWriteBuffer.
 volatile static uint16_t sdCardWriteBufferIdx;
+//! Log file that is opened and written to during the program.
 static FIL logFile;
+//! Struct used for initializing fat file system.
 static FATFS fs;
 
 static int initFatFS(void);
@@ -53,7 +58,7 @@ void loggerTask(void *pvParameters) {
 }
 
 /**
- * @brief  Initializes the sd card and fatfs.
+ * @brief  Initializes the SD card and fatfs.
  * @return Returns FMOF_SUCCESS or FMOF_FAILURE if failed to mount file system.
  */
 static int initFatFS(void) {
@@ -81,6 +86,10 @@ static int initFatFS(void) {
 	return FMOF_SUCCESS;
 }
 
+/**
+ * @brief  Creates a new log file on the SD card.
+ * @return Returns FMOF_SUCCESS after the new log file has been created correctly.
+ */
 static int openLog(void) {
 	FRESULT sdCardStatus = FR_OK;
 	static uint16_t fileIdx = 0;

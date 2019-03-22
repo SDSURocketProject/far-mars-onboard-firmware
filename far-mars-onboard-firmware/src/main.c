@@ -37,17 +37,16 @@
 
 void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName );
 
-#define ledTaskPriority        (tskIDLE_PRIORITY + 1)
-#define loggerTaskPriority     (tskIDLE_PRIORITY + 2)
-#define daqSendTaskPriority    (tskIDLE_PRIORITY + 3)
-#define navigationTaskPriority (tskIDLE_PRIORITY + 4)
+#define ledTaskPriority        (tskIDLE_PRIORITY + 1) //!< Priority of the task that blinks the LED.
+#define loggerTaskPriority     (tskIDLE_PRIORITY + 2) //!< Priority of the task that logs to the SD card.
+#define daqSendTaskPriority    (tskIDLE_PRIORITY + 3) //!< Priority of the task that sends data over RS485.
+#define navigationTaskPriority (tskIDLE_PRIORITY + 4) //!< Priority of the task that gathers sensor data.
 
 /**
  * @brief		Entry point for the program.
  * @return		never returns if working properly.
  */
-int main (void)
-{
+int main (void) {
 	system_init();
 	configRTC();
 	pressureInit();

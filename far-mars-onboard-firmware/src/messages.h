@@ -78,39 +78,39 @@ struct strData {
  * @brief Struct that contains all messages that can be sent.
  */
 struct sensorMessage {
-	uint8_t msgID;
-	uint32_t timestamp;
+	uint8_t msgID;      //!< ID that indicates what type of struct is being used in the union.
+	uint32_t timestamp; //!< Time at which the data in the message was collected.
 
 	// Data
 	union {
-		struct bno055_accel_t              accelerationRaw;
-		struct bno055_gyro_t               gyroscopeRaw;
-		struct bno055_euler_t              eulerRaw;
-		struct bno055_quaternion_t         quaternionRaw;
-		struct bno055_linear_accel_t       linearAccelerationRaw;
-		struct bno055_gravity_t            gravityRaw;
+		struct bno055_accel_t              accelerationRaw;       //!< Acceleration data in binary format.
+		struct bno055_gyro_t               gyroscopeRaw;          //!< Gyroscope data in binary format.
+		struct bno055_euler_t              eulerRaw;              //!< Euler angle data in binary format.
+		struct bno055_quaternion_t         quaternionRaw;         //!< quaternion data in binary format.
+		struct bno055_linear_accel_t       linearAccelerationRaw; //!< Linear acceleration data in binary format.
+		struct bno055_gravity_t            gravityRaw;            //!< Gravity data in binary format.
 
-		struct bno055_accel_float_t        accelerationMpss;       // Meters per second squared
-		struct bno055_gyro_float_t         gyroscopeRps;           // Degrees per second
-		struct bno055_gyro_float_t         gyroscopeDps;           // Radians per second
-		struct bno055_euler_float_t        eulerRadian;
-		struct bno055_euler_float_t        eulerDegree; 
-		struct bno055_linear_accel_float_t linearAccelerationMpss; // Meters per second squared
-		struct bno055_gravity_float_t      gravityMpss;            // Meters per second squared
+		struct bno055_accel_float_t        accelerationMpss;       //!< Acceleration data in meters per second squared.
+		struct bno055_gyro_float_t         gyroscopeRps;           //!< Gyroscope data in degrees per second.
+		struct bno055_gyro_float_t         gyroscopeDps;           //!< Gyroscope data in radians per second.
+		struct bno055_euler_float_t        eulerRadian;            //!< Euler angle data in radians.
+		struct bno055_euler_float_t        eulerDegree;            //!< Euler angle data in degrees.
+		struct bno055_linear_accel_float_t linearAccelerationMpss; //!< Linear acceleration data in meters per second squared.
+		struct bno055_gravity_float_t      gravityMpss;            //!< Gravity data in meters per second squared.
 
-		struct cpuTemperatureData          cpuTemperatureRaw;
-		struct cpuTemperatureFloatData     cpuTemperatureCelcius;
-		struct cpuTemperatureFloatData     cpuTemperatureFahrenheit;
-		struct cpuTemperatureFloatData     cpuTemperatureKelvin;
+		struct cpuTemperatureData          cpuTemperatureRaw;        //!< CPU temperature in raw binary format.
+		struct cpuTemperatureFloatData     cpuTemperatureCelsius;    //!< CPU temperature in Celsius.
+		struct cpuTemperatureFloatData     cpuTemperatureFahrenheit; //!< CPU temperature in Fahrenheit.
+		struct cpuTemperatureFloatData     cpuTemperatureKelvin;     //!< CPU temperature in Kelvin.
 
-		struct pressureData                pressureRaw;
-		struct pressureConvertedData       pressurePSIA; // Absolute pressure
-		struct pressureConvertedData       pressurePSIG; // Gauge pressure
+		struct pressureData                pressureRaw;  //!< Pressure data in raw binary format.
+		struct pressureConvertedData       pressurePSIA; //!< Pressure data in PSI absolute.
+		struct pressureConvertedData       pressurePSIG; //!< Pressure data in PSI gauge.
 
-		struct batteryData                 batteryRaw;
-		struct batteryFloatData            batteryVoltage;
+		struct batteryData                 batteryRaw;     //!< Battery voltage in raw binary format.
+		struct batteryFloatData            batteryVoltage; //!< Battery voltage in volts.
 
-		struct strData                     str;
+		struct strData                     str; //!< Message containing a pointer to a string, normally used for reporting errors.
 	};
 };
 

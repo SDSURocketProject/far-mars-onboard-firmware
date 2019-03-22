@@ -12,20 +12,28 @@
 
 //! Constant by which each pressure reading is divided by when converting to PSI. Defined as 2^(adc resolution).
 #define PRESSURE_DIVISION_CONSTANT 4096UL
+//! The integer value of the half volt bias that some of the PTs output.
 #define PRESSURE_DC_BIAS 409UL
 
+//! The maximum pressure that the methane PT can read
 #define PRESSURE_METHANE_MAX_PRESSURE 1500UL
+//! The maximum pressure that the lox PT can read
 #define PRESSURE_LOX_MAX_PRESSURE 1500UL
+//! The maximum pressure that the helium PT can read
 #define PRESSURE_HELIUM_MAX_PRESSURE 5800UL
 
 struct adc_module pressureADCModule;
+//! Buffer used for receiving data from an ADC read.
 static int16_t adcBuffer[numPressureSensors];
+//! Contains the timestamp when the most recent ADC read completed.
 static uint32_t lastTimestamp;
 static SemaphoreHandle_t pressureADCSemaphore;
 static SemaphoreHandle_t pressureSyncSemaphore;
 
 // Updated 3-8-2019
+//! Number of values used inside the adcOffsetTable.
 #define OFFSET_TABLE_SIZE 16
+//! Offset table used for correcting the error of the onboard ADC.
 static const int16_t adcOffsetTable[OFFSET_TABLE_SIZE] = {
 	11, 11, 12, 13,
 	13, 13, 13, 13,

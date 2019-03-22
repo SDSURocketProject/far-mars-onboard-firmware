@@ -10,10 +10,15 @@
 #include "far_mars_onboard_firmware.h"
 #include "com.h"
 
+//! Queue that holds the messages that need to be sent over RS485.
 static QueueHandle_t sendQueue = NULL;
+//! Structure used for temporarily holding a message before processing for communication. 
 static struct sensorMessage sendMessage;
+//! The buffer that is filled with the message after processing for communication.
 volatile static uint8_t sendBuffer[DAQ_MAX_MESSAGE_SIZE];
+//! Tracks the size of the message held in the sendBuffer.
 volatile static uint8_t sendBufferIdx;
+//! Task handle used by the RS485 ISR to alert the daqSendTask task that a message has been sent successfully over RS485.
 static TaskHandle_t xDaqSendHandle = NULL;
 
 static int configRS485(struct usart_module *module);
@@ -55,6 +60,11 @@ void daqSendTask(void *pvParameters) {
 	}
 }
 
+/**
+ * @brief	                Configures a sercom peripheral for RS485 communication.
+ * @param[in] *pvParameters Pointer to the module that needs to be configured for RS485 communication.
+ * @return	                Returns FMOF_SUCCESS upon success.
+ */
 static int configRS485(struct usart_module *module) {
 	struct usart_config config_usart;
 
