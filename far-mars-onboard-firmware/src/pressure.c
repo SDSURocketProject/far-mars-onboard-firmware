@@ -67,10 +67,10 @@ int pressureInit(void) {
 	adcConfig.accumulate_samples = ADC_ACCUMULATE_SAMPLES_16;
 	adcConfig.divide_result = ADC_DIVIDE_RESULT_16;
 	
-	adcConfig.positive_input_sequence_mask_enable = (1 << ADC_POSITIVE_INPUT_PIN0) | // Methane
-	                                                (1 << ADC_POSITIVE_INPUT_PIN1) | // Battery Sense
+	adcConfig.positive_input_sequence_mask_enable = (1 << ADC_POSITIVE_INPUT_PIN1) | // Battery Sense
 	                                                (1 << ADC_POSITIVE_INPUT_PIN2) | // LOX
-													(1 << ADC_POSITIVE_INPUT_PIN3);  // Helium
+													(1 << ADC_POSITIVE_INPUT_PIN3) | // Helium
+													(1 << ADC_POSITIVE_INPUT_PIN4);  // Methane
 	
 	if ((returned = adc_init(&pressureADCModule, ADC0, &adcConfig)) != STATUS_OK) {
 		configASSERT(0);
