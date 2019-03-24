@@ -104,6 +104,7 @@ static int openLog(void) {
 		taskENTER_CRITICAL();
 		sdCardStatus = f_open(&logFile, fileName, FA_CREATE_NEW | FA_WRITE);
 		f_sync(&logFile);
+
 		taskEXIT_CRITICAL();
 	} while(sdCardStatus != FR_OK);
 

@@ -10,6 +10,15 @@
 #include "far_mars_onboard_firmware.h"
 #include "com.h"
 
+//! @brief Maximum length of a message to be sent in bytes.
+#define DAQ_MAX_MESSAGE_SIZE ((sizeof(struct sensorMessage)*2)+2)
+//! @brief Length of the daq send queue.
+#define DAQ_SEND_QUEUE_LENGTH 10
+//! @brief Pin used to control DATA_DIR on RS485 transceiver.
+#define USART_DATA_DIR PIN_PA22
+#define USART_DATA_DIR_DE 1
+#define USART_DATA_DIR_RE 0
+
 //! Queue that holds the messages that need to be sent over RS485.
 static QueueHandle_t sendQueue = NULL;
 //! Structure used for temporarily holding a message before processing for communication. 
@@ -17,7 +26,7 @@ static struct sensorMessage sendMessage;
 //! The buffer that is filled with the message after processing for communication.
 volatile static uint8_t sendBuffer[DAQ_MAX_MESSAGE_SIZE];
 //! Tracks the size of the message held in the sendBuffer.
-volatile static uint8_t sendBufferIdx;
+volatile static int8_t sendBufferIdx;
 //! Task handle used by the RS485 ISR to alert the daqSendTask task that a message has been sent successfully over RS485.
 static TaskHandle_t xDaqSendHandle = NULL;
 
@@ -102,35 +111,18 @@ void daqSendCallback(struct usart_module *const module) {
  * @return            Returns FMOF_SUCCESS.
  */
 static int daqPackSendBuffer(void) {
-	uint8_t *src;
-	uint8_t bytesToCopy;
-	sendBufferIdx = 0;
-
-	sendBuffer[sendBufferIdx++] = 'A';
-	sendBuffer[sendBufferIdx++] = 'B';
-	sendBuffer[sendBufferIdx++] = 'C';
-	sendBuffer[sendBufferIdx++] = sendMessage.msgID;
-	sendBuffer[sendBufferIdx++] = (sendMessage.timestamp >>  0) & 0xFF;
-	sendBuffer[sendBufferIdx++] = (sendMessage.timestamp >>  8) & 0xFF;
-	sendBuffer[sendBufferIdx++] = (sendMessage.timestamp >> 16) & 0xFF;
-	sendBuffer[sendBufferIdx++] = (sendMessage.timestamp >> 24) & 0xFF;
+	uint8_t preprocessBuffer[sizeof(struct sensorMessage)];
+	uint8_t preprocessBufferIdx = 0;
 	
-	// Write data
-	if (sendMessage.msgID == strDataID) {
-		src = (uint8_t *)sendMessage.str.str;
-		while (*src != '\0') {
-			sendBuffer[sendBufferIdx++] = *src++;
-		}
-		// Write the null terminator
-		sendBuffer[sendBufferIdx++] = *src++;
-	}
-	else {
-		bytesToCopy = sensorMessageSizes[sendMessage.msgID];
-		src = (uint8_t *)&sendMessage.accelerationRaw; // All union members start at the same memory location
-		for(; bytesToCopy > 0; bytesToCopy--) {
-			sendBuffer[sendBufferIdx++] = *src++;
-		}
-	}
+	preprocessBuffer[0] = sendMessage.msgID;
+	preprocessBufferIdx++;
+	memcpy(&preprocessBuffer[preprocessBufferIdx], &sendMessage.timestamp, sizeof(sendMessage.timestamp));
+	preprocessBufferIdx += sizeof(sendMessage.timestamp);
+	memcpy(&preprocessBuffer[preprocessBufferIdx], &sendMessage.accelerationRaw, sensorMessageSizes[sendMessage.msgID]);
+	preprocessBufferIdx += sensorMessageSizes[sendMessage.msgID];
+	
+	sendBufferIdx = escapeBuffer(preprocessBuffer, preprocessBufferIdx, sendBuffer, DAQ_MAX_MESSAGE_SIZE);
+
 	return FMOF_SUCCESS;
 }
 
