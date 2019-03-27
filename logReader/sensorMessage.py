@@ -46,9 +46,9 @@ messageSizes = [
 9,  #cpuTemperatureCelciusDataID
 9,  #cpuTemperatureFahrenheitDataID
 9,  #cpuTemperatureKelvinDataID
-11, #pressureRawDataID
-17, #pressurePSIADataID
-17, #pressurePSIGDataID
+13, #pressureRawDataID
+21, #pressurePSIADataID
+21, #pressurePSIGDataID
 7,  #batteryRawDataID
 9,  #batteryFloatDataID
 0   #strDataID
@@ -74,64 +74,64 @@ messagePackedFormats = [
 '<f',    #cpuTemperatureCelciusDataID 14
 '<f',    #cpuTemperatureFahrenheitDataID 15
 '<f',    #cpuTemperatureKelvinDataID 16
-'<hhh',  #pressureRawDataID 17
-'<III',  #pressurePSIADataID 18
-'<III',  #pressurePSIGDataID 19
+'<hhhh', #pressureRawDataID 17
+'<IIII', #pressurePSIADataID 18
+'<IIII', #pressurePSIGDataID 19
 '<h',    #batteryRawDataID 20
 '<f',    #batteryFloatDataID 21
 's'      #strDataID 22
 ]
 
 messageLogFormats = [
-"Raw Acceleration - X=%i, Y=%i, Z=%i\n",           #accelerationRawDataID
-"Raw Gyroscope - X=%i, Y=%i, Z=%i\n",              #gyroscopeRawDataID
-"Raw Euler - X=%i, Y=%i, Z=%i\n",	               #eulerRawDataID
-"Quaternion - %i, %i, %i, %i\n",                   #quaternionRawDataID
-"Raw Linear Acceleration - X=%i, Y=%i, Z=%i\n",	   #linearAccelerationRawDataID
-"Raw Gravity - X=%i, Y=%i, Z=%i\n",	               #gravityRawDataID
-"Meters per second squared - X=%f, Y=%f, Z=%f\n",  #accelerationMpssDataID
-"Radians per second - X=%f, Y=%f, Z=%f\n",         #gyroscopeRpsDataID
-"Degrees per second - X=%f, Y=%f, Z=%f\n",         #gyroscopeDpsDataID
-"Radians - X=%f, Y=%f, Z=%f\n",                    #eulerRadianDataID
-"Degrees - X=%f, Y=%f, Z=%f\n",                    #eulerDegreeDataID
-"Meters per second squared - X=%f, Y=%f, Z=%f\n",  #linearAccelerationMpssDataID
-"Meters per second squared - X=%f, Y=%f, Z=%f\n",  #gravityMpssDataID
-"Raw CPU Temperature - %i\n",                      #cpuTemperatureRawDataID
-"CPU Celcius - %f\n",                              #cpuTemperatureCelciusDataID
-"CPU Fahrenheit - %f\n",                           #cpuTemperatureFahrenheitDataID
-"CPU Kelvin - %f\n",                               #cpuTemperatureKelvinDataID
-"Raw Pressures - Methane=%i, LOX=%i, Helium=%i\n", #pressureRawDataID
-"PSI absolute - Methane=%i, LOX=%i, Helium=%i\n",  #pressurePSIADataID
-"PSI guage - Methane=%i, LOX=%i, Helium=%i\n",     #pressurePSIGDataID
-'Battery raw voltage - %i\n',                      #batteryRawDataID
-'Battery voltage - %f\n',                          #batteryFloatDataID
-"%s"                                               #strDataID
+"Raw Acceleration - X=%i, Y=%i, Z=%i\n",                       #accelerationRawDataID
+"Raw Gyroscope - X=%i, Y=%i, Z=%i\n",                          #gyroscopeRawDataID
+"Raw Euler - X=%i, Y=%i, Z=%i\n",	                           #eulerRawDataID
+"Quaternion - %i, %i, %i, %i\n",                               #quaternionRawDataID
+"Raw Linear Acceleration - X=%i, Y=%i, Z=%i\n",	               #linearAccelerationRawDataID
+"Raw Gravity - X=%i, Y=%i, Z=%i\n",	                           #gravityRawDataID
+"Meters per second squared - X=%f, Y=%f, Z=%f\n",              #accelerationMpssDataID
+"Radians per second - X=%f, Y=%f, Z=%f\n",                     #gyroscopeRpsDataID
+"Degrees per second - X=%f, Y=%f, Z=%f\n",                     #gyroscopeDpsDataID
+"Radians - X=%f, Y=%f, Z=%f\n",                                #eulerRadianDataID
+"Degrees - X=%f, Y=%f, Z=%f\n",                                #eulerDegreeDataID
+"Meters per second squared - X=%f, Y=%f, Z=%f\n",              #linearAccelerationMpssDataID
+"Meters per second squared - X=%f, Y=%f, Z=%f\n",              #gravityMpssDataID
+"Raw CPU Temperature - %i\n",                                  #cpuTemperatureRawDataID
+"CPU Celcius - %f\n",                                          #cpuTemperatureCelciusDataID
+"CPU Fahrenheit - %f\n",                                       #cpuTemperatureFahrenheitDataID
+"CPU Kelvin - %f\n",                                           #cpuTemperatureKelvinDataID
+"Raw Pressures - Methane=%i, LOX=%i, Helium=%i, Chamber=%i\n", #pressureRawDataID
+"PSI absolute - Methane=%i, LOX=%i, Helium=%i, Chamber=%i\n",  #pressurePSIADataID
+"PSI guage - Methane=%i, LOX=%i, Helium=%i, Chamber=%i\n",     #pressurePSIGDataID
+'Battery raw voltage - %i\n',                                  #batteryRawDataID
+'Battery voltage - %f\n',                                      #batteryFloatDataID
+"%s"                                                           #strDataID
 ]
 
 messageCSVHeaders = [
-"Timestamp, X Raw, Y Raw, Z Raw,\n",              #accelerationRawDataID
-"Timestamp, X Raw, Y Raw, Z Raw,\n",              #gyroscopeRawDataID
-"Timestamp, X Raw, Y Raw, Z Raw,\n",	          #eulerRawDataID
-"Timestamp, W, X, Y, Z,\n",                       #quaternionRawDataID
-"Timestamp, X Raw, Y Raw, Z Raw,\n",	          #linearAccelerationRawDataID
-"Timestamp, X Raw, Y Raw, Z Raw,\n",	          #gravityRawDataID
-"Timestamp, X, Y, Z,\n",                          #accelerationMpssDataID
-"Timestamp, X, Y, Z,\n",                          #gyroscopeRpsDataID
-"Timestamp, X, Y, Z,\n",                          #gyroscopeDpsDataID
-"Timestamp, X, Y, Z,\n",                          #eulerRadianDataID
-"Timestamp, X, Y, Z,\n",                          #eulerDegreeDataID
-"Timestamp, X, Y, Z,\n",                          #linearAccelerationMpssDataID
-"Timestamp, X, Y, Z,\n",                          #gravityMpssDataID
-"Timestamp, Temp Raw,\n",                         #cpuTemperatureRawDataID
-"Timestamp, Celcius,\n",                          #cpuTemperatureCelciusDataID
-"Timestamp, Fahrenheit,\n",                       #cpuTemperatureFahrenheitDataID
-"Timestamp, Kelvin,\n",                           #cpuTemperatureKelvinDataID
-"Timestamp, Methane Raw, LOX Raw, Helium Raw,\n", #pressureRawDataID
-"Timestamp, Methane, LOX, Helium,\n",             #pressurePSIADataID
-"Timestamp, Methane, LOX, Helium,\n",             #pressurePSIGDataID
-'Timestamp, Voltage Raw\n',                       #batteryRawDataID
-'Timestamp, Voltage\n',                           #batteryFloatDataID
-"Timestamp, Strings,\n"                           #strDataID
+"Timestamp, X Raw, Y Raw, Z Raw,\n",                          #accelerationRawDataID
+"Timestamp, X Raw, Y Raw, Z Raw,\n",                          #gyroscopeRawDataID
+"Timestamp, X Raw, Y Raw, Z Raw,\n",	                      #eulerRawDataID
+"Timestamp, W, X, Y, Z,\n",                                   #quaternionRawDataID
+"Timestamp, X Raw, Y Raw, Z Raw,\n",	                      #linearAccelerationRawDataID
+"Timestamp, X Raw, Y Raw, Z Raw,\n",	                      #gravityRawDataID
+"Timestamp, X, Y, Z,\n",                                      #accelerationMpssDataID
+"Timestamp, X, Y, Z,\n",                                      #gyroscopeRpsDataID
+"Timestamp, X, Y, Z,\n",                                      #gyroscopeDpsDataID
+"Timestamp, X, Y, Z,\n",                                      #eulerRadianDataID
+"Timestamp, X, Y, Z,\n",                                      #eulerDegreeDataID
+"Timestamp, X, Y, Z,\n",                                      #linearAccelerationMpssDataID
+"Timestamp, X, Y, Z,\n",                                      #gravityMpssDataID
+"Timestamp, Temp Raw,\n",                                     #cpuTemperatureRawDataID
+"Timestamp, Celcius,\n",                                      #cpuTemperatureCelciusDataID
+"Timestamp, Fahrenheit,\n",                                   #cpuTemperatureFahrenheitDataID
+"Timestamp, Kelvin,\n",                                       #cpuTemperatureKelvinDataID
+"Timestamp, Methane Raw, LOX Raw, Helium Raw, Chamber Raw\n", #pressureRawDataID
+"Timestamp, Methane, LOX, Helium, Chamber,\n",                #pressurePSIADataID
+"Timestamp, Methane, LOX, Helium, Chamber,\n",                #pressurePSIGDataID
+'Timestamp, Voltage Raw\n',                                   #batteryRawDataID
+'Timestamp, Voltage\n',                                       #batteryFloatDataID
+"Timestamp, Strings,\n"                                       #strDataID
 ]
 
 messageCSVFormats = [
@@ -152,9 +152,9 @@ messageCSVFormats = [
 "%f,\n",             #cpuTemperatureCelciusDataID
 "%f,\n",             #cpuTemperatureFahrenheitDataID
 "%f,\n",             #cpuTemperatureKelvinDataID
-"%i, %i, %i,\n",     #pressureRawDataID
-"%i, %i, %i,\n",     #pressurePSIADataID
-"%i, %i, %i,\n",     #pressurePSIGDataID
+"%i, %i, %i, %i\n",  #pressureRawDataID
+"%i, %i, %i, %i\n",  #pressurePSIADataID
+"%i, %i, %i, %i\n",  #pressurePSIGDataID
 '%i\n',              #batteryRawDataID
 '%f\n',              #batteryFloatDataID
 "%s,\n"              #strDataID

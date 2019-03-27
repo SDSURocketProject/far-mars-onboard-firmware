@@ -16,6 +16,7 @@ enum pressureSensors {
 	pressureLOX,
 	pressureHelium,
 	pressureMethane,
+	pressureChamber,
 	numPressureSensors
 };
 

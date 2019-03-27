@@ -65,6 +65,7 @@ PRESSURE_DIVISION_CONSTANT = 2**12 #(2^adc bit rate)
 PRESSURE_METHANE_MAX_PRESSURE = 1500
 PRESSURE_LOX_MAX_PRESSURE = 1500
 PRESSURE_HELIUM_MAX_PRESSURE = 5800
+PRESSURE_CHAMBER_MAX_PRESSURE = 1500
 
 # Returns true if the message contains pressure data
 def isPressure(message):
@@ -134,12 +135,15 @@ def pressureRawToPSIG(message):
     # Helium
     temp = (message[2][2]/PRESSURE_DIVISION_CONSTANT)*PRESSURE_HELIUM_MAX_PRESSURE
     data.append(temp)
-
+    # Chamber
+    temp = (message[2][3]/PRESSURE_DIVISION_CONSTANT)*PRESSURE_CHAMBER_MAX_PRESSURE
+    data.append(temp)
+    
     return (sm.pressurePSIGDataID, message[1], tuple(data))
 # Convert raw pressure to PSIA
 def pressureRawToPSIA(message):
     message = pressureRawToPSIG(message)
-    return (sm.pressurePSIADataID, message[1], (message[2][0]-14.7, message[2][1]-14.7, message[2][2]-14.7, ) )
+    return (sm.pressurePSIADataID, message[1], (message[2][0]-14.7, message[2][1]-14.7, message[2][2]-14.7, message[2][3]-14.7) )
 # Convert PSIG to raw pressure
 def pressurePSIGToRaw(message):
     data = []
@@ -155,11 +159,14 @@ def pressurePSIGToRaw(message):
     # Helium
     temp = (PRESSURE_DIVISION_CONSTANT*message[2][2])/PRESSURE_HELIUM_MAX_PRESSURE
     data.append(temp)
+    # Chamber
+    temp = (PRESSURE_DIVISION_CONSTANT*message[2][3])/PRESSURE_CHAMBER_MAX_PRESSURE
+    data.append(temp)
 
     return (sm.pressureRawDataID, message[1], tuple(data))
 # Convert PSIA to raw pressure
 def pressurePSIAToRaw(message):
-    message = pressurePSIGToRaw(sm.pressurePSIADataID, message[1], (message[2][0]+14.7, message[2][1]+14.7, message[2][2]+14.7))
+    message = pressurePSIGToRaw(sm.pressurePSIADataID, message[1], (message[2][0]+14.7, message[2][1]+14.7, message[2][2]+14.7, message[2][3]+14.7))
     return message
 
 #------------------------------------------------------------------------------

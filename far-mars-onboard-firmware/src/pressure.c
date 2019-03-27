@@ -21,6 +21,8 @@
 #define PRESSURE_LOX_MAX_PRESSURE 1500UL
 //! The maximum pressure that the helium PT can read
 #define PRESSURE_HELIUM_MAX_PRESSURE 5800UL
+//! The maximum pressure that the chamber PT can read
+#define PRESSURE_CHAMBER_MAX_PRESSURE 1500UL
 
 struct adc_module pressureADCModule;
 //! Buffer used for receiving data from an ADC read.
@@ -70,7 +72,8 @@ int pressureInit(void) {
 	adcConfig.positive_input_sequence_mask_enable = (1 << ADC_POSITIVE_INPUT_PIN1) | // Battery Sense
 	                                                (1 << ADC_POSITIVE_INPUT_PIN2) | // LOX
 													(1 << ADC_POSITIVE_INPUT_PIN3) | // Helium
-													(1 << ADC_POSITIVE_INPUT_PIN4);  // Methane
+													(1 << ADC_POSITIVE_INPUT_PIN4) | // Methane
+													(1 << ADC_POSITIVE_INPUT_PIN5);  // Chamber
 	
 	if ((returned = adc_init(&pressureADCModule, ADC0, &adcConfig)) != STATUS_OK) {
 		configASSERT(0);
@@ -133,6 +136,7 @@ int pressureReadConversion(struct sensorMessage *pressures, struct sensorMessage
 	voltage->batteryRaw.voltage = adcBuffer[volts];
 	pressures->pressureRaw.LOX = adcBuffer[pressureLOX];
 	pressures->pressureRaw.helium = adcBuffer[pressureHelium];
+	pressures->pressureRaw.chamber = adcBuffer[pressureChamber];
 
 	pressures->msgID = pressureRawDataID;
 	pressures->timestamp = lastTimestamp;
@@ -201,11 +205,12 @@ int pressureRawToPSIG(struct sensorMessage *RAW, struct sensorMessage *PSIG) {
 		return FMOF_FAILURE;
 	}
 
-	int32_t methane, LOX, helium;
+	int32_t methane, LOX, helium, chamber;
 
 	methane = RAW->pressureRaw.methane;
 	LOX     = RAW->pressureRaw.LOX;
 	helium  = RAW->pressureRaw.helium;
+	chamber = RAW->pressureRaw.chamber;
 
 	methane -= PRESSURE_DC_BIAS; // Remove .5v DC bias
 	if (methane < 0) { // Check overflow
@@ -220,6 +225,8 @@ int pressureRawToPSIG(struct sensorMessage *RAW, struct sensorMessage *PSIG) {
 	PSIG->pressurePSIG.LOX = (LOX*PRESSURE_LOX_MAX_PRESSURE*5/4)/PRESSURE_DIVISION_CONSTANT;
 
 	PSIG->pressurePSIG.helium = (helium*PRESSURE_HELIUM_MAX_PRESSURE)/PRESSURE_DIVISION_CONSTANT;
+
+	PSIG->pressurePSIG.chamber = (chamber*PRESSURE_CHAMBER_MAX_PRESSURE)/PRESSURE_DIVISION_CONSTANT;
 
 	PSIG->msgID = pressurePSIGDataID;
 	PSIG->timestamp = RAW->timestamp;
@@ -244,6 +251,7 @@ int pressurePSIAToPSIG(struct sensorMessage *PSIA, struct sensorMessage *PSIG) {
 	PSIG->pressurePSIG.methane = PSIA->pressurePSIA.methane+15;
 	PSIG->pressurePSIG.LOX     = PSIA->pressurePSIA.LOX+15;
 	PSIG->pressurePSIG.helium  = PSIA->pressurePSIA.helium+15;
+	PSIG->pressurePSIG.chamber = PSIA->pressurePSIA.chamber+15;
 	PSIG->msgID = pressurePSIGDataID;
 	PSIG->timestamp = PSIA->timestamp;
 	return FMOF_SUCCESS;
@@ -267,6 +275,7 @@ int pressurePSIGToPSIA(struct sensorMessage *PSIG, struct sensorMessage *PSIA) {
 	PSIA->pressurePSIA.methane = PSIG->pressurePSIG.methane-15;
 	PSIA->pressurePSIA.LOX     = PSIG->pressurePSIG.LOX-15;
 	PSIA->pressurePSIA.helium  = PSIG->pressurePSIG.helium-15;
+	PSIA->pressurePSIA.chamber = PSIG->pressurePSIG.chamber-15;
 	PSIA->msgID = pressurePSIADataID;
 	PSIA->timestamp = PSIG->timestamp;
 	return FMOF_SUCCESS;
