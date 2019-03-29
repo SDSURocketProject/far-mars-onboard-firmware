@@ -25,9 +25,10 @@ uint16_t sensorMessageSizes[NUM_SENSOR_MESSAGES] = {
 	sizeof(struct cpuTemperatureFloatData),
 	sizeof(struct cpuTemperatureFloatData),
 	sizeof(struct cpuTemperatureFloatData),
-	sizeof(struct pressureData),
-	sizeof(struct pressureConvertedData),
-	sizeof(struct pressureConvertedData),
+	sizeof(struct pressureDataADC0),
+	sizeof(struct pressureConvertedDataADC0),
+	sizeof(struct pressureConvertedDataADC0),
+	sizeof(struct pressureDataADC1),
 	sizeof(struct batteryData),
 	sizeof(struct batteryFloatData),
 	sizeof(struct strData) // use the size data member to find the length of the string

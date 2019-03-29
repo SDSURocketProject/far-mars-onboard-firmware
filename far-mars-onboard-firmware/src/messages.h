@@ -34,10 +34,11 @@ enum sensorMessageIDs {
 	pressureRawDataID,			    // 17
 	pressurePSIADataID,			    // 18
 	pressurePSIGDataID,			    // 19
-	batteryRawDataID,			    // 20
-	batteryFloatDataID,			    // 21
-	strDataID,					    // 22
-	NUM_SENSOR_MESSAGES
+	pressureRawADC1DataID,          // 20
+	batteryRawDataID,			    // 21
+	batteryFloatDataID,			    // 22
+	strDataID,					    // 23
+	NUM_SENSOR_MESSAGES             // 24
 };
 
 //! @brief Struct containing raw CPU temperature data
@@ -50,14 +51,24 @@ struct cpuTemperatureFloatData {
 	float temperature;
 };
 
-//! @brief Struct containing pressure sensor data
-struct pressureData {
+//! @brief Struct containing pressure sensor data from ADC0
+struct pressureDataADC0 {
 	int16_t methane, LOX, helium, chamber;
 };
 
-//! @brief Struct containing pressure sensor data
-struct pressureConvertedData {
+//! @brief Struct containing pressure sensor data from ADC0
+struct pressureConvertedDataADC0 {
 	int32_t methane, LOX, helium, chamber;
+};
+
+//! @brief Struct containing pressure sensor data from ADC1
+struct pressureDataADC1 {
+	int16_t heliumReg;
+};
+
+//! @brief Struct containing pressure sensor data from ADC1
+struct pressureConvertedDataADC1 {
+	int32_t heliumReg;
 };
 
 struct batteryData {
@@ -103,9 +114,11 @@ struct sensorMessage {
 		struct cpuTemperatureFloatData     cpuTemperatureFahrenheit; //!< CPU temperature in Fahrenheit.
 		struct cpuTemperatureFloatData     cpuTemperatureKelvin;     //!< CPU temperature in Kelvin.
 
-		struct pressureData                pressureRaw;  //!< Pressure data in raw binary format.
-		struct pressureConvertedData       pressurePSIA; //!< Pressure data in PSI absolute.
-		struct pressureConvertedData       pressurePSIG; //!< Pressure data in PSI gauge.
+		struct pressureDataADC0            pressureRaw;  //!< Pressure data in raw binary format.
+		struct pressureConvertedDataADC0   pressurePSIA; //!< Pressure data in PSI absolute.
+		struct pressureConvertedDataADC0   pressurePSIG; //!< Pressure data in PSI gauge.
+
+		struct pressureDataADC1            pressureRawADC1; //!< Pressure data of the helium regulator in raw binary format.
 
 		struct batteryData                 batteryRaw;     //!< Battery voltage in raw binary format.
 		struct batteryFloatData            batteryVoltage; //!< Battery voltage in volts.
