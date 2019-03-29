@@ -12,10 +12,10 @@
 #include "messages.h"
 
 enum pressureSensors {
-	volts,
+	battSense,
+	pressureMethane,
 	pressureLOX,
 	pressureHelium,
-	pressureMethane,
 	pressureChamber,
 	numPressureSensors
 };

@@ -66,14 +66,14 @@ int pressureInit(void) {
 	adcConfig.reference = ADC_REFERENCE_INTVCC2; // VDDANA
 	adcConfig.positive_input = ADC_POSITIVE_INPUT_PIN0;
 	adcConfig.resolution = ADC_RESOLUTION_CUSTOM;
-	adcConfig.accumulate_samples = ADC_ACCUMULATE_SAMPLES_16;
-	adcConfig.divide_result = ADC_DIVIDE_RESULT_16;
+	adcConfig.accumulate_samples = ADC_ACCUMULATE_SAMPLES_8;
+	adcConfig.divide_result = ADC_DIVIDE_RESULT_8;
 	
 	adcConfig.positive_input_sequence_mask_enable = (1 << ADC_POSITIVE_INPUT_PIN1) | // Battery Sense
-	                                                (1 << ADC_POSITIVE_INPUT_PIN2) | // LOX
-													(1 << ADC_POSITIVE_INPUT_PIN3) | // Helium
-													(1 << ADC_POSITIVE_INPUT_PIN4) | // Methane
-													(1 << ADC_POSITIVE_INPUT_PIN5);  // Chamber
+	                                                (1 << ADC_POSITIVE_INPUT_PIN4) | // Methane
+													(1 << ADC_POSITIVE_INPUT_PIN5) | // LOX
+													(1 << ADC_POSITIVE_INPUT_PIN6) | // Helium
+													(1 << ADC_POSITIVE_INPUT_PIN7);  // Chamber
 	
 	if ((returned = adc_init(&pressureADCModule, ADC0, &adcConfig)) != STATUS_OK) {
 		configASSERT(0);
@@ -132,8 +132,8 @@ int pressureReadConversion(struct sensorMessage *pressures, struct sensorMessage
 		return FMOF_FAILURE;
 	}
 
+	voltage->batteryRaw.voltage = adcBuffer[battSense];
 	pressures->pressureRaw.methane = adcBuffer[pressureMethane];
-	voltage->batteryRaw.voltage = adcBuffer[volts];
 	pressures->pressureRaw.LOX = adcBuffer[pressureLOX];
 	pressures->pressureRaw.helium = adcBuffer[pressureHelium];
 	pressures->pressureRaw.chamber = adcBuffer[pressureChamber];
