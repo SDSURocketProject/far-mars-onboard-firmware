@@ -1161,6 +1161,12 @@
     <Compile Include="src\com.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\hall.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\hall.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\messages.c">
       <SubType>compile</SubType>
     </Compile>

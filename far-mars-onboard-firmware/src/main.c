@@ -35,6 +35,7 @@
 #include "pressure.h"
 #include "navigation.h"
 #include "far_mars_adc1.h"
+#include "hall.h"
 
 void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName );
 
@@ -52,6 +53,7 @@ int main (void) {
 	configRTC();
 	pressureInit();
 	adc1Init();
+	hallInit();
 
 	BaseType_t xReturned;
 	TaskHandle_t xLedHandle = NULL;
