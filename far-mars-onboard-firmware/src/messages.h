@@ -35,10 +35,11 @@ enum sensorMessageIDs {
 	pressurePSIADataID,			    // 18
 	pressurePSIGDataID,			    // 19
 	pressureRawADC1DataID,          // 20
-	batteryRawDataID,			    // 21
-	batteryFloatDataID,			    // 22
-	strDataID,					    // 23
-	NUM_SENSOR_MESSAGES             // 24
+	thermocoupleRawDataID,          // 21
+	batteryRawDataID,			    // 22
+	batteryFloatDataID,			    // 23
+	strDataID,					    // 24
+	NUM_SENSOR_MESSAGES             // 25
 };
 
 //! @brief Struct containing raw CPU temperature data
@@ -69,6 +70,11 @@ struct pressureDataADC1 {
 //! @brief Struct containing pressure sensor data from ADC1
 struct pressureConvertedDataADC1 {
 	int32_t heliumReg;
+};
+
+//! @brief Struct containing thermocouple sensor data
+struct thermocoupleData {
+	int32_t uaf; // upper air frame
 };
 
 struct batteryData {
@@ -119,6 +125,8 @@ struct sensorMessage {
 		struct pressureConvertedDataADC0   pressurePSIG; //!< Pressure data in PSI gauge.
 
 		struct pressureDataADC1            pressureRawADC1; //!< Pressure data of the helium regulator in raw binary format.
+
+		struct thermocoupleData            thermocoupleRaw; //!< Thermocouple data in raw binary format.
 
 		struct batteryData                 batteryRaw;     //!< Battery voltage in raw binary format.
 		struct batteryFloatData            batteryVoltage; //!< Battery voltage in volts.
