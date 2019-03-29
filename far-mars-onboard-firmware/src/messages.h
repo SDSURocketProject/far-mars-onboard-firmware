@@ -36,10 +36,11 @@ enum sensorMessageIDs {
 	pressurePSIGDataID,			    // 19
 	pressureRawADC1DataID,          // 20
 	thermocoupleRawDataID,          // 21
-	batteryRawDataID,			    // 22
-	batteryFloatDataID,			    // 23
-	strDataID,					    // 24
-	NUM_SENSOR_MESSAGES             // 25
+	hallEffectDataID,               // 22
+	batteryRawDataID,			    // 23
+	batteryFloatDataID,			    // 24
+	strDataID,					    // 25
+	NUM_SENSOR_MESSAGES             // 26
 };
 
 //! @brief Struct containing raw CPU temperature data
@@ -75,6 +76,11 @@ struct pressureConvertedDataADC1 {
 //! @brief Struct containing thermocouple sensor data
 struct thermocoupleData {
 	int32_t uaf; // upper air frame
+};
+
+//! @brief Struct containing thermocouple sensor data
+struct hallEffectData {
+	uint8_t methane, LOX;
 };
 
 struct batteryData {
@@ -127,6 +133,8 @@ struct sensorMessage {
 		struct pressureDataADC1            pressureRawADC1; //!< Pressure data of the helium regulator in raw binary format.
 
 		struct thermocoupleData            thermocoupleRaw; //!< Thermocouple data in raw binary format.
+
+		struct hallEffectData              hallEffect; //!< Hall effect sensor data.
 
 		struct batteryData                 batteryRaw;     //!< Battery voltage in raw binary format.
 		struct batteryFloatData            batteryVoltage; //!< Battery voltage in volts.
