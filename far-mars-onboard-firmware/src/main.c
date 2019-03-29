@@ -34,6 +34,7 @@
 #include "daq_send.h"
 #include "pressure.h"
 #include "navigation.h"
+#include "far_mars_adc1.h"
 
 void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName );
 
@@ -50,6 +51,7 @@ int main (void) {
 	system_init();
 	configRTC();
 	pressureInit();
+	adc1Init();
 
 	BaseType_t xReturned;
 	TaskHandle_t xLedHandle = NULL;

@@ -10,6 +10,7 @@
 #include "daq_send.h"
 #include "logger.h"
 #include "pressure.h"
+#include "far_mars_adc1.h"
 
 /**
  * @brief This task retrieves sensor data and sends it to logger and daq_send tasks.
@@ -21,7 +22,9 @@ void navigationTask(void *pvParameters) {
 	TickType_t xLastWakeupTime;
 	struct sensorMessage pressure;
 	struct sensorMessage voltage;
+	struct sensorMessage pressureAdc1;
 	uint32_t pressureReturn;
+	uint32_t adc1Return;
 
 	xLastWakeupTime = xTaskGetTickCount();
 	while(1) {
@@ -30,11 +33,19 @@ void navigationTask(void *pvParameters) {
 		if ((pressureReturn = pressureStartConversion(10)) != FMOF_SUCCESS) {
 			logString("Starting pressure conversion timed out\n", LOG_LEVEL_ERROR);
 		}
+		if ((adc1Return = adc1StartConversion(10)) != FMOF_SUCCESS) {
+			logString("Starting adc 1 conversion timed out\n", LOG_LEVEL_ERROR);
+		}
 
 		// Read conversions
 		if(pressureReturn == FMOF_SUCCESS) {
 			if (pressureReadConversion(&pressure, &voltage, 10) != FMOF_SUCCESS) {
 				logString("Reading pressure conversion timed out\n", LOG_LEVEL_ERROR);
+			}
+		}
+		if(adc1Return == FMOF_SUCCESS) {
+			if (adc1ReadConversion(&pressureAdc1, 10) != FMOF_SUCCESS) {
+				logString("Reading adc 1 conversion timed out\n", LOG_LEVEL_ERROR);
 			}
 		}
 		
@@ -50,6 +61,7 @@ void navigationTask(void *pvParameters) {
 			daqSendSensorMessage(&pressure);
 			logSensorMessage(&pressure, LOG_LEVEL_DATA);
 			logSensorMessage(&voltage, LOG_LEVEL_DATA);
+			logSensorMessage(&pressureAdc1, LOG_LEVEL_DATA);
 		}
 	}
 }

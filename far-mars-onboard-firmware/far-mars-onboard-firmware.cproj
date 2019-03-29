@@ -846,6 +846,12 @@
     <None Include="src\ASF\common\services\serial\serial.h">
       <SubType>compile</SubType>
     </None>
+    <Compile Include="src\far_mars_adc1.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\far_mars_adc1.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\ASF\common2\components\memory\sd_mmc\sd_mmc.c">
       <SubType>compile</SubType>
     </Compile>
