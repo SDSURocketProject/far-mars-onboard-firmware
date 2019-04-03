@@ -13,6 +13,8 @@
 int escapeBuffer(uint8_t *in, uint32_t inSize, uint8_t *out, uint32_t outSize);
 int unEscapeBuffer(uint8_t *in, uint32_t inSize, uint8_t *out, uint32_t outSize);
 
+uint16_t CRCCCITT(uint8_t *data, uint32_t length);
+
 #define COM_ASSERT(x)
 
 // Configure the value of each return code for each project
