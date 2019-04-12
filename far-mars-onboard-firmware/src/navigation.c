@@ -65,13 +65,16 @@ void navigationTask(void *pvParameters) {
 		// Log conversions
 		if (pressureReturn == FMOF_SUCCESS) {
 			daqSendSensorMessage(&pressure);
+			daqSendSensorMessage(&voltage);
 			logSensorMessage(&pressure, LOG_LEVEL_DATA);
 			logSensorMessage(&voltage, LOG_LEVEL_DATA);
 		}
 		if (adc1Return == FMOF_SUCCESS) {
+			daqSendSensorMessage(&pressureAdc1);
 			logSensorMessage(&pressureAdc1, LOG_LEVEL_DATA);
 		}
 		if (hallReturn == FMOF_SUCCESS) {
+			daqSendSensorMessage(&hall);
 			logSensorMessage(&hall, LOG_LEVEL_DATA);
 		}
 	}
