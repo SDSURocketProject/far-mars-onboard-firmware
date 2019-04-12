@@ -10,23 +10,29 @@
 #include "far_mars_onboard_firmware.h"
 #include "com.h"
 
+struct daqSensors {
+	uint32_t timestamp;
+	int32_t TC_uaf;
+	uint8_t HALL_methane, HALL_LOX;
+	uint16_t BATT_voltage;
+	int16_t PT_methane, PT_LOX, PT_helium, PT_chamber, PT_heliumReg;
+} __attribute__((packed));
+
 //! @brief Maximum length of a message to be sent in bytes.
-#define DAQ_MAX_MESSAGE_SIZE ((sizeof(struct sensorMessage)*2)+2)
-//! @brief Length of the daq send queue.
-#define DAQ_SEND_QUEUE_LENGTH 10
+#define DAQ_MAX_MESSAGE_SIZE ((sizeof(struct daqSensors)*2)+2)
 //! @brief Pin used to control DATA_DIR on RS485 transceiver.
 #define USART_DATA_DIR PIN_PA22
 #define USART_DATA_DIR_DE 1
 #define USART_DATA_DIR_RE 0
 
-//! Queue that holds the messages that need to be sent over RS485.
-static QueueHandle_t sendQueue = NULL;
-//! Structure used for temporarily holding a message before processing for communication. 
-static struct sensorMessage sendMessage;
+//! Mutex for protecting the allSensors struct.
+static SemaphoreHandle_t allSensorsMutex;
+//! Structure that holds the sensor data. 
+static struct daqSensors allSensors;
 //! The buffer that is filled with the message after processing for communication.
 volatile static uint8_t sendBuffer[DAQ_MAX_MESSAGE_SIZE];
 //! Tracks the size of the message held in the sendBuffer.
-volatile static int8_t sendBufferIdx;
+volatile static int32_t sendBufferIdx;
 //! Task handle used by the RS485 ISR to alert the daqSendTask task that a message has been sent successfully over RS485.
 static TaskHandle_t xDaqSendHandle = NULL;
 
@@ -39,6 +45,8 @@ static int daqPackSendBuffer(void);
  * @return	                none.
  */
 void daqSendTask(void *pvParameters) {
+	const TickType_t xFrequency = pdMS_TO_TICKS(50);
+	TickType_t xLastWakeupTime;
 	struct port_config config_port_pin;
 	port_get_config_defaults(&config_port_pin);
 	config_port_pin.direction = PORT_PIN_DIR_OUTPUT;
@@ -48,8 +56,8 @@ void daqSendTask(void *pvParameters) {
 	struct usart_module rs485_module;
 	configRS485(&rs485_module);
 
-	sendQueue = xQueueCreate(DAQ_SEND_QUEUE_LENGTH, sizeof(struct sensorMessage));
-	if (!sendQueue) {
+	allSensorsMutex = xSemaphoreCreateMutex();
+	if (!allSensorsMutex) {
 		configASSERT(0);
 	}
 	
@@ -57,14 +65,14 @@ void daqSendTask(void *pvParameters) {
 	
 	//port_pin_set_output_level(USART_DATA_DIR, USART_DATA_DIR_RE);
 	port_pin_set_output_level(USART_DATA_DIR, USART_DATA_DIR_DE);
+
+	xLastWakeupTime = xTaskGetTickCount();
 	while (1) {
-		if (xQueueReceive(sendQueue, &sendMessage, portMAX_DELAY) != pdTRUE) {
-			configASSERT(0);
-		}
+		vTaskDelayUntil(&xLastWakeupTime, xFrequency);
 		daqPackSendBuffer();
 		//port_pin_set_output_level(USART_DATA_DIR, USART_DATA_DIR_DE);
 		usart_write_buffer_job(&rs485_module, sendBuffer, sendBufferIdx);
-		ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(100)); // returns zero if write didn't finish before timeout, put into a do-while loop later
+		ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(50)); // returns zero if write didn't finish before timeout, put into a do-while loop later
 		//port_pin_set_output_level(USART_DATA_DIR, USART_DATA_DIR_RE);
 	}
 }
@@ -107,22 +115,22 @@ void daqSendCallback(struct usart_module *const module) {
 }
 
 /**
- * @brief             Packs the sendMessage into the sendBuffer.
- * @return            Returns FMOF_SUCCESS.
+ * @brief  Packs the allSensors struct into the sendBuffer.
+ * @return Returns FMOF_SUCCESS.
  */
 static int daqPackSendBuffer(void) {
-	uint8_t preprocessBuffer[sizeof(struct sensorMessage)];
-	uint8_t preprocessBufferIdx = 0;
-	
-	preprocessBuffer[0] = sendMessage.msgID;
-	preprocessBufferIdx++;
-	memcpy(&preprocessBuffer[preprocessBufferIdx], &sendMessage.timestamp, sizeof(sendMessage.timestamp));
-	preprocessBufferIdx += sizeof(sendMessage.timestamp);
-	memcpy(&preprocessBuffer[preprocessBufferIdx], &sendMessage.accelerationRaw, sensorMessageSizes[sendMessage.msgID]);
-	preprocessBufferIdx += sensorMessageSizes[sendMessage.msgID];
-	
-	sendBufferIdx = escapeBuffer(preprocessBuffer, preprocessBufferIdx, sendBuffer, DAQ_MAX_MESSAGE_SIZE);
+	if (xSemaphoreTake(allSensorsMutex, pdMS_TO_TICKS(50)) != pdPASS) {
+		configASSERT(0);
+		return FMOF_FAILURE;
+	}
+	allSensors.timestamp = getTimestamp();
+	sendBufferIdx = escapeBuffer(&allSensors, sizeof(struct daqSensors), sendBuffer, DAQ_MAX_MESSAGE_SIZE);
+	xSemaphoreGive(allSensorsMutex);
 
+	if (sendBufferIdx < 0) {
+		configASSERT(0);
+		return FMOF_FAILURE;
+	}
 	return FMOF_SUCCESS;
 }
 
@@ -131,27 +139,49 @@ static int daqPackSendBuffer(void) {
  * @param[in] *msg Contains a message to be sent
  * 
  * @return Status of the send attempt.
- * @retval FMOF_SUCCESS                     The send was successful
- * @retval FMOF_DAQ_SEND_MESSAGE_QUEUE_FULL The send queue is full
- * @retval FMOF_DAQ_SEND_QUEUE_NOT_INIT     The send queue has not yet been initialized
+ * @retval FMOF_SUCCESS     The send was successful
+ * @retval FMOF_INVALID_ARG The pointer *msg points to null
+ * @retval FMOF_NOT_INIT    The allSensorsMutex has not yet been initialized
  */
 int daqSendSensorMessage(struct sensorMessage *msg) {
 	if (!msg) {
 		configASSERT(0);
-		return FMOF_FAILURE;
-	}
-	if (!sendQueue) {
-		return FMOF_DAQ_SEND_QUEUE_NOT_INIT;
+		return FMOF_INVALID_ARG;
 	}
 
-	if (xQueueSendToBack(sendQueue, (void *)msg, (TickType_t) 0) != pdPASS) {
-		return FMOF_DAQ_SEND_MESSAGE_QUEUE_FULL;
+	if (xSemaphoreTake(allSensorsMutex, pdMS_TO_TICKS(50)) != pdPASS) {
+		return FMOF_NOT_INIT;
 	}
+	switch(msg->msgID) {
+	case pressureRawDataID:
+		allSensors.PT_methane = msg->pressureRaw.methane;
+		allSensors.PT_LOX = msg->pressureRaw.LOX;
+		allSensors.PT_helium= msg->pressureRaw.helium;
+		allSensors.PT_chamber= msg->pressureRaw.chamber;
+		break;
+	case pressureRawADC1DataID:
+		allSensors.PT_heliumReg = msg->pressureRawADC1.heliumReg;
+		break;
+	case thermocoupleRawDataID:
+		allSensors.TC_uaf = msg->thermocoupleRaw.uaf;
+		break;
+	case hallEffectDataID:
+		allSensors.HALL_methane = msg->hallEffect.methane;
+		allSensors.HALL_LOX = msg->hallEffect.LOX;
+		break;
+	case batteryRawDataID:
+		allSensors.BATT_voltage = msg->batteryRaw.voltage;
+		break;
+	default:
+		break;
+	}
+	xSemaphoreGive(allSensorsMutex);
+
 	return FMOF_SUCCESS;
 }
 
 /**
- * @brief          Puts a string on the queue to be sent over RS485.
+ * @brief          Puts a string on the queue to be sent over RS485. DEPRECATED
  * @param[in] *msg Contains a string to be sent
  * 
  * @return Status of the send attempt.
@@ -159,6 +189,7 @@ int daqSendSensorMessage(struct sensorMessage *msg) {
  * @retval FMOF_DAQ_SEND_MESSAGE_QUEUE_FULL The send queue is full
  * @retval FMOF_DAQ_SEND_QUEUE_NOT_INIT     The send queue has not yet been initialized
  */
+/* DEPRECATED
 int daqSendString(const char *str) {
 	if (!str) {
 		configASSERT(0);
@@ -178,3 +209,4 @@ int daqSendString(const char *str) {
 	}
 	return FMOF_SUCCESS;
 }
+*/

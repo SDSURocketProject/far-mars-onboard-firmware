@@ -15,12 +15,12 @@
 //! All of the return values for functions in the Far Mars Onboard Firmware (FMOF)
 enum FMOF_returns {
 	FMOF_SUCCESS,				      //! Generic success
+	FMOF_INVALID_ARG,                 //! Generic invalid argument, see function return values for more detail
+	FMOF_NOT_INIT,                    //! Something needed by the function is not yet initialized, see function return values for more detail
 	FMOF_LOGGER_LOW_LOGGING_LEVEL,    //! A message was send to be logged but it's logging level was less than LOGGING_LEVEL
 	FMOF_LOGGER_QUEUE_FULL,           //! The logger queue is completely full of messages
 	FMOF_LOGGER_QUEUE_NOT_INIT,       //! The logger queue is not yet initialized
 	FMOF_LOGGER_INVALID_MSGID,	      //! An invalid message ID was passed to the message logger
-	FMOF_DAQ_SEND_MESSAGE_QUEUE_FULL, //! The send queue is completely full of messages
-	FMOF_DAQ_SEND_QUEUE_NOT_INIT,     //! The send queue is not yet initialized
 	FMOF_PRESSURE_SENSOR_IN_USE,      //! The pressure sensor is being used by another task
 	FMOF_PRESSURE_QUEUE_FULL,         //! The pressure sensor is unavailable
 	FMOF_PRESSURE_START_CONVERSION,   //! Read conversion was called before start conversion

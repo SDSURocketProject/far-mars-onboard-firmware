@@ -15,6 +15,6 @@
 void daqSendTask(void *pvParameters);
 void daqSendCallback(struct usart_module *const module);
 int daqSendSensorMessage(struct sensorMessage *msg);
-int daqSendString(const char *str);
+//int daqSendString(const char *str); // DEPRECATED
 
 #endif /* DAQ_SEND_H_ */
