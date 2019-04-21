@@ -23,10 +23,13 @@ cpuTemperatureKelvinDataID = 16
 pressureRawDataID = 17
 pressurePSIADataID = 18
 pressurePSIGDataID = 19
-batteryRawDataID = 20
-batteryFloatDataID = 21
-strDataID = 22
-NUM_SENSOR_MESSAGES = 23
+pressureRawADC1DataID = 20
+thermocoupleRawDataID = 21
+hallEffectDataID = 22
+batteryRawDataID = 23
+batteryFloatDataID = 24
+strDataID = 25
+NUM_SENSOR_MESSAGES = 26
 
 messageSizes = [
 11, #accelerationRawDataID
@@ -49,6 +52,9 @@ messageSizes = [
 13, #pressureRawDataID
 21, #pressurePSIADataID
 21, #pressurePSIGDataID
+7,  #pressureRawADC1DataID
+9,  #thermocoupleRawDataID
+7,  #hallEffectDataID
 7,  #batteryRawDataID
 9,  #batteryFloatDataID
 0   #strDataID
@@ -77,6 +83,9 @@ messagePackedFormats = [
 '<hhhh', #pressureRawDataID 17
 '<IIII', #pressurePSIADataID 18
 '<IIII', #pressurePSIGDataID 19
+'<h',    #pressureRawADC1DataID
+'<i',    #thermocoupleRawDataID
+'<BB',   #hallEffectDataID
 '<h',    #batteryRawDataID 20
 '<f',    #batteryFloatDataID 21
 's'      #strDataID 22
@@ -103,6 +112,9 @@ messageLogFormats = [
 "Raw Pressures - Methane=%i, LOX=%i, Helium=%i, Chamber=%i\n", #pressureRawDataID
 "PSI absolute - Methane=%i, LOX=%i, Helium=%i, Chamber=%i\n",  #pressurePSIADataID
 "PSI guage - Methane=%i, LOX=%i, Helium=%i, Chamber=%i\n",     #pressurePSIGDataID
+"Raw ADC 1 pressure - HE Reg=%i",                              #pressureRawADC1DataID
+"Raw thermocouple - UAF=%i",                                   #thermocoupleRawDataID
+"Hall effect sensors = Methane=%i, LOX=%i",                    #hallEffectDataID
 'Battery raw voltage - %i\n',                                  #batteryRawDataID
 'Battery voltage - %f\n',                                      #batteryFloatDataID
 "%s"                                                           #strDataID
@@ -129,6 +141,9 @@ messageCSVHeaders = [
 "Timestamp, Methane Raw, LOX Raw, Helium Raw, Chamber Raw\n", #pressureRawDataID
 "Timestamp, Methane, LOX, Helium, Chamber,\n",                #pressurePSIADataID
 "Timestamp, Methane, LOX, Helium, Chamber,\n",                #pressurePSIGDataID
+"Timestamp, He Reg,\n",                                       #pressureRawADC1DataID
+"Timestamp, UAF,\n",                                          #thermocoupleRawDataID
+"Timestamp, Methane, LOX,\n",                                 #hallEffectDataID
 'Timestamp, Voltage Raw\n',                                   #batteryRawDataID
 'Timestamp, Voltage\n',                                       #batteryFloatDataID
 "Timestamp, Strings,\n"                                       #strDataID
@@ -155,6 +170,9 @@ messageCSVFormats = [
 "%i, %i, %i, %i\n",  #pressureRawDataID
 "%i, %i, %i, %i\n",  #pressurePSIADataID
 "%i, %i, %i, %i\n",  #pressurePSIGDataID
+"%i, %i,\n",         #pressureRawADC1DataID
+"%i,",               #thermocoupleRawDataID
+"%i, %i,",           #hallEffectDataID
 '%i\n',              #batteryRawDataID
 '%f\n',              #batteryFloatDataID
 "%s,\n"              #strDataID
