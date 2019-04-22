@@ -36,6 +36,7 @@
 #include "navigation.h"
 #include "far_mars_adc1.h"
 #include "hall.h"
+#include "temperature.h"
 
 void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName );
 
@@ -52,6 +53,7 @@ int main (void) {
 	system_init();
 	configRTC();
 	pressureInit();
+	thermocoupleInit();
 	adc1Init();
 	hallInit();
 

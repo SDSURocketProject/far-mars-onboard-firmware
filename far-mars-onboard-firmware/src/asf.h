@@ -112,6 +112,10 @@
 // From module: SD/MMC stack on SPI interface
 #include <sd_mmc.h>
 
+// From module: SDADC - Sigma-Delta Analog-to-Digital Converter (Callback APIs)
+#include <sdadc.h>
+#include <sdadc_callback.h>
+
 // From module: SERCOM Callback API
 #include <sercom.h>
 #include <sercom_interrupt.h>
