@@ -3,8 +3,7 @@
  *
  * Created: 1/2/2019 2:58:16 PM
  *  Author: David Knight
- */ 
-
+ */
 
 #ifndef PRESSURE_H_
 #define PRESSURE_H_
@@ -12,12 +11,12 @@
 #include "messages.h"
 
 enum pressureSensors {
-	battSense,
-	pressureMethane,
-	pressureLOX,
-	pressureHelium,
-	pressureChamber,
-	numPressureSensors
+    battSense,
+    pressureMethane,
+    pressureLOX,
+    pressureHelium,
+    pressureChamber,
+    numPressureSensors
 };
 
 int pressureInit(void);

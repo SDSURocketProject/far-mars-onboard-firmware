@@ -58,7 +58,6 @@
 #ifndef __BNO055_H__
 #define __BNO055_H__
 
-
 //#define BNO055_API
 /****************************************************************/
 /**\name	DATA TYPES INCLUDES		*/
@@ -75,245 +74,242 @@
 * @brief For the Linux platform support
 * Please use the types.h for your data types definitions
 */
-#ifdef	__KERNEL__
+#ifdef __KERNEL__
 
-#include <linux/types.h>
+#    include <linux/types.h>
 /* singed integer type*/
-typedef	int8_t s8;/**< used for signed 8bit */
-typedef	int16_t s16;/**< used for signed 16bit */
-typedef	int32_t s32;/**< used for signed 32bit */
-typedef	int64_t s64;/**< used for signed 64bit */
+typedef int8_t s8;   /**< used for signed 8bit */
+typedef int16_t s16; /**< used for signed 16bit */
+typedef int32_t s32; /**< used for signed 32bit */
+typedef int64_t s64; /**< used for signed 64bit */
 
-typedef	u_int8_t u8;/**< used for unsigned 8bit */
-typedef	u_int16_t u16;/**< used for unsigned 16bit */
-typedef	u_int32_t u32;/**< used for unsigned 32bit */
-typedef	u_int64_t u64;/**< used for unsigned 64bit */
-
-
+typedef u_int8_t u8;   /**< used for unsigned 8bit */
+typedef u_int16_t u16; /**< used for unsigned 16bit */
+typedef u_int32_t u32; /**< used for unsigned 32bit */
+typedef u_int64_t u64; /**< used for unsigned 64bit */
 
 #else /* ! __KERNEL__ */
 /**********************************************************
 * These definition uses for define the C
 * standard version data types
 ***********************************************************/
-# if !defined(__STDC_VERSION__)
+#    if !defined(__STDC_VERSION__)
 
 /************************************************
  * compiler is C11 C standard
 ************************************************/
-#if (__STDC_VERSION__ == 201112L)
+#        if (__STDC_VERSION__ == 201112L)
 
 /************************************************/
-#include <stdint.h>
+#            include <stdint.h>
 /************************************************/
 
 /*unsigned integer types*/
-typedef	uint8_t u8;/**< used for unsigned 8bit */
-typedef	uint16_t u16;/**< used for unsigned 16bit */
-typedef	uint32_t u32;/**< used for unsigned 32bit */
-typedef	uint64_t u64;/**< used for unsigned 64bit */
+typedef uint8_t u8;   /**< used for unsigned 8bit */
+typedef uint16_t u16; /**< used for unsigned 16bit */
+typedef uint32_t u32; /**< used for unsigned 32bit */
+typedef uint64_t u64; /**< used for unsigned 64bit */
 
 /*signed integer types*/
-typedef	int8_t s8;/**< used for signed 8bit */
-typedef	int16_t s16;/**< used for signed 16bit */
-typedef	int32_t s32;/**< used for signed 32bit */
-typedef	int64_t s64;/**< used for signed 64bit */
-/************************************************
+typedef int8_t s8;   /**< used for signed 8bit */
+typedef int16_t s16; /**< used for signed 16bit */
+typedef int32_t s32; /**< used for signed 32bit */
+typedef int64_t s64; /**< used for signed 64bit */
+                     /************************************************
  * compiler is C99 C standard
 ************************************************/
 
-#elif (__STDC_VERSION__ == 199901L)
+#        elif (__STDC_VERSION__ == 199901L)
 
 /* stdint.h is a C99 supported c library.
 which is used to fixed the integer size*/
 /************************************************/
-#include <stdint.h>
+#            include <stdint.h>
 /************************************************/
 
 /*unsigned integer types*/
-typedef	uint8_t u8;/**< used for unsigned 8bit */
-typedef	uint16_t u16;/**< used for unsigned 16bit */
-typedef	uint32_t u32;/**< used for unsigned 32bit */
-typedef	uint64_t u64;/**< used for unsigned 64bit */
+typedef uint8_t u8;   /**< used for unsigned 8bit */
+typedef uint16_t u16; /**< used for unsigned 16bit */
+typedef uint32_t u32; /**< used for unsigned 32bit */
+typedef uint64_t u64; /**< used for unsigned 64bit */
 
 /*signed integer types*/
-typedef int8_t s8;/**< used for signed 8bit */
-typedef	int16_t s16;/**< used for signed 16bit */
-typedef	int32_t s32;/**< used for signed 32bit */
-typedef	int64_t s64;/**< used for signed 64bit */
-/************************************************
+typedef int8_t s8;   /**< used for signed 8bit */
+typedef int16_t s16; /**< used for signed 16bit */
+typedef int32_t s32; /**< used for signed 32bit */
+typedef int64_t s64; /**< used for signed 64bit */
+                     /************************************************
  * compiler is C89 or other C standard
 ************************************************/
 
-#else /*  !defined(__STDC_VERSION__) */
+#        else /*  !defined(__STDC_VERSION__) */
 /*!
 * @brief By default it is defined as 32 bit machine configuration
 *	define your data types based on your
 *	machine/compiler/controller configuration
 */
-#define  MACHINE_32_BIT
+#            define MACHINE_32_BIT
 
 /*! @brief
  *	If your machine support 16 bit
  *	define the MACHINE_16_BIT
  */
-#ifdef MACHINE_16_BIT
-#include <limits.h>
+#            ifdef MACHINE_16_BIT
+#                include <limits.h>
 /*signed integer types*/
-typedef	signed char  s8;/**< used for signed 8bit */
-typedef	signed short int s16;/**< used for signed 16bit */
-typedef	signed long int s32;/**< used for signed 32bit */
+typedef signed char s8;        /**< used for signed 8bit */
+typedef signed short int s16;  /**< used for signed 16bit */
+typedef signed long int s32;   /**< used for signed 32bit */
 
-#if defined(LONG_MAX) && LONG_MAX == 0x7fffffffffffffffL
-typedef long int s64;/**< used for signed 64bit */
-typedef unsigned long int u64;/**< used for unsigned 64bit */
-#elif defined(LLONG_MAX) && (LLONG_MAX == 0x7fffffffffffffffLL)
-typedef long long int s64;/**< used for signed 64bit */
-typedef unsigned long long int u64;/**< used for unsigned 64bit */
-#else
-#warning Either the correct data type for signed 64 bit integer \
+#                if defined(LONG_MAX) && LONG_MAX == 0x7fffffffffffffffL
+typedef long int s64;          /**< used for signed 64bit */
+typedef unsigned long int u64; /**< used for unsigned 64bit */
+#                elif defined(LLONG_MAX) && (LLONG_MAX == 0x7fffffffffffffffLL)
+typedef long long int s64;          /**< used for signed 64bit */
+typedef unsigned long long int u64; /**< used for unsigned 64bit */
+#                else
+#                    warning Either the correct data type for signed 64 bit integer \
 could not be found, or 64 bit integers are not supported in your environment.
-#warning If 64 bit integers are supported on your platform, \
+#                    warning If 64 bit integers are supported on your platform, \
 please set s64 manually.
-#endif
+#                endif
 
 /*unsigned integer types*/
-typedef	unsigned char u8;/**< used for unsigned 8bit */
-typedef	unsigned short int u16;/**< used for unsigned 16bit */
-typedef	unsigned long int u32;/**< used for unsigned 32bit */
+typedef unsigned char u8;       /**< used for unsigned 8bit */
+typedef unsigned short int u16; /**< used for unsigned 16bit */
+typedef unsigned long int u32;  /**< used for unsigned 32bit */
 
 /* If your machine support 32 bit
 define the MACHINE_32_BIT*/
-#elif defined MACHINE_32_BIT
+#            elif defined MACHINE_32_BIT
 /*signed integer types*/
-typedef	signed char  s8;/**< used for signed 8bit */
-typedef	signed short int s16;/**< used for signed 16bit */
-typedef	signed int s32;/**< used for signed 32bit */
-typedef	signed long long int s64;/**< used for signed 64bit */
+typedef signed char s8;           /**< used for signed 8bit */
+typedef signed short int s16;     /**< used for signed 16bit */
+typedef signed int s32;           /**< used for signed 32bit */
+typedef signed long long int s64; /**< used for signed 64bit */
 
 /*unsigned integer types*/
-typedef	unsigned char u8;/**< used for unsigned 8bit */
-typedef	unsigned short int u16;/**< used for unsigned 16bit */
-typedef	unsigned int u32;/**< used for unsigned 32bit */
-typedef	unsigned long long int u64;/**< used for unsigned 64bit */
+typedef unsigned char u8;           /**< used for unsigned 8bit */
+typedef unsigned short int u16;     /**< used for unsigned 16bit */
+typedef unsigned int u32;           /**< used for unsigned 32bit */
+typedef unsigned long long int u64; /**< used for unsigned 64bit */
 
 /* If your machine support 64 bit
 define the MACHINE_64_BIT*/
-#elif defined MACHINE_64_BIT
+#            elif defined MACHINE_64_BIT
 /*signed integer types*/
-typedef	signed char  s8;/**< used for signed 8bit */
-typedef	signed short int s16;/**< used for signed 16bit */
-typedef	signed int s32;/**< used for signed 32bit */
-typedef	signed long int s64;/**< used for signed 64bit */
+typedef signed char s8;       /**< used for signed 8bit */
+typedef signed short int s16; /**< used for signed 16bit */
+typedef signed int s32;       /**< used for signed 32bit */
+typedef signed long int s64;  /**< used for signed 64bit */
 
 /*unsigned integer types*/
-typedef	unsigned char u8;/**< used for unsigned 8bit */
-typedef	unsigned short int u16;/**< used for unsigned 16bit */
-typedef	unsigned int u32;/**< used for unsigned 32bit */
-typedef	unsigned long int u64;/**< used for unsigned 64bit */
+typedef unsigned char u8;       /**< used for unsigned 8bit */
+typedef unsigned short int u16; /**< used for unsigned 16bit */
+typedef unsigned int u32;       /**< used for unsigned 32bit */
+typedef unsigned long int u64;  /**< used for unsigned 64bit */
 
-#else
-#warning The data types defined above which not supported \
+#            else
+#                warning The data types defined above which not supported \
 define the data types manually
-#endif
-#endif
+#            endif
+#        endif
 
 /*** This else will execute for the compilers
  *	which are not supported the C standards
  *	Like C89/C99/C11***/
-#else
+#    else
 /*!
 * @brief By default it is defined as 32 bit machine configuration
 *	define your data types based on your
 *	machine/compiler/controller configuration
 */
-#define  MACHINE_32_BIT
+#        define MACHINE_32_BIT
 
 /* If your machine support 16 bit
 define the MACHINE_16_BIT*/
-#ifdef MACHINE_16_BIT
-#include <limits.h>
+#        ifdef MACHINE_16_BIT
+#            include <limits.h>
 /*signed integer types*/
-typedef	signed char  s8;/**< used for signed 8bit */
-typedef	signed short int s16;/**< used for signed 16bit */
-typedef	signed long int s32;/**< used for signed 32bit */
+typedef signed char s8;        /**< used for signed 8bit */
+typedef signed short int s16;  /**< used for signed 16bit */
+typedef signed long int s32;   /**< used for signed 32bit */
 
-#if defined(LONG_MAX) && LONG_MAX == 0x7fffffffffffffffL
-typedef long int s64;/**< used for signed 64bit */
-typedef unsigned long int u64;/**< used for unsigned 64bit */
-#elif defined(LLONG_MAX) && (LLONG_MAX == 0x7fffffffffffffffLL)
-typedef long long int s64;/**< used for signed 64bit */
-typedef unsigned long long int u64;/**< used for unsigned 64bit */
-#else
-#warning Either the correct data type for signed 64 bit integer \
+#            if defined(LONG_MAX) && LONG_MAX == 0x7fffffffffffffffL
+typedef long int s64;          /**< used for signed 64bit */
+typedef unsigned long int u64; /**< used for unsigned 64bit */
+#            elif defined(LLONG_MAX) && (LLONG_MAX == 0x7fffffffffffffffLL)
+typedef long long int s64;          /**< used for signed 64bit */
+typedef unsigned long long int u64; /**< used for unsigned 64bit */
+#            else
+#                warning Either the correct data type for signed 64 bit integer \
 could not be found, or 64 bit integers are not supported in your environment.
-#warning If 64 bit integers are supported on your platform, \
+#                warning If 64 bit integers are supported on your platform, \
 please set s64 manually.
-#endif
+#            endif
 
 /*unsigned integer types*/
-typedef	unsigned char u8;/**< used for unsigned 8bit */
-typedef	unsigned short int u16;/**< used for unsigned 16bit */
-typedef	unsigned long int u32;/**< used for unsigned 32bit */
+typedef unsigned char u8;       /**< used for unsigned 8bit */
+typedef unsigned short int u16; /**< used for unsigned 16bit */
+typedef unsigned long int u32;  /**< used for unsigned 32bit */
 
 /*! @brief If your machine support 32 bit
 define the MACHINE_32_BIT*/
-#elif defined MACHINE_32_BIT
+#        elif defined MACHINE_32_BIT
 /*signed integer types*/
-typedef	signed char  s8;/**< used for signed 8bit */
-typedef	signed short int s16;/**< used for signed 16bit */
-typedef	signed int s32;/**< used for signed 32bit */
-typedef	signed long long int s64;/**< used for signed 64bit */
+typedef signed char s8;           /**< used for signed 8bit */
+typedef signed short int s16;     /**< used for signed 16bit */
+typedef signed int s32;           /**< used for signed 32bit */
+typedef signed long long int s64; /**< used for signed 64bit */
 
 /*unsigned integer types*/
-typedef	unsigned char u8;/**< used for unsigned 8bit */
-typedef	unsigned short int u16;/**< used for unsigned 16bit */
-typedef	unsigned int u32;/**< used for unsigned 32bit */
-typedef	unsigned long long int u64;/**< used for unsigned 64bit */
+typedef unsigned char u8;           /**< used for unsigned 8bit */
+typedef unsigned short int u16;     /**< used for unsigned 16bit */
+typedef unsigned int u32;           /**< used for unsigned 32bit */
+typedef unsigned long long int u64; /**< used for unsigned 64bit */
 
 /* If your machine support 64 bit
 define the MACHINE_64_BIT*/
-#elif defined MACHINE_64_BIT
+#        elif defined MACHINE_64_BIT
 /*signed integer types*/
-typedef	signed char  s8;/**< used for signed 8bit */
-typedef	signed short int s16;/**< used for signed 16bit */
-typedef	signed int s32;/**< used for signed 32bit */
-typedef	signed long int s64;/**< used for signed 64bit */
+typedef signed char s8;       /**< used for signed 8bit */
+typedef signed short int s16; /**< used for signed 16bit */
+typedef signed int s32;       /**< used for signed 32bit */
+typedef signed long int s64;  /**< used for signed 64bit */
 
 /*unsigned integer types*/
-typedef	unsigned char u8;/**< used for unsigned 8bit */
-typedef	unsigned short int u16;/**< used for unsigned 16bit */
-typedef	unsigned int u32;/**< used for unsigned 32bit */
-typedef	unsigned long int u64;/**< used for unsigned 64bit */
+typedef unsigned char u8;       /**< used for unsigned 8bit */
+typedef unsigned short int u16; /**< used for unsigned 16bit */
+typedef unsigned int u32;       /**< used for unsigned 32bit */
+typedef unsigned long int u64;  /**< used for unsigned 64bit */
 
-#else
-#warning The data types defined above which not supported \
+#        else
+#            warning The data types defined above which not supported \
 define the data types manually
-#endif
-#endif
+#        endif
+#    endif
 #endif
 /***************************************************************/
 /**\name	BUS READ AND WRITE FUNCTIONS           */
 /***************************************************************/
-#define BNO055_WR_FUNC_PTR s8 (*bus_write)\
-(u8, u8, u8 *, u8)
+#define BNO055_WR_FUNC_PTR s8 (*bus_write)(u8, u8, u8 *, u8)
 
-#define BNO055_BUS_WRITE_FUNC(dev_addr, reg_addr, reg_data, wr_len)\
-	bus_write(dev_addr, reg_addr, reg_data, wr_len)
+#define BNO055_BUS_WRITE_FUNC(dev_addr, reg_addr, reg_data, wr_len) \
+    bus_write(dev_addr, reg_addr, reg_data, wr_len)
 
-#define BNO055_RD_FUNC_PTR s8 \
-(*bus_read)(u8, u8, u8 *, u8)
+#define BNO055_RD_FUNC_PTR s8 (*bus_read)(u8, u8, u8 *, u8)
 
-#define BNO055_BUS_READ_FUNC(dev_addr, reg_addr, reg_data, r_len)\
-bus_read(dev_addr, reg_addr, reg_data, r_len)
+#define BNO055_BUS_READ_FUNC(dev_addr, reg_addr, reg_data, r_len) \
+    bus_read(dev_addr, reg_addr, reg_data, r_len)
 
 #define BNO055_DELAY_RETURN_TYPE void
 
 #define BNO055_DELAY_PARAM_TYPES u32
 
-#define BNO055_DELAY_FUNC(delay_in_msec)\
-	delay_func(delay_in_msec)
+#define BNO055_DELAY_FUNC(delay_in_msec) \
+    delay_func(delay_in_msec)
 
+// clang-format off
 /********************************************************/
 /**\name	I2C ADDRESS DEFINITION FOR BNO055           */
 /********************************************************/
@@ -501,12 +497,12 @@ bus_read(dev_addr, reg_addr, reg_data, r_len)
 #define BNO055_GYRO_ANY_MOTION_THRES_ADDR		(0X1E)
 #define BNO055_GYRO_ANY_MOTION_SET_ADDR			(0X1F)
 /* PAGE1 REGISTERS DEFINITION END*/
+// clang-format on
 
-
-#define BNO055_MDELAY_DATA_TYPE		u32
+#define BNO055_MDELAY_DATA_TYPE u32
 
 /*< This refers BNO055 return type as s8 */
-#define BNO055_RETURN_FUNCTION_TYPE	s8
+#define BNO055_RETURN_FUNCTION_TYPE s8
 
 /* Compile switch definition for Float and double*/
 #define BNO055_FLOAT_ENABLE
@@ -518,215 +514,217 @@ bus_read(dev_addr, reg_addr, reg_data, r_len)
 *	@brief bno055 struct
 */
 struct bno055_t {
-u8 chip_id;/**< chip_id of bno055 */
-u16 sw_rev_id;/**< software revision id of bno055 */
-u8 page_id;/**< page_id of bno055 */
-u8 accel_rev_id;/**< accel revision id of bno055 */
-u8 mag_rev_id;/**< mag revision id of bno055 */
-u8 gyro_rev_id;/**< gyro revision id of bno055 */
-u8 bl_rev_id;/**< boot loader revision id of bno055 */
-u8 dev_addr;/**< i2c device address of bno055 */
-BNO055_WR_FUNC_PTR;/**< bus write function pointer */
-BNO055_RD_FUNC_PTR;/**<bus read function pointer */
-void (*delay_msec)(BNO055_MDELAY_DATA_TYPE);/**< delay function pointer */
+    u8 chip_id;                                  /**< chip_id of bno055 */
+    u16 sw_rev_id;                               /**< software revision id of bno055 */
+    u8 page_id;                                  /**< page_id of bno055 */
+    u8 accel_rev_id;                             /**< accel revision id of bno055 */
+    u8 mag_rev_id;                               /**< mag revision id of bno055 */
+    u8 gyro_rev_id;                              /**< gyro revision id of bno055 */
+    u8 bl_rev_id;                                /**< boot loader revision id of bno055 */
+    u8 dev_addr;                                 /**< i2c device address of bno055 */
+    BNO055_WR_FUNC_PTR;                          /**< bus write function pointer */
+    BNO055_RD_FUNC_PTR;                          /**<bus read function pointer */
+    void (*delay_msec)(BNO055_MDELAY_DATA_TYPE); /**< delay function pointer */
 };
 /*!
 * @brief struct for accel data read from registers
 */
 struct bno055_accel_t {
-s16 x;/**< accel x data */
-s16 y;/**< accel y data */
-s16 z;/**< accel z data */
+    s16 x; /**< accel x data */
+    s16 y; /**< accel y data */
+    s16 z; /**< accel z data */
 };
 /*!
 * @brief struct for Mag data read from registers
 */
 struct bno055_mag_t {
-s16 x;/**< mag x data */
-s16 y;/**< mag y data */
-s16 z;/**< mag z data */
+    s16 x; /**< mag x data */
+    s16 y; /**< mag y data */
+    s16 z; /**< mag z data */
 };
 /*!
 * @brief struct for Gyro data read from registers
 */
 struct bno055_gyro_t {
-s16 x;/**< gyro x data */
-s16 y;/**< gyro y data */
-s16 z;/**< gyro z data */
+    s16 x; /**< gyro x data */
+    s16 y; /**< gyro y data */
+    s16 z; /**< gyro z data */
 };
 /*!
 * @brief struct for Euler data read from registers
 */
 struct bno055_euler_t {
-s16 h;/**< Euler h data */
-s16 r;/**< Euler r data */
-s16 p;/**< Euler p data */
+    s16 h; /**< Euler h data */
+    s16 r; /**< Euler r data */
+    s16 p; /**< Euler p data */
 };
 /*!
 * @brief struct for Quaternion data read from registers
 */
 struct bno055_quaternion_t {
-s16 w;/**< Quaternion w data */
-s16 x;/**< Quaternion x data */
-s16 y;/**< Quaternion y data */
-s16 z;/**< Quaternion z data */
+    s16 w; /**< Quaternion w data */
+    s16 x; /**< Quaternion x data */
+    s16 y; /**< Quaternion y data */
+    s16 z; /**< Quaternion z data */
 };
 /*!
 * @brief struct for Linear Accel data read from registers
 */
 struct bno055_linear_accel_t {
-s16 x; /**< Linear Accel x data */
-s16 y; /**< Linear Accel y data */
-s16 z; /**< Linear Accel z data */
+    s16 x; /**< Linear Accel x data */
+    s16 y; /**< Linear Accel y data */
+    s16 z; /**< Linear Accel z data */
 };
 /*!
 * @brief struct for Gravity data read from registers
 */
 struct bno055_gravity_t {
-s16 x;/**< Gravity x data */
-s16 y;/**< Gravity y data */
-s16 z;/**< Gravity z data */
+    s16 x; /**< Gravity x data */
+    s16 y; /**< Gravity y data */
+    s16 z; /**< Gravity z data */
 };
-#ifdef	BNO055_DOUBLE_ENABLE
+#ifdef BNO055_DOUBLE_ENABLE
 /*!
 * @brief struct for Accel-output data of precision double
 */
 struct bno055_accel_double_t {
-double x;/**< Accel x double data */
-double y;/**< Accel y double data */
-double z;/**< Accel z double data */
+    double x; /**< Accel x double data */
+    double y; /**< Accel y double data */
+    double z; /**< Accel z double data */
 };
 /*!
 * @brief struct for Mag-output data of precision double
 */
 struct bno055_mag_double_t {
-double x;/**< Mag x double data */
-double y;/**< Mag y double data */
-double z;/**< Mag z double data */
+    double x; /**< Mag x double data */
+    double y; /**< Mag y double data */
+    double z; /**< Mag z double data */
 };
 /*!
 * @brief struct for Gyro-output data of precision double
 */
 struct bno055_gyro_double_t {
-double x;/**< Gyro x double data */
-double y;/**< Gyro y double data */
-double z;/**< Gyro z double data */
+    double x; /**< Gyro x double data */
+    double y; /**< Gyro y double data */
+    double z; /**< Gyro z double data */
 };
 /*!
 * @brief struct for Euler-output data of precision double
 */
 struct bno055_euler_double_t {
-double h;/**< Euler h double data */
-double r;/**< Euler r double data */
-double p;/**< Euler p double data */
+    double h; /**< Euler h double data */
+    double r; /**< Euler r double data */
+    double p; /**< Euler p double data */
 };
 /*!
 * @brief struct for Linear Accel-output data of precision double
 */
 struct bno055_linear_accel_double_t {
-double x;/**< linear accel x double data */
-double y;/**< linear accel y double data */
-double z;/**< linear accel z double data */
+    double x; /**< linear accel x double data */
+    double y; /**< linear accel y double data */
+    double z; /**< linear accel z double data */
 };
 /*!
 * @brief struct for Gravity-output data of precision double
 */
 struct bno055_gravity_double_t {
-double x;/**< Gravity x double data */
-double y;/**< Gravity y double data */
-double z;/**< Gravity z double data */
+    double x; /**< Gravity x double data */
+    double y; /**< Gravity y double data */
+    double z; /**< Gravity z double data */
 };
 #endif
-#ifdef	BNO055_FLOAT_ENABLE
+#ifdef BNO055_FLOAT_ENABLE
 /*!
 * @brief struct for Accel-output data of precision float
 */
 struct bno055_accel_float_t {
-float x;/**< accel x float data */
-float y;/**< accel y float data */
-float z;/**< accel z float data */
+    float x; /**< accel x float data */
+    float y; /**< accel y float data */
+    float z; /**< accel z float data */
 };
 /*!
 * @brief struct for Mag-output data of precision float
 */
 struct bno055_mag_float_t {
-float x;/**< Mag x float data */
-float y;/**< Mag y float data */
-float z;/**< Mag z float data */
+    float x; /**< Mag x float data */
+    float y; /**< Mag y float data */
+    float z; /**< Mag z float data */
 };
 /*!
 * @brief struct for Gyro-output data of precision float
 */
 struct bno055_gyro_float_t {
-float x;/**< Gyro x float data */
-float y;/**< Gyro y float data */
-float z;/**< Gyro z float data */
+    float x; /**< Gyro x float data */
+    float y; /**< Gyro y float data */
+    float z; /**< Gyro z float data */
 };
 /*!
 * @brief struct for Euler-output data of precision float
 */
 struct bno055_euler_float_t {
-float h;/**< Euler h float data */
-float r;/**< Euler r float data */
-float p;/**< Euler p float data */
+    float h; /**< Euler h float data */
+    float r; /**< Euler r float data */
+    float p; /**< Euler p float data */
 };
 /*!
 * @brief struct for Linear accel-output data of precision float
 */
 struct bno055_linear_accel_float_t {
-float x;/**< Linear accel x float data */
-float y;/**< Linear accel y float data */
-float z;/**< Linear accel z float data */
+    float x; /**< Linear accel x float data */
+    float y; /**< Linear accel y float data */
+    float z; /**< Linear accel z float data */
 };
 /*!
 * @brief struct for Gravity-output data of precision float
 */
 struct bno055_gravity_float_t {
-float x;/**< Gravity x float data */
-float y;/**< Gravity y float data */
-float z;/**< Gravity z float data */
+    float x; /**< Gravity x float data */
+    float y; /**< Gravity y float data */
+    float z; /**< Gravity z float data */
 };
 #endif
 /*!
 * @brief struct for Accel offset
 */
 struct bno055_accel_offset_t {
-s16 x;/**< Accel offset x data */
-s16 y;/**< Accel offset y data */
-s16 z;/**< Accel offset z data */
-s16 r;/**< Accel radius r data */
+    s16 x; /**< Accel offset x data */
+    s16 y; /**< Accel offset y data */
+    s16 z; /**< Accel offset z data */
+    s16 r; /**< Accel radius r data */
 };
 /*!
 * @brief struct for Gyro offset
 */
 struct bno055_gyro_offset_t {
-s16 x;/**< Gyro offset x data */
-s16 y;/**< Gyro offset y data */
-s16 z;/**< Gyro offset z data */
+    s16 x; /**< Gyro offset x data */
+    s16 y; /**< Gyro offset y data */
+    s16 z; /**< Gyro offset z data */
 };
 /*!
 * @brief struct for Mag offset
 */
 struct bno055_mag_offset_t {
-s16 x;/**< Mag offset x data */
-s16 y;/**< Mag offset y data */
-s16 z;/**< Mag offset z data */
-s16 r;/**< Mag radius x data */
+    s16 x; /**< Mag offset x data */
+    s16 y; /**< Mag offset y data */
+    s16 z; /**< Mag offset z data */
+    s16 r; /**< Mag radius x data */
 };
 /*!
 * @brief struct for soft iron calibration matrix
 */
 struct bno055_sic_matrix_t {
-s16 sic_0;/**< soft iron calibration matrix 0 data */
-s16 sic_1;/**< soft iron calibration matrix 1 data */
-s16 sic_2;/**< soft iron calibration matrix 2 data */
-s16 sic_3;/**< soft iron calibration matrix 3 data */
-s16 sic_4;/**< soft iron calibration matrix 4 data */
-s16 sic_5;/**< soft iron calibration matrix 5 data */
-s16 sic_6;/**< soft iron calibration matrix 6 data */
-s16 sic_7;/**< soft iron calibration matrix 7 data */
-s16 sic_8;/**< soft iron calibration matrix 8 data */
+    s16 sic_0; /**< soft iron calibration matrix 0 data */
+    s16 sic_1; /**< soft iron calibration matrix 1 data */
+    s16 sic_2; /**< soft iron calibration matrix 2 data */
+    s16 sic_3; /**< soft iron calibration matrix 3 data */
+    s16 sic_4; /**< soft iron calibration matrix 4 data */
+    s16 sic_5; /**< soft iron calibration matrix 5 data */
+    s16 sic_6; /**< soft iron calibration matrix 6 data */
+    s16 sic_7; /**< soft iron calibration matrix 7 data */
+    s16 sic_8; /**< soft iron calibration matrix 8 data */
 };
+
+// clang-format off
 /***************************************************/
 /**\name	CONSTANT DEFINITIONS                   */
 /***************************************************/
@@ -2144,15 +2142,16 @@ BNO055_GYRO_ANY_MOTION_THRES_ADDR
 #define BNO055_GYRO_AWAKE_DURN_REG		BNO055_GYRO_ANY_MOTION_SET_ADDR
 
 /* PAGE1 DATA REGISTERS DEFINITION END*/
+// clang-format on
+
 /*************************************************/
 /**\name GET AND SET BITSLICE FUNCTIONS    */
 /*************************************************/
-#define BNO055_GET_BITSLICE(regvar, bitname)\
-((regvar & bitname##_MSK) >> bitname##_POS)
+#define BNO055_GET_BITSLICE(regvar, bitname) \
+    ((regvar & bitname##_MSK) >> bitname##_POS)
 
-
-#define BNO055_SET_BITSLICE(regvar, bitname, val)\
-((regvar & ~bitname##_MSK) | ((val<<bitname##_POS)&bitname##_MSK))
+#define BNO055_SET_BITSLICE(regvar, bitname, val) \
+    ((regvar & ~bitname##_MSK) | ((val << bitname##_POS) & bitname##_MSK))
 /*************************************************/
 /**\name FUNCTION DECLARATION    */
 /*************************************************/
@@ -2199,7 +2198,7 @@ BNO055_RETURN_FUNCTION_TYPE bno055_init(struct bno055_t *bno055);
  *
 */
 BNO055_RETURN_FUNCTION_TYPE bno055_write_register(u8 addr_u8,
-u8 *data_u8, u8 len_u8);
+                                                  u8 *data_u8, u8 len_u8);
 /*!
  *	@brief This API reads the data from
  *	the given register address
@@ -2216,7 +2215,7 @@ u8 *data_u8, u8 len_u8);
  *
  */
 BNO055_RETURN_FUNCTION_TYPE bno055_read_register(u8 addr_u8,
-u8 *data_u8, u8 len_u8);
+                                                 u8 *data_u8, u8 len_u8);
 /*!
  *	@brief This API reads chip id
  *	from register 0x00 it is a byte of data
@@ -2856,7 +2855,7 @@ struct bno055_gravity_t *gravity);
  *
  */
 BNO055_RETURN_FUNCTION_TYPE bno055_read_temp_data(s8 *temp_s8);
-#ifdef	BNO055_FLOAT_ENABLE
+#ifdef BNO055_FLOAT_ENABLE
 /********************************************************************/
 /**\name FUNCTIONS FOR READING ACCEL DATA OUTPUT AS FLOAT PRECISION */
 /********************************************************************/
@@ -3482,7 +3481,7 @@ float *temp_f);
 BNO055_RETURN_FUNCTION_TYPE bno055_convert_float_temp_celsius(
 float *temp_f);
 #endif
-#ifdef	BNO055_DOUBLE_ENABLE
+#ifdef BNO055_DOUBLE_ENABLE
 /**************************************************************************/
 /**\name FUNCTIONS FOR READING ACCEL DATA OUTPUT AS DOUBLE PRECISION */
 /*************************************************************************/
@@ -5238,7 +5237,7 @@ u8 remap_z_sign_u8);
  *	@note : Each soft iron calibration matrix range from -32768 to +32767
  */
 BNO055_RETURN_FUNCTION_TYPE bno055_read_sic_matrix(
-struct bno055_sic_matrix_t  *sic_matrix);
+struct bno055_sic_matrix_t *sic_matrix);
 /*!
  *	@brief This API is used to write soft iron calibration matrix
  *	from the register 0x43 to 0x53 it is a 18 bytes of data
@@ -5265,7 +5264,7 @@ struct bno055_sic_matrix_t  *sic_matrix);
  *	@note : Each soft iron calibration matrix range from -32768 to +32767
  */
 BNO055_RETURN_FUNCTION_TYPE bno055_write_sic_matrix(
-struct bno055_sic_matrix_t  *sic_matrix);
+struct bno055_sic_matrix_t *sic_matrix);
 /*****************************************************/
 /**\name FUNCTIONS FOR ACCEL OFFSET AND RADIUS */
 /*****************************************************/
@@ -5301,7 +5300,7 @@ struct bno055_sic_matrix_t  *sic_matrix);
  *	bno055_set_accel_range() API
  */
 BNO055_RETURN_FUNCTION_TYPE bno055_read_accel_offset(
-struct bno055_accel_offset_t  *accel_offset);
+struct bno055_accel_offset_t *accel_offset);
 /*!
  *	@brief This API is used to write accel offset and accel radius
  *	offset form register 0x55 to 0x5A and radius form 0x67 and 0x68
@@ -5334,7 +5333,7 @@ struct bno055_accel_offset_t  *accel_offset);
  *	bno055_set_accel_range() API
  */
 BNO055_RETURN_FUNCTION_TYPE bno055_write_accel_offset(
-struct bno055_accel_offset_t  *accel_offset);
+struct bno055_accel_offset_t *accel_offset);
 /*****************************************************/
 /**\name FUNCTIONS FOR MAG OFFSET AND RADIUS*/
 /*****************************************************/
@@ -5360,7 +5359,7 @@ struct bno055_accel_offset_t  *accel_offset);
  */
 
 BNO055_RETURN_FUNCTION_TYPE bno055_read_mag_offset(
-struct bno055_mag_offset_t  *mag_offset);
+struct bno055_mag_offset_t *mag_offset);
 /*!
  *	@brief This API is used to read mag offset
  *	offset form register 0x69 to 0x6A
@@ -5382,7 +5381,7 @@ struct bno055_mag_offset_t  *mag_offset);
  *	@note  The range of the magnetometer offset is +/-6400 in LSB
  */
 BNO055_RETURN_FUNCTION_TYPE bno055_write_mag_offset(
-struct bno055_mag_offset_t  *mag_offset);
+struct bno055_mag_offset_t *mag_offset);
 /*****************************************************/
 /**\name FUNCTIONS FOR GYRO OFFSET */
 /*****************************************************/
@@ -5418,7 +5417,7 @@ struct bno055_mag_offset_t  *mag_offset);
  *	bno055_set_gyro_range() API
  */
 BNO055_RETURN_FUNCTION_TYPE bno055_read_gyro_offset(
-struct bno055_gyro_offset_t  *gyro_offset);
+struct bno055_gyro_offset_t *gyro_offset);
 /*!
  *	@brief This API is used to read gyro offset
  *	offset form register 0x61 to 0x66
@@ -7316,7 +7315,7 @@ u8 channel_u8, u8 *data_u8);
  *
  */
 BNO055_RETURN_FUNCTION_TYPE bno055_set_gyro_any_motion_axis_enable(
-u8 channel_u8, u8  data_u8);
+u8 channel_u8, u8 data_u8);
 /**************************************************************/
 /**\name FUNCTIONS FOR GYRO HIGHRATE ENABLE */
 /**************************************************************/

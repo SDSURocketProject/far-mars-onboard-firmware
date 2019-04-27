@@ -5,10 +5,10 @@
  *  Author: David Knight
  */
 
-#include "pressure.h"
-#include <asf.h>
 #include "daq_send.h"
 #include "logger.h"
+#include "pressure.h"
+#include <asf.h>
 
 //! Constant by which each pressure reading is divided by when converting to PSI. Defined as 2^(adc resolution).
 #define PRESSURE_DIVISION_CONSTANT 4096UL
@@ -35,6 +35,7 @@ static SemaphoreHandle_t pressureSyncSemaphore;
 // Updated 3-8-2019
 //! Number of values used inside the adcOffsetTable.
 #define OFFSET_TABLE_SIZE 16
+// clang-format off
 //! Offset table used for correcting the error of the onboard ADC.
 static const int16_t adcOffsetTable[OFFSET_TABLE_SIZE] = {
 	11, 11, 12, 13,
@@ -42,6 +43,7 @@ static const int16_t adcOffsetTable[OFFSET_TABLE_SIZE] = {
 	 5,  5,  6,  6,
 	 5,  5,  5,  6
 };
+// clang-format on
 
 void pressureAdcCallback(struct adc_module *const module);
 
@@ -49,46 +51,46 @@ void pressureAdcCallback(struct adc_module *const module);
  * @brief Initializes the pressure sensors.
  */
 int pressureInit(void) {
-	struct adc_config adcConfig;
-	uint32_t returned;
+    struct adc_config adcConfig;
+    uint32_t returned;
 
-	pressureADCSemaphore = xSemaphoreCreateMutex();
-	if (pressureADCSemaphore == NULL) {
-		configASSERT(0);
-	}
-	pressureSyncSemaphore = xSemaphoreCreateBinary();
-	if (pressureSyncSemaphore == NULL) {
-		configASSERT(0);
-	}
+    pressureADCSemaphore = xSemaphoreCreateMutex();
+    if (pressureADCSemaphore == NULL) {
+        configASSERT(0);
+    }
+    pressureSyncSemaphore = xSemaphoreCreateBinary();
+    if (pressureSyncSemaphore == NULL) {
+        configASSERT(0);
+    }
 
-	adc_get_config_defaults(&adcConfig);
-	adcConfig.clock_prescaler = ADC_CLOCK_PRESCALER_DIV16;
-	adcConfig.reference = ADC_REFERENCE_INTVCC2; // VDDANA
-	adcConfig.positive_input = ADC_POSITIVE_INPUT_PIN0;
-	adcConfig.resolution = ADC_RESOLUTION_CUSTOM;
-	adcConfig.accumulate_samples = ADC_ACCUMULATE_SAMPLES_8;
-	adcConfig.divide_result = ADC_DIVIDE_RESULT_8;
-	
-	adcConfig.positive_input_sequence_mask_enable = (1 << ADC_POSITIVE_INPUT_PIN1) | // Battery Sense
-	                                                (1 << ADC_POSITIVE_INPUT_PIN4) | // Methane
-													(1 << ADC_POSITIVE_INPUT_PIN5) | // LOX
-													(1 << ADC_POSITIVE_INPUT_PIN6) | // Helium
-													(1 << ADC_POSITIVE_INPUT_PIN7);  // Chamber
-	
-	if ((returned = adc_init(&pressureADCModule, ADC0, &adcConfig)) != STATUS_OK) {
-		configASSERT(0);
-		return FMOF_FAILURE;
-	}
+    adc_get_config_defaults(&adcConfig);
+    adcConfig.clock_prescaler    = ADC_CLOCK_PRESCALER_DIV16;
+    adcConfig.reference          = ADC_REFERENCE_INTVCC2; // VDDANA
+    adcConfig.positive_input     = ADC_POSITIVE_INPUT_PIN0;
+    adcConfig.resolution         = ADC_RESOLUTION_CUSTOM;
+    adcConfig.accumulate_samples = ADC_ACCUMULATE_SAMPLES_8;
+    adcConfig.divide_result      = ADC_DIVIDE_RESULT_8;
 
-	*((volatile uint16_t *)0x4200440A) |= (1<<7); // Enable Rail-to-rail mode
+    adcConfig.positive_input_sequence_mask_enable = (1 << ADC_POSITIVE_INPUT_PIN1) | // Battery Sense
+                                                    (1 << ADC_POSITIVE_INPUT_PIN4) | // Methane
+                                                    (1 << ADC_POSITIVE_INPUT_PIN5) | // LOX
+                                                    (1 << ADC_POSITIVE_INPUT_PIN6) | // Helium
+                                                    (1 << ADC_POSITIVE_INPUT_PIN7);  // Chamber
 
-	adc_enable(&pressureADCModule);
-	adc_enable_positive_input_sequence(&pressureADCModule, adcConfig.positive_input_sequence_mask_enable);
+    if ((returned = adc_init(&pressureADCModule, ADC0, &adcConfig)) != STATUS_OK) {
+        configASSERT(0);
+        return FMOF_FAILURE;
+    }
 
-	adc_register_callback(&pressureADCModule, pressureAdcCallback, ADC_CALLBACK_READ_BUFFER);
-	adc_enable_callback(&pressureADCModule, ADC_CALLBACK_READ_BUFFER);
+    *((volatile uint16_t *)0x4200440A) |= (1 << 7); // Enable Rail-to-rail mode
 
-	return FMOF_SUCCESS;
+    adc_enable(&pressureADCModule);
+    adc_enable_positive_input_sequence(&pressureADCModule, adcConfig.positive_input_sequence_mask_enable);
+
+    adc_register_callback(&pressureADCModule, pressureAdcCallback, ADC_CALLBACK_READ_BUFFER);
+    adc_enable_callback(&pressureADCModule, ADC_CALLBACK_READ_BUFFER);
+
+    return FMOF_SUCCESS;
 }
 
 /**
@@ -100,17 +102,17 @@ int pressureInit(void) {
  * @retval FMOF_FAILURE The conversion has failed to start
  */
 int pressureStartConversion(uint8_t wait) {
-	if (xSemaphoreTake(pressureADCSemaphore, pdMS_TO_TICKS(0)) != pdPASS) {
-		return FMOF_FAILURE;
-	}
+    if (xSemaphoreTake(pressureADCSemaphore, pdMS_TO_TICKS(0)) != pdPASS) {
+        return FMOF_FAILURE;
+    }
 
-	if (adc_read_buffer_job(&pressureADCModule, adcBuffer, numPressureSensors) != STATUS_OK) {
-		configASSERT(0);
-		xSemaphoreGive(pressureADCSemaphore);
-		xSemaphoreGive(pressureSyncSemaphore);
-		return FMOF_FAILURE;
-	}
-	return FMOF_SUCCESS;
+    if (adc_read_buffer_job(&pressureADCModule, adcBuffer, numPressureSensors) != STATUS_OK) {
+        configASSERT(0);
+        xSemaphoreGive(pressureADCSemaphore);
+        xSemaphoreGive(pressureSyncSemaphore);
+        return FMOF_FAILURE;
+    }
+    return FMOF_SUCCESS;
 }
 
 /**
@@ -123,29 +125,29 @@ int pressureStartConversion(uint8_t wait) {
  * @retval FMOF_FAILURE                   Failed to read conversion before timeout
  */
 int pressureReadConversion(struct sensorMessage *pressures, struct sensorMessage *voltage, uint8_t wait) {
-	if (xSemaphoreGetMutexHolder(pressureADCSemaphore) != xTaskGetCurrentTaskHandle()) {
-		return FMOF_PRESSURE_START_CONVERSION;
-	}
-	// Synchronize with ISR
-	if (xSemaphoreTake(pressureSyncSemaphore, pdMS_TO_TICKS(wait)) != pdPASS) {
-		xSemaphoreGive(pressureADCSemaphore);
-		return FMOF_FAILURE;
-	}
+    if (xSemaphoreGetMutexHolder(pressureADCSemaphore) != xTaskGetCurrentTaskHandle()) {
+        return FMOF_PRESSURE_START_CONVERSION;
+    }
+    // Synchronize with ISR
+    if (xSemaphoreTake(pressureSyncSemaphore, pdMS_TO_TICKS(wait)) != pdPASS) {
+        xSemaphoreGive(pressureADCSemaphore);
+        return FMOF_FAILURE;
+    }
 
-	voltage->batteryRaw.voltage = adcBuffer[battSense];
-	pressures->pressureRaw.methane = adcBuffer[pressureMethane];
-	pressures->pressureRaw.LOX = adcBuffer[pressureLOX];
-	pressures->pressureRaw.helium = adcBuffer[pressureHelium];
-	pressures->pressureRaw.chamber = adcBuffer[pressureChamber];
+    voltage->batteryRaw.voltage    = adcBuffer[battSense];
+    pressures->pressureRaw.methane = adcBuffer[pressureMethane];
+    pressures->pressureRaw.LOX     = adcBuffer[pressureLOX];
+    pressures->pressureRaw.helium  = adcBuffer[pressureHelium];
+    pressures->pressureRaw.chamber = adcBuffer[pressureChamber];
 
-	pressures->msgID = pressureRawDataID;
-	pressures->timestamp = lastTimestamp;
-	
-	voltage->msgID = batteryRawDataID;
-	voltage->timestamp = lastTimestamp;
-	
-	xSemaphoreGive(pressureADCSemaphore);
-	return FMOF_SUCCESS;
+    pressures->msgID     = pressureRawDataID;
+    pressures->timestamp = lastTimestamp;
+
+    voltage->msgID     = batteryRawDataID;
+    voltage->timestamp = lastTimestamp;
+
+    xSemaphoreGive(pressureADCSemaphore);
+    return FMOF_SUCCESS;
 }
 
 /**
@@ -154,15 +156,15 @@ int pressureReadConversion(struct sensorMessage *pressures, struct sensorMessage
  * @return	          none.
  */
 void pressureAdcCallback(struct adc_module *const module) {
-	uint8_t i = 0;
-	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-	for(; i < numPressureSensors; i++) {
-		adcBuffer[i] += adcOffsetTable[adcBuffer[i]/(PRESSURE_DIVISION_CONSTANT/OFFSET_TABLE_SIZE)];
-	}
-	lastTimestamp = getTimestamp();
-	// Synchronize with processing task
-	xSemaphoreGiveFromISR(pressureSyncSemaphore, &xHigherPriorityTaskWoken);
-	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+    uint8_t i                           = 0;
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    for (; i < numPressureSensors; i++) {
+        adcBuffer[i] += adcOffsetTable[adcBuffer[i] / (PRESSURE_DIVISION_CONSTANT / OFFSET_TABLE_SIZE)];
+    }
+    lastTimestamp = getTimestamp();
+    // Synchronize with processing task
+    xSemaphoreGiveFromISR(pressureSyncSemaphore, &xHigherPriorityTaskWoken);
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
 /**
@@ -175,19 +177,19 @@ void pressureAdcCallback(struct adc_module *const module) {
  * @retval FMOF_FAILURE The message passed in does not contain RAW pressure data
  */
 int pressureRawToPSIA(struct sensorMessage *RAW, struct sensorMessage *PSIA) {
-	struct sensorMessage PSIG;
-	int returned;
-	
-	if (RAW->msgID != pressureRawDataID) {
-		configASSERT(0);
-		return FMOF_FAILURE;
-	}
+    struct sensorMessage PSIG;
+    int returned;
 
-	returned = pressureRawToPSIG(RAW, &PSIG);
-	if (returned != FMOF_SUCCESS) {
-		return returned;
-	}
-	return pressurePSIGToPSIA(&PSIG, PSIA);;
+    if (RAW->msgID != pressureRawDataID) {
+        configASSERT(0);
+        return FMOF_FAILURE;
+    }
+
+    returned = pressureRawToPSIG(RAW, &PSIG);
+    if (returned != FMOF_SUCCESS) {
+        return returned;
+    }
+    return pressurePSIGToPSIA(&PSIG, PSIA);
 }
 
 /**
@@ -200,37 +202,37 @@ int pressureRawToPSIA(struct sensorMessage *RAW, struct sensorMessage *PSIA) {
  * @retval FMOF_FAILURE The message passed in does not contain RAW pressure data
  */
 int pressureRawToPSIG(struct sensorMessage *RAW, struct sensorMessage *PSIG) {
-	if (RAW->msgID != pressureRawDataID) {
-		configASSERT(0);
-		return FMOF_FAILURE;
-	}
+    if (RAW->msgID != pressureRawDataID) {
+        configASSERT(0);
+        return FMOF_FAILURE;
+    }
 
-	int32_t methane, LOX, helium, chamber;
+    int32_t methane, LOX, helium, chamber;
 
-	methane = RAW->pressureRaw.methane;
-	LOX     = RAW->pressureRaw.LOX;
-	helium  = RAW->pressureRaw.helium;
-	chamber = RAW->pressureRaw.chamber;
+    methane = RAW->pressureRaw.methane;
+    LOX     = RAW->pressureRaw.LOX;
+    helium  = RAW->pressureRaw.helium;
+    chamber = RAW->pressureRaw.chamber;
 
-	methane -= PRESSURE_DC_BIAS; // Remove .5v DC bias
-	if (methane < 0) { // Check overflow
-		methane = 0;
-	}
-	PSIG->pressurePSIG.methane = (methane*PRESSURE_METHANE_MAX_PRESSURE*5/4)/PRESSURE_DIVISION_CONSTANT;
-	
-	LOX -= PRESSURE_DC_BIAS; // Remove .5v DC bias
-	if (LOX < 0) { // Check overflow
-		LOX = 0;
-	}
-	PSIG->pressurePSIG.LOX = (LOX*PRESSURE_LOX_MAX_PRESSURE*5/4)/PRESSURE_DIVISION_CONSTANT;
+    methane -= PRESSURE_DC_BIAS; // Remove .5v DC bias
+    if (methane < 0) {           // Check overflow
+        methane = 0;
+    }
+    PSIG->pressurePSIG.methane = (methane * PRESSURE_METHANE_MAX_PRESSURE * 5 / 4) / PRESSURE_DIVISION_CONSTANT;
 
-	PSIG->pressurePSIG.helium = (helium*PRESSURE_HELIUM_MAX_PRESSURE)/PRESSURE_DIVISION_CONSTANT;
+    LOX -= PRESSURE_DC_BIAS; // Remove .5v DC bias
+    if (LOX < 0) {           // Check overflow
+        LOX = 0;
+    }
+    PSIG->pressurePSIG.LOX = (LOX * PRESSURE_LOX_MAX_PRESSURE * 5 / 4) / PRESSURE_DIVISION_CONSTANT;
 
-	PSIG->pressurePSIG.chamber = (chamber*PRESSURE_CHAMBER_MAX_PRESSURE)/PRESSURE_DIVISION_CONSTANT;
+    PSIG->pressurePSIG.helium = (helium * PRESSURE_HELIUM_MAX_PRESSURE) / PRESSURE_DIVISION_CONSTANT;
 
-	PSIG->msgID = pressurePSIGDataID;
-	PSIG->timestamp = RAW->timestamp;
-	return FMOF_SUCCESS;
+    PSIG->pressurePSIG.chamber = (chamber * PRESSURE_CHAMBER_MAX_PRESSURE) / PRESSURE_DIVISION_CONSTANT;
+
+    PSIG->msgID     = pressurePSIGDataID;
+    PSIG->timestamp = RAW->timestamp;
+    return FMOF_SUCCESS;
 }
 
 /**
@@ -243,18 +245,18 @@ int pressureRawToPSIG(struct sensorMessage *RAW, struct sensorMessage *PSIG) {
  * @retval FMOF_FAILURE The message passed in does not contain PSIA data
  */
 int pressurePSIAToPSIG(struct sensorMessage *PSIA, struct sensorMessage *PSIG) {
-	if (PSIA->msgID != pressurePSIADataID) {
-		configASSERT(0);
-		return FMOF_FAILURE;
-	}
+    if (PSIA->msgID != pressurePSIADataID) {
+        configASSERT(0);
+        return FMOF_FAILURE;
+    }
 
-	PSIG->pressurePSIG.methane = PSIA->pressurePSIA.methane+15;
-	PSIG->pressurePSIG.LOX     = PSIA->pressurePSIA.LOX+15;
-	PSIG->pressurePSIG.helium  = PSIA->pressurePSIA.helium+15;
-	PSIG->pressurePSIG.chamber = PSIA->pressurePSIA.chamber+15;
-	PSIG->msgID = pressurePSIGDataID;
-	PSIG->timestamp = PSIA->timestamp;
-	return FMOF_SUCCESS;
+    PSIG->pressurePSIG.methane = PSIA->pressurePSIA.methane + 15;
+    PSIG->pressurePSIG.LOX     = PSIA->pressurePSIA.LOX + 15;
+    PSIG->pressurePSIG.helium  = PSIA->pressurePSIA.helium + 15;
+    PSIG->pressurePSIG.chamber = PSIA->pressurePSIA.chamber + 15;
+    PSIG->msgID                = pressurePSIGDataID;
+    PSIG->timestamp            = PSIA->timestamp;
+    return FMOF_SUCCESS;
 }
 
 /**
@@ -267,16 +269,16 @@ int pressurePSIAToPSIG(struct sensorMessage *PSIA, struct sensorMessage *PSIG) {
  * @retval FMOF_FAILURE The message passed in does not contain PSIG data
  */
 int pressurePSIGToPSIA(struct sensorMessage *PSIG, struct sensorMessage *PSIA) {
-	if (PSIG->msgID != pressurePSIGDataID) {
-		configASSERT(0);
-		return FMOF_FAILURE;
-	}
+    if (PSIG->msgID != pressurePSIGDataID) {
+        configASSERT(0);
+        return FMOF_FAILURE;
+    }
 
-	PSIA->pressurePSIA.methane = PSIG->pressurePSIG.methane-15;
-	PSIA->pressurePSIA.LOX     = PSIG->pressurePSIG.LOX-15;
-	PSIA->pressurePSIA.helium  = PSIG->pressurePSIG.helium-15;
-	PSIA->pressurePSIA.chamber = PSIG->pressurePSIG.chamber-15;
-	PSIA->msgID = pressurePSIADataID;
-	PSIA->timestamp = PSIG->timestamp;
-	return FMOF_SUCCESS;
+    PSIA->pressurePSIA.methane = PSIG->pressurePSIG.methane - 15;
+    PSIA->pressurePSIA.LOX     = PSIG->pressurePSIG.LOX - 15;
+    PSIA->pressurePSIA.helium  = PSIG->pressurePSIG.helium - 15;
+    PSIA->pressurePSIA.chamber = PSIG->pressurePSIG.chamber - 15;
+    PSIA->msgID                = pressurePSIADataID;
+    PSIA->timestamp            = PSIG->timestamp;
+    return FMOF_SUCCESS;
 }
