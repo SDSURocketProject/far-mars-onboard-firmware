@@ -37,6 +37,7 @@ volatile static int32_t sendBufferIdx;
 static TaskHandle_t xDaqSendHandle = NULL;
 
 static int configRS485(struct usart_module *module);
+void daqSendCallback(struct usart_module *const module);
 static int daqPackSendBuffer(void);
 
 /**

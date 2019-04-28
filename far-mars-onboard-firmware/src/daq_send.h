@@ -11,7 +11,6 @@
 #include "timestamp.h"
 
 void daqSendTask(void *pvParameters);
-void daqSendCallback(struct usart_module *const module);
 int daqSendSensorMessage(struct sensorMessage *msg);
 //int daqSendString(const char *str); // DEPRECATED
 
