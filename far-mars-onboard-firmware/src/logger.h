@@ -8,6 +8,13 @@
 #ifndef LOGGER_H_
 #define LOGGER_H_
 
+/**
+ * @defgroup D_loggerGroup Logger
+ * @brief FreeRTOS task for logging data and errors to the SD card.
+ * 
+ * @{
+ */
+
 #include "far_mars_onboard_firmware.h"
 #include "messages.h"
 #include "timestamp.h"
@@ -33,5 +40,9 @@ enum loggingLevels {
 void loggerTask(void *pvParameters);
 int logSensorMessage(struct sensorMessage *msg, uint8_t level);
 int logString(const char *msg, uint8_t level);
+
+/**
+ * @} D_loggerGroup
+ */
 
 #endif /* LOGGER_H_ */

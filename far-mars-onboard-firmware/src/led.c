@@ -4,6 +4,12 @@
  * Created: 12/20/2018 3:58:19 PM
  *  Author: David Knight
  */
+/**
+ * @defgroup E_statusGroup Status
+ * @brief FreeRTOS task for logging data and errors to the SD card.
+ * 
+ * @{
+ */
 
 #include "led.h"
 #include "logger.h"
@@ -40,3 +46,7 @@ void ledTask(void *pvParameters) {
         vTaskDelay(pdMS_TO_TICKS(500));
     }
 }
+
+/**
+ * @} E_statusGroup
+ */

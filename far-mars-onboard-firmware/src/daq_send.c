@@ -5,6 +5,10 @@
  *  Author: David Knight
  */
 
+/**
+ * @addtogroup C_daqGroup
+ * @{
+ */
 #include "com.h"
 #include "daq_send.h"
 #include "far_mars_onboard_firmware.h"
@@ -80,9 +84,9 @@ void daqSendTask(void *pvParameters) {
 }
 
 /**
- * @brief	                Configures a sercom peripheral for RS485 communication.
- * @param[in] *pvParameters Pointer to the module that needs to be configured for RS485 communication.
- * @return	                Returns FMOF_SUCCESS upon success.
+ * @brief	          Configures a sercom peripheral for RS485 communication.
+ * @param[in] *module Pointer to the module that needs to be configured for RS485 communication.
+ * @return	          Returns FMOF_SUCCESS upon success.
  */
 static int configRS485(struct usart_module *module) {
     struct usart_config config_usart;
@@ -212,3 +216,7 @@ int daqSendString(const char *str) {
 	return FMOF_SUCCESS;
 }
 */
+
+/**
+ * @} C_daqGroup
+ */

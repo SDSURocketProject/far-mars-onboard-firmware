@@ -5,6 +5,11 @@
  *  Author: David Knight
  */
 
+/**
+ * @addtogroup B_navigationGroup
+ * @{
+ */
+
 #include "daq_send.h"
 #include "far_mars_adc1.h"
 #include "hall.h"
@@ -94,3 +99,7 @@ void navigationTask(void *pvParameters) {
         }
     }
 }
+
+/**
+ * @} B_navigationGroup
+ */

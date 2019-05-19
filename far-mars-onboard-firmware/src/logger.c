@@ -5,6 +5,10 @@
  *  Author: David Knight
  */
 
+/**
+ * @addtogroup D_loggerGroup
+ * @{
+ */
 #include "com.h"
 #include "logger.h"
 #include <arm_math.h>
@@ -257,3 +261,7 @@ int logString(const char *msg, uint8_t level) {
     }
     return FMOF_SUCCESS;
 }
+
+/**
+ * @} D_loggerGroup
+ */
