@@ -29,9 +29,19 @@ var NAVTREE =
       [ "Acronyms", "index.html#mainpageAcronyms", null ],
       [ "Theory of Operation", "index.html#mainpageToO", null ],
       [ "Documentation generation", "index.html#mainpageDocGen", null ],
+      [ "Todo", "index.html#Todo", [
+        [ "Code related", "index.html#todoCodeSec", null ],
+        [ "Documentation related", "index.html#todoDocSec", null ]
+      ] ],
       [ "BNO055 License", "index.html#mainpageBNO055License", null ]
     ] ],
     [ "License", "_license.html", null ],
+    [ "Other useful concepts", "concepts_page.html", [
+      [ "assert() and configASSERT()", "concepts_page.html#assertSec", null ],
+      [ "Interrupt Service Routines", "concepts_page.html#isrSec", null ],
+      [ "Semaphores", "concepts_page.html#semaphoreSec", null ],
+      [ "callback vs polled", "concepts_page.html#callbackVsPollSec", null ]
+    ] ],
     [ "Modules", "modules.html", "modules" ],
     [ "Data Structures", "annotated.html", [
       [ "Data Structures", "annotated.html", "annotated_dup" ],
@@ -65,9 +75,9 @@ var NAVTREEINDEX =
 "bno055_8h.html#a8839ad0f1756a87aca4c546cc85c6340",
 "bno055_8h.html#ab62aec096a442cb0597fc0c01ff65a85",
 "bno055_8h.html#ae0c433e7298d63298b7839699f1da7cf",
-"conf__access_8h.html#ab5c20e3a5856e2d1c955179083f7291f",
-"globals_defs_e.html",
-"pressure_8h.html#a39fd2e55b2affc0e88368d8bf4f2dd23"
+"conf__access_8h.html#ab08cd5dc058ef4fd50d5c13758d76e47",
+"globals_defs.html",
+"pressure_8c.html#ac4dcc8448d2830d1317ae30e72456431"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

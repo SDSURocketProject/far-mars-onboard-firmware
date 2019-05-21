@@ -52,6 +52,9 @@ enum FMOF_returns {
  * For the sake of understanding the basics of this firmware you should read
  * the sections Preface, Task Management, and Queue Management.
  *
+ * If you are unfamiliar with embedded firmware development or multi threading
+ * concepts you should also look at the @ref conceptsPage "Other useful concepts page".
+ *
  * The current version of the onboard computer schematic can be found at <a href="https://github.com/SDSURocketProject/far-mars-avionics-pcb/blob/master/documentation/schematic.pdf">far-mars-avionics-pcb</a>.
  * 
  * @section mainpageAcronyms Acronyms
@@ -65,6 +68,7 @@ enum FMOF_returns {
  * | HE      | Helium                                                           |
  * | I2C     | Inter-Integrated Circuit (pronounced I-squared-C)                |
  * | IMU     | Internal Measurement Unit                                        |
+ * | ISR     | Interrupt Service Routine                                        |
  * | LED     | Light Emitting Diode                                             |
  * | LiPo    | Lithium Polymer Battery                                          |
  * | LOX     | Liquid Oxygen                                                    |
@@ -142,6 +146,20 @@ enum FMOF_returns {
  * For information on how to write documentation with Doxygen reference the
  * <a href="http://doxygen.nl/manual/index.html">Doxygen manual</a>.
  *
+ * @section Todo
+ * @subsection todoCodeSec Code related
+ * - Reorder the start conversion functions in navigation.c to be in order from
+ *   longest to complete to shortest and put the read conversion functions in
+ *   the reverse order.
+ * - Resize the daqSendTask stack size as it now only needs the size
+ *   configMINIMAL_STACK_SIZE since commit 83bfc0186443a0f60d4229764ae8075fbaf678fa
+ *
+ * @subsection todoDocSec Documentation related
+ * - Redo the "Interrupt Service Routines" and "callback vs polled" sections
+ *   on the @ref conceptsPage "Other useful concepts" page
+ * - Complete the documentation for the B_navigationGroup, C_daqGroup,
+ *   D_loggerGroup, and E_statusGroup groups.
+ *
  * @section mainpageBNO055License BNO055 License
  *
  * Redistribution and use in source and binary forms, with or without
@@ -182,5 +200,81 @@ enum FMOF_returns {
  * No license is granted by implication or otherwise under any patent or
  * patent rights of the copyright holder.
  */
+
+/**
+ * @page conceptsPage Other useful concepts
+ *
+ * @section assertSec assert() and configASSERT()
+ * An <a href="https://en.wikipedia.org/wiki/Assertion_(software_development)">assertion</a>
+ * is a runtime test of assumptions made by the program. It is normally used to
+ * check find bugs in programs related to things like null pointer references,
+ * detect invalid logic in code, and failure conditions. Standard assertion
+ * behavior in desktop programming is to log some kind of error to either a
+ * terminal window, log file, or both and then stop execution of the program.
+ * This type of assertion is not viable for this firmware because there is no
+ * terminal window and a log file is not always available for errors,
+ * especially during startup before the SD card is initialized. In addition
+ * stopping execution of the firmware is not always viable if for example the
+ * rocket were in the air.
+ *
+ * Instead this program uses configASSERT() which is
+ * created in the FreeRTOSConfig.h file. It serves a similar purpose to
+ * assert(), however it stops execution of the firmware if the code was
+ * compiled with the Debug configuration and does nothing if the code was
+ * compiled with the Release configuration in the Atmel Studio Configuration
+ * Manager. Stopping the program while debugging makes it obvious to the
+ * developer that something has failed and choosing the "break all" command
+ * (Ctrl+F5) while debugging will stop the debug session on the line of code
+ * that failed.
+ *
+ * Example use of configASSERT() is shown below:
+ * \code{.c}
+ * if (somethingFailed) {
+ *     configASSERT(0);
+ *     attemptFix();
+ * }
+ * \endcode
+ * The actions taken by attemptFix() can range from doing nothing, correcting
+ * the problem immediately, restarting the FreeRTOS task, or in the worst case
+ * resetting the processor. The actions taken depend entirely on the importance
+ * of the failure and the state of the system.
+ *
+ * @section isrSec Interrupt Service Routines
+ * If I haven't yet written this look this up on google before reading about
+ * callback vs polled.
+ *
+ * @section semaphoreSec Semaphores
+ * If I haven't yet written this look this up on google before reading about
+ * callback vs polled.
+ *
+ * @section callbackVsPollSec callback vs polled
+ * A <a href="https://en.wikipedia.org/wiki/Callback_(computer_programming)">callback</a>
+ * is any executable code that is passed as an argument to other code that is
+ * expected to call back (execute) the argument at a given time.
+ *
+ * <a href="https://en.wikipedia.org/wiki/Polling_(computer_science)">Polling</a>
+ * refers to actively sampling the status of an external device by a client
+ * program as a synchronous activity.
+ *
+ * In the context of this firmware, and most firmware in general, callbacks and
+ * polling are two different ways of retrieving data from either hardware or
+ * some other piece of software. Let's say for example we needed to get data
+ * from an analog to digital converter (ADC) and it takes 10 milliseconds to
+ * get this data. The ADC is a device which can run at the same time as the
+ * code that we are executing in a program. The simplest method of getting data
+ * from the ADC would be to tell it to start collecting the data while we
+ * repeatedly check on the status of the ADC until it says it's done. However
+ * this isn't very efficient because during that 10 milliseconds our program
+ * could have been doing other things while it was waiting for the ADC to
+ * finish. The alternative method would be to tell the ADC to start collecting
+ * the data and having it tell our program when it's finished. This is normally
+ * done by providing a function that the ADC can trigger when it's finished.
+ * This function is called a callback function and in the case of the ADC the
+ * callback would be an Interrupt Service Routine. Within FreeRTOS we would
+ * have the callback use a binary semaphore to alert the thread that wanted the
+ * data that the operation has completed. See Chapter 6.4 of the <a href="https://www.freertos.org/Documentation/RTOS_book.html">Mastering the FreeRTOS Real Time Kernel</a>
+ * for more details.
+ * 
+ */ 
 
 #endif /* FAR_MARS_ONBOARD_FIRMWARE_H_ */

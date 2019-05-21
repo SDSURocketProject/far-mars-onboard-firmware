@@ -106,6 +106,7 @@ Introduction</h1>
 </ol>
 <p>This firmware is created in Atmel Studio 7.0.</p>
 <p>This documentation assumes basic familiarity with the FreeRTOS kernel. For learning basic concepts of the FreeRTOS kernel refer to the pdf book, "Mastering the FreeRTOS Real Time Kernel", at the <a href="https://www.freertos.org/Documentation/RTOS_book.html">FreeRTOS website</a>. For the sake of understanding the basics of this firmware you should read the sections Preface, Task Management, and Queue Management.</p>
+<p>If you are unfamiliar with embedded firmware development or multi threading concepts you should also look at the <a class="el" href="concepts_page.html">Other useful concepts page</a>.</p>
 <p>The current version of the onboard computer schematic can be found at <a href="https://github.com/SDSURocketProject/far-mars-avionics-pcb/blob/master/documentation/schematic.pdf">far-mars-avionics-pcb</a>.</p>
 <h1><a class="anchor" id="mainpageAcronyms"></a>
 Acronyms</h1>
@@ -129,36 +130,38 @@ Acronyms</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyLeft">IMU  </td><td class="markdownTableBodyLeft">Internal Measurement Unit   </td></tr>
 <tr class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft">ISR  </td><td class="markdownTableBodyLeft">Interrupt Service Routine   </td></tr>
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyLeft">LED  </td><td class="markdownTableBodyLeft">Light Emitting Diode   </td></tr>
-<tr class="markdownTableRowEven">
+<tr class="markdownTableRowOdd">
 <td class="markdownTableBodyLeft">LiPo  </td><td class="markdownTableBodyLeft">Lithium Polymer Battery   </td></tr>
-<tr class="markdownTableRowOdd">
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyLeft">LOX  </td><td class="markdownTableBodyLeft">Liquid Oxygen   </td></tr>
-<tr class="markdownTableRowEven">
+<tr class="markdownTableRowOdd">
 <td class="markdownTableBodyLeft">OBC  </td><td class="markdownTableBodyLeft">Onboard Computer   </td></tr>
-<tr class="markdownTableRowOdd">
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyLeft">PSIG  </td><td class="markdownTableBodyLeft">Pressure per Square Inch Guage   </td></tr>
-<tr class="markdownTableRowEven">
+<tr class="markdownTableRowOdd">
 <td class="markdownTableBodyLeft">PSIA  </td><td class="markdownTableBodyLeft">Pressure per Square Inch Absolute   </td></tr>
-<tr class="markdownTableRowOdd">
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyLeft">PT  </td><td class="markdownTableBodyLeft">Pressure Transducer   </td></tr>
-<tr class="markdownTableRowEven">
+<tr class="markdownTableRowOdd">
 <td class="markdownTableBodyLeft">RTC  </td><td class="markdownTableBodyLeft">Real Time Clock   </td></tr>
-<tr class="markdownTableRowOdd">
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyLeft">RTOS  </td><td class="markdownTableBodyLeft">Real Time Operating System   </td></tr>
-<tr class="markdownTableRowEven">
+<tr class="markdownTableRowOdd">
 <td class="markdownTableBodyLeft">RS485  </td><td class="markdownTableBodyLeft"><a href="https://en.wikipedia.org/wiki/RS-485">See Wikipedia</a>   </td></tr>
-<tr class="markdownTableRowOdd">
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyLeft">SDADC  </td><td class="markdownTableBodyLeft">Sigma Delta Analog to Digital Converter   </td></tr>
-<tr class="markdownTableRowEven">
+<tr class="markdownTableRowOdd">
 <td class="markdownTableBodyLeft">SERCOM  </td><td class="markdownTableBodyLeft">Serial Communication Interface   </td></tr>
-<tr class="markdownTableRowOdd">
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyLeft">SPI  </td><td class="markdownTableBodyLeft">Serial Peripheral Interface   </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyLeft">TC  </td><td class="markdownTableBodyLeft">Thermocouple   </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyLeft">UAF  </td><td class="markdownTableBodyLeft">Upper Air Frame   </td></tr>
+<td class="markdownTableBodyLeft">TC  </td><td class="markdownTableBodyLeft">Thermocouple   </td></tr>
 <tr class="markdownTableRowEven">
+<td class="markdownTableBodyLeft">UAF  </td><td class="markdownTableBodyLeft">Upper Air Frame   </td></tr>
+<tr class="markdownTableRowOdd">
 <td class="markdownTableBodyLeft">UART  </td><td class="markdownTableBodyLeft">Universal Asynchronous Receiver-Transmitter   </td></tr>
 </table>
 <h1><a class="anchor" id="mainpageToO"></a>
@@ -188,6 +191,20 @@ Documentation generation</h1>
 <li>You can view the documentation by clicking the "Show HTML output" button at the bottom of the wizard or by opening the file ".\documentation\html\index.html" in any web browser.</li>
 </ol>
 <p>For information on how to write documentation with Doxygen reference the <a href="http://doxygen.nl/manual/index.html">Doxygen manual</a>.</p>
+<h1><a class="anchor" id="Todo"></a>
+Todo</h1>
+<h2><a class="anchor" id="todoCodeSec"></a>
+Code related</h2>
+<ul>
+<li>Reorder the start conversion functions in <a class="el" href="navigation_8c.html">navigation.c</a> to be in order from longest to complete to shortest and put the read conversion functions in the reverse order.</li>
+<li>Resize the daqSendTask stack size as it now only needs the size configMINIMAL_STACK_SIZE since commit 83bfc0186443a0f60d4229764ae8075fbaf678fa</li>
+</ul>
+<h2><a class="anchor" id="todoDocSec"></a>
+Documentation related</h2>
+<ul>
+<li>Redo the "Interrupt Service Routines" and "callback vs polled" sections on the <a class="el" href="concepts_page.html">Other useful concepts</a> page</li>
+<li>Complete the documentation for the B_navigationGroup, C_daqGroup, D_loggerGroup, and E_statusGroup groups.</li>
+</ul>
 <h1><a class="anchor" id="mainpageBNO055License"></a>
 BNO055 License</h1>
 <p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
