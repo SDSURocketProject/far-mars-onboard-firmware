@@ -123,6 +123,29 @@ Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>Initialization of peripherals and FreeRTOS tasks. </p>
+<p>Initialization of peripherals, drivers and FreeRTOS takes place in the main function which is where the firmware begins after startup. The main function needs to do the following:</p>
+<ol type="1">
+<li>call <a href="http://asf.atmel.com/docs/latest/common.components.wifi.winc1500.wifi_serial_example.samd21_xplained_pro/html/group__asfdoc__sam0__system__group.html#ga43f5e0d6db0fb41a437cc9096b32e9b5">system_init()</a><ul>
+<li>ASF requires that we call this function at the start of main.</li>
+</ul>
+</li>
+<li>call <a class="el" href="timestamp_8c.html#a69afae640b5b4c3a30f66fff0b0ffb8f" title="Initializes the RTC used for timestamps.">configRTC()</a><ul>
+<li>Starts the RTC which will provide timestamps for the program.</li>
+</ul>
+</li>
+<li>initialize peripherals<ul>
+<li><a class="el" href="pressure_8c.html#ac4dcc8448d2830d1317ae30e72456431" title="Initializes the pressure sensors.">pressureInit()</a>, <a class="el" href="temperature_8c.html#ad0677c0eadcfa6c378b31d6d923bf7dd" title="Initializes the SDADC.">thermocoupleInit()</a>, <a class="el" href="far__mars__adc1_8c.html#a78e1ee5dc4ac9f4c4d9343d8105ef9a2" title="Initializes the pressure sensors.">adc1Init()</a>, and <a class="el" href="hall_8c.html#a848df13cc9fb6fccfdb97ad068a37769" title="Initializes the hall effect sensors.">hallInit()</a> must all be called before starting the FreeRTOS scheduler as the tasks we will create expect some things to already be initialized. The order that these functions are called is not important.</li>
+</ul>
+</li>
+<li>Create FreeRTOS tasks<ul>
+<li>Creates each of the tasks specified by the Theory of Operation section in this manual. Each of the tasks are assigned a priority that is relative to the idle task as it is always lowest priority task in every FreeRTOS program. Most tasks only require the smallest stack size specified in <a class="el" href="_free_r_t_o_s_config_8h.html">FreeRTOSConfig.h</a> except for the logger task because it has a large queue that it needs extra space for, see the <a class="el" href="group___d__logger_group.html">Logger</a> for more details. Each task also needs to have it's return value checked to ensure the task was properly created by the FreeRTOS kernel.</li>
+</ul>
+</li>
+<li>call vTaskStartScheduler()<ul>
+<li>Finally we can start the FreeRTOS scheduler which passes control over to the highest priority task that we just created. </li>
+</ul>
+</li>
+</ol>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="gaae2e6cd9cb7c07d824b4e864913cb226"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gaae2e6cd9cb7c07d824b4e864913cb226">&#9670;&nbsp;</a></span>daqSendTaskPriority</h2>

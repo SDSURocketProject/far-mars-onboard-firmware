@@ -30,6 +30,7 @@
  * | Acronym | Meaning                                                          |
  * | :------ | :--------------------------------------------------------------- |
  * | ADC     | Analog to Digital Converter                                      |
+ * | ASF     | Atmel Software Framework                                         |
  * | CH4     | Methane                                                          |
  * | DAQ     | Data Acquisition                                                 |
  * | FMOF    | Far Mars Onboard Firmware                                        |
@@ -40,10 +41,14 @@
  * | LiPo    | Lithium Polymer Battery                                          |
  * | LOX     | Liquid Oxygen                                                    |
  * | OBC     | Onboard Computer                                                 |
+ * | PSIG    | Pressure per Square Inch Guage                                   |
+ * | PSIA    | Pressure per Square Inch Absolute                                |
  * | PT      | Pressure Transducer                                              |
+ * | RTC     | Real Time Clock                                                  |
  * | RTOS    | Real Time Operating System                                       |
  * | RS485   | <a href="https://en.wikipedia.org/wiki/RS-485">See Wikipedia</a> |
  * | SDADC   | Sigma Delta Analog to Digital Converter                          |
+ * | SERCOM  | Serial Communication Interface                                   |
  * | SPI     | Serial Peripheral Interface                                      |
  * | TC      | Thermocouple                                                     |
  * | UAF     | Upper Air Frame                                                  |
@@ -154,6 +159,33 @@
  * @addtogroup A_mainGroup Main
  *
  * @brief Initialization of peripherals and FreeRTOS tasks.
+ *  
+ * Initialization of peripherals, drivers and FreeRTOS takes place in the main
+ * function which is where the firmware begins after startup. The main function
+ * needs to do the following:
+ *
+ * -# call <a href="http://asf.atmel.com/docs/latest/common.components.wifi.winc1500.wifi_serial_example.samd21_xplained_pro/html/group__asfdoc__sam0__system__group.html#ga43f5e0d6db0fb41a437cc9096b32e9b5">system_init()</a>
+ *     - ASF requires that we call this function at the start of main.
+ * -# call configRTC()
+ *     - Starts the RTC which will provide timestamps for the program.
+ * -# initialize peripherals
+ *     - pressureInit(), thermocoupleInit(), adc1Init(), and hallInit() must
+ *       all be called before starting the FreeRTOS scheduler as the tasks we
+ *       will create expect some things to already be initialized. The order
+ *       that these functions are called is not important.
+ * -# Create FreeRTOS tasks
+ *     - Creates each of the tasks specified by the Theory of Operation section
+ *       in this manual. Each of the tasks are assigned a priority that is
+ *       relative to the idle task as it is always lowest priority task in
+ *       every FreeRTOS program. Most tasks only require the smallest stack
+ *       size specified in FreeRTOSConfig.h except for the logger task because
+ *       it has a large queue that it needs extra space for, see the @ref
+ *       D_loggerGroup "Logger" for more details. Each task also needs to have
+ *       it's return value checked to ensure the task was properly created by
+ *       the FreeRTOS kernel.
+ * -# call vTaskStartScheduler()
+ *     - Finally we can start the FreeRTOS scheduler which passes control over
+ *       to the highest priority task that we just created.
  * @{
  */
 
@@ -189,13 +221,16 @@ void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName);
  * @return		never returns if working properly.
  */
 int main(void) {
+    // ASF Initialization
     system_init();
+    // far-mars-onboard-firmware peripheral initialization
     configRTC();
     pressureInit();
     thermocoupleInit();
     adc1Init();
     hallInit();
 
+    // FreeRTOS task initialization
     BaseType_t xReturned;
     TaskHandle_t xLedHandle        = NULL;
     TaskHandle_t xloggerHandle     = NULL;
@@ -240,7 +275,7 @@ int main(void) {
         configASSERT(0);
     }
 
-    /* Insert application code here, after the board has been initialized. */
+    // Start FreeRTOS tasks
     vTaskStartScheduler();
     // Should never reach here
     while (1) {};
