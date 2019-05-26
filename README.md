@@ -9,6 +9,9 @@ The primary tasks for the onboard computer are:
     - BNO055 Internal Measurement Unit
 2. Send the above sensor data to the off board data acquisition computer prior to launch
 3. Log the above sensor data to an SD card inserted into the onboard computer.
- 
+
+# Testing data
+Recordings of the data collected during cryo, static, and launch are located in the folder testing. In each folder is are .mat files containing the data from the test and a .m Matlab script which uses that data to create graphs.
+
 # Documentation
 Open the file "./documentation/html/index.html" in any web browser to view the firmware documentation.
