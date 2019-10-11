@@ -47,24 +47,16 @@ void navigationTask(void *pvParameters) {
         if ((adc1Return = adc1StartConversion(10)) != FMOF_SUCCESS) {
             logString("Starting adc 1 conversion timed out\n", LOG_LEVEL_ERROR);
         }
-        if ((thermocoupleReturn = thermocoupleStartConversion(10)) != FMOF_SUCCESS) {
-            logString("Starting thermocouple conversion timed out\n", LOG_LEVEL_ERROR);
-        }
 
         // Read conversions
         if (pressureReturn == FMOF_SUCCESS) {
-            if (pressureReadConversion(&pressure, &voltage, 10) != FMOF_SUCCESS) {
+            if (pressureReadConversion(&pressure, &voltage, &thermocouple, 10) != FMOF_SUCCESS) {
                 logString("Reading pressure conversion timed out\n", LOG_LEVEL_ERROR);
             }
         }
         if (adc1Return == FMOF_SUCCESS) {
             if (adc1ReadConversion(&pressureAdc1, 10) != FMOF_SUCCESS) {
                 logString("Reading adc 1 conversion timed out\n", LOG_LEVEL_ERROR);
-            }
-        }
-        if (thermocoupleReturn == FMOF_SUCCESS) {
-            if (thermocoupleReadConversion(&thermocouple, 10) != FMOF_SUCCESS) {
-                logString("Reading thermocouple conversion timed out\n", LOG_LEVEL_ERROR);
             }
         }
         if (hallReadConversion(&hall) != FMOF_SUCCESS) {
@@ -82,8 +74,10 @@ void navigationTask(void *pvParameters) {
         if (pressureReturn == FMOF_SUCCESS) {
             daqSendSensorMessage(&pressure);
             daqSendSensorMessage(&voltage);
+			daqSendSensorMessage(&thermocouple);
             logSensorMessage(&pressure, LOG_LEVEL_DATA);
             logSensorMessage(&voltage, LOG_LEVEL_DATA);
+			logSensorMessage(&thermocouple, LOG_LEVEL_DATA);
         }
         if (adc1Return == FMOF_SUCCESS) {
             daqSendSensorMessage(&pressureAdc1);

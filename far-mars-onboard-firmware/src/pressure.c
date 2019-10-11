@@ -71,7 +71,8 @@ int pressureInit(void) {
     adcConfig.accumulate_samples = ADC_ACCUMULATE_SAMPLES_8;
     adcConfig.divide_result      = ADC_DIVIDE_RESULT_8;
 
-    adcConfig.positive_input_sequence_mask_enable = (1 << ADC_POSITIVE_INPUT_PIN1) | // Battery Sense
+    adcConfig.positive_input_sequence_mask_enable = (1 << ADC_POSITIVE_INPUT_PIN0) | // Upper Air Frame Temperature
+													(1 << ADC_POSITIVE_INPUT_PIN1) | // Battery Sense
                                                     (1 << ADC_POSITIVE_INPUT_PIN4) | // Methane
                                                     (1 << ADC_POSITIVE_INPUT_PIN5) | // LOX
                                                     (1 << ADC_POSITIVE_INPUT_PIN6) | // Helium
@@ -117,14 +118,16 @@ int pressureStartConversion(uint8_t wait) {
 
 /**
  * @brief Reads all the pressure sensors after a conversion has been started.
- * @param[out] *pressures Contains pressure values upon return
- * @param[in]  wait       Maximum amount of time in milliseconds to wait for a single pressure sensor to be received
+ * @param[out] *pressures    Contains raw pressure data
+ * @param[out] *voltage      Contains raw battery data
+ * @param[out] *thermocouple Contains raw thermocouple data
+ * @param[in]  wait          Maximum amount of time in milliseconds to wait for a single pressure sensor to be received
  * 
  * @retval FMOF_SUCCESS                   Successfully read conversion
  * @retval FMOF_PRESSURE_START_CONVERSION Read conversion was called before start conversion
  * @retval FMOF_FAILURE                   Failed to read conversion before timeout
  */
-int pressureReadConversion(struct sensorMessage *pressures, struct sensorMessage *voltage, uint8_t wait) {
+int pressureReadConversion(struct sensorMessage *pressures, struct sensorMessage *voltage, struct sensorMessage *thermocouple, uint8_t wait) {
     if (xSemaphoreGetMutexHolder(pressureADCSemaphore) != xTaskGetCurrentTaskHandle()) {
         return FMOF_PRESSURE_START_CONVERSION;
     }
@@ -133,13 +136,17 @@ int pressureReadConversion(struct sensorMessage *pressures, struct sensorMessage
         xSemaphoreGive(pressureADCSemaphore);
         return FMOF_FAILURE;
     }
-
-    voltage->batteryRaw.voltage    = adcBuffer[battSense];
-    pressures->pressureRaw.methane = adcBuffer[pressureMethane];
-    pressures->pressureRaw.LOX     = adcBuffer[pressureLOX];
-    pressures->pressureRaw.helium  = adcBuffer[pressureHelium];
-    pressures->pressureRaw.chamber = adcBuffer[pressureChamber];
-
+	
+	thermocouple->thermocoupleRaw.uaf = adcBuffer[tempUAF];
+    voltage->batteryRaw.voltage       = adcBuffer[battSense];
+    pressures->pressureRaw.methane    = adcBuffer[pressureMethane];
+    pressures->pressureRaw.LOX        = adcBuffer[pressureLOX];
+    pressures->pressureRaw.helium     = adcBuffer[pressureHelium];
+    pressures->pressureRaw.chamber    = adcBuffer[pressureChamber];
+	
+	thermocouple->msgID     = thermocoupleRawDataID;
+	thermocouple->timestamp = lastTimestamp;
+	
     pressures->msgID     = pressureRawDataID;
     pressures->timestamp = lastTimestamp;
 

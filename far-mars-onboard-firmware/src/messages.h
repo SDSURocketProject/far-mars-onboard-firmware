@@ -74,7 +74,7 @@ struct pressureConvertedDataADC1 {
 
 //! @brief Struct containing thermocouple sensor data
 struct thermocoupleData {
-    int32_t uaf; // upper air frame
+    int16_t uaf; // upper air frame
 };
 
 //! @brief Struct containing thermocouple sensor data

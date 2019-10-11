@@ -11,6 +11,7 @@
 #include "messages.h"
 
 enum pressureSensors {
+	tempUAF,
     battSense,
     pressureMethane,
     pressureLOX,
@@ -21,7 +22,7 @@ enum pressureSensors {
 
 int pressureInit(void);
 int pressureStartConversion(uint8_t wait);
-int pressureReadConversion(struct sensorMessage *pressures, struct sensorMessage *voltage, uint8_t wait);
+int pressureReadConversion(struct sensorMessage *pressures, struct sensorMessage *voltage, struct sensorMessage *thermocouple, uint8_t wait);
 int pressureRawToPSIA(struct sensorMessage *RAW, struct sensorMessage *PSIA);
 int pressureRawToPSIG(struct sensorMessage *RAW, struct sensorMessage *PSIG);
 int pressurePSIAToPSIG(struct sensorMessage *PSIA, struct sensorMessage *PSIG);
