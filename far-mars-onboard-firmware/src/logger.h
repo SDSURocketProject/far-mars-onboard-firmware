@@ -35,7 +35,7 @@ enum loggingLevels {
 //! @brief Current logging level
 #define LOGGING_LEVEL LOG_LEVEL_ALL
 //! @brief Length of the message queue
-#define MESSAGE_QUEUE_LENGTH 50
+#define MESSAGE_QUEUE_LENGTH 100
 
 void loggerTask(void *pvParameters);
 int logSensorMessage(struct sensorMessage *msg, uint8_t level);
