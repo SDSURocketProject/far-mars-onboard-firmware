@@ -53,7 +53,7 @@ messageSizes = [
 21, #pressurePSIADataID
 21, #pressurePSIGDataID
 7,  #pressureRawADC1DataID
-9,  #thermocoupleRawDataID
+7,  #thermocoupleRawDataID
 7,  #hallEffectDataID
 7,  #batteryRawDataID
 9,  #batteryFloatDataID
@@ -83,12 +83,12 @@ messagePackedFormats = [
 '<hhhh', #pressureRawDataID 17
 '<IIII', #pressurePSIADataID 18
 '<IIII', #pressurePSIGDataID 19
-'<h',    #pressureRawADC1DataID
-'<i',    #thermocoupleRawDataID
-'<BB',   #hallEffectDataID
-'<h',    #batteryRawDataID 20
-'<f',    #batteryFloatDataID 21
-'s'      #strDataID 22
+'<h',    #pressureRawADC1DataID 20
+'<h',    #thermocoupleRawDataID 21
+'<BB',   #hallEffectDataID 22
+'<h',    #batteryRawDataID 23
+'<f',    #batteryFloatDataID 24
+'s'      #strDataID 25
 ]
 
 messageLogFormats = [

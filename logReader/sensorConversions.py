@@ -62,10 +62,14 @@ def filterMessages(messages, filter, IDs):
 # Pressure Conversions
 #------------------------------------------------------------------------------
 PRESSURE_DIVISION_CONSTANT = 2**12 #(2^adc bit rate)
-PRESSURE_METHANE_MAX_PRESSURE = 1500
-PRESSURE_LOX_MAX_PRESSURE = 1500
+PRESSURE_METHANE_MAX_PRESSURE = 3000
+PRESSURE_LOX_MAX_PRESSURE = 3000
 PRESSURE_HELIUM_MAX_PRESSURE = 5800
 PRESSURE_CHAMBER_MAX_PRESSURE = 1500
+PRESSURE_METHANE_BIAS = -8
+PRESSURE_LOX_BIAS = 380
+PRESSURE_HELIUM_BIAS = 0
+PRESSURE_CHAMBER_BIAS = 0
 
 # Returns true if the message contains pressure data
 def isPressure(message):
@@ -126,17 +130,17 @@ def pressureRawToPSIG(message):
 
     # Methane
     temp = (message[2][0]/PRESSURE_DIVISION_CONSTANT)*5.0-0.5
-    temp = (temp/4.0)*PRESSURE_METHANE_MAX_PRESSURE
+    temp = (temp/4.0)*PRESSURE_METHANE_MAX_PRESSURE - PRESSURE_METHANE_BIAS
     data.append(temp)
     # LOX
     temp = (message[2][1]/PRESSURE_DIVISION_CONSTANT)*5.0-0.5
-    temp = (temp/4.0)*PRESSURE_LOX_MAX_PRESSURE
+    temp = (temp/4.0)*PRESSURE_LOX_MAX_PRESSURE - PRESSURE_LOX_BIAS
     data.append(temp)
     # Helium
-    temp = (message[2][2]/PRESSURE_DIVISION_CONSTANT)*PRESSURE_HELIUM_MAX_PRESSURE
+    temp = (message[2][2]/PRESSURE_DIVISION_CONSTANT)*PRESSURE_HELIUM_MAX_PRESSURE - PRESSURE_HELIUM_BIAS
     data.append(temp)
     # Chamber
-    temp = (message[2][3]/PRESSURE_DIVISION_CONSTANT)*PRESSURE_CHAMBER_MAX_PRESSURE
+    temp = (message[2][3]/PRESSURE_DIVISION_CONSTANT)*PRESSURE_CHAMBER_MAX_PRESSURE - PRESSURE_CHAMBER_BIAS
     data.append(temp)
     
     return (sm.pressurePSIGDataID, message[1], tuple(data))
