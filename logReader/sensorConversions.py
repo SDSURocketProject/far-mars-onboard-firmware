@@ -9,7 +9,10 @@ from collections import Iterable
 def convertMessages(messages, inputID, outputID):
     inputID = [inputID]
     outputID = [outputID]
+
     if (isPressure(inputID) and isPressure(outputID)):
+        pass
+    elif (inputID == [sm.thermocoupleRawDataID] and outputID == [sm.thermocoupleRawDataID]):
         pass
     elif (isAcceleration(inputID) and isAcceleration(outputID)):
         pass
@@ -29,6 +32,8 @@ def convertMessages(messages, inputID, outputID):
         
         if (isPressure(inputID)):
             messages[i] = pressureConvert(messages[i], outputID)
+        elif (inputID == [sm.thermocoupleRawDataID]):
+            messages[i] = thermocoupleConvert(messages[i])
         elif (isAcceleration(inputID)):
             messages[i] = accelerationConvert(messages[i], outputID)
         elif (isGyroscope(inputID)):
@@ -37,7 +42,7 @@ def convertMessages(messages, inputID, outputID):
             messages[i] = magnetometerConvert(messages[i], outputID)
         elif (isCpuTemp(inputID)):
             messages[i] = cpuTempConvert(messages[i], outputID)
-    
+
     return messages
 
 # Returns a list of messages that have been filtered based on IDs
@@ -67,9 +72,8 @@ PRESSURE_LOX_MAX_PRESSURE = 3000
 PRESSURE_HELIUM_MAX_PRESSURE = 5800
 PRESSURE_CHAMBER_MAX_PRESSURE = 1500
 PRESSURE_METHANE_BIAS = -8
-PRESSURE_LOX_BIAS = 380
-PRESSURE_HELIUM_BIAS = 0
-PRESSURE_CHAMBER_BIAS = 0
+PRESSURE_LOX_BIAS = 375
+PRESSURE_CHAMBER_BIAS = 23
 
 # Returns true if the message contains pressure data
 def isPressure(message):
@@ -130,17 +134,21 @@ def pressureRawToPSIG(message):
 
     # Methane
     temp = (message[2][0]/PRESSURE_DIVISION_CONSTANT)*5.0-0.5
-    temp = (temp/4.0)*PRESSURE_METHANE_MAX_PRESSURE - PRESSURE_METHANE_BIAS
+	temp = (temp/4.0)*PRESSURE_METHANE_MAX_PRESSURE
+    temp = temp - PRESSURE_METHANE_BIAS
     data.append(temp)
     # LOX
     temp = (message[2][1]/PRESSURE_DIVISION_CONSTANT)*5.0-0.5
-    temp = (temp/4.0)*PRESSURE_LOX_MAX_PRESSURE - PRESSURE_LOX_BIAS
+    temp = (temp/4.0)*PRESSURE_LOX_MAX_PRESSURE
+    temp = temp - PRESSURE_LOX_BIAS
     data.append(temp)
     # Helium
     temp = (message[2][2]/PRESSURE_DIVISION_CONSTANT)*PRESSURE_HELIUM_MAX_PRESSURE - PRESSURE_HELIUM_BIAS
     data.append(temp)
     # Chamber
-    temp = (message[2][3]/PRESSURE_DIVISION_CONSTANT)*PRESSURE_CHAMBER_MAX_PRESSURE - PRESSURE_CHAMBER_BIAS
+    temp = (message[2][3]/PRESSURE_DIVISION_CONSTANT)*5.0-0.5
+    temp = (temp/4.0)*PRESSURE_CHAMBER_MAX_PRESSURE
+    temp = temp - PRESSURE_CHAMBER_BIAS
     data.append(temp)
     
     return (sm.pressurePSIGDataID, message[1], tuple(data))
@@ -172,6 +180,18 @@ def pressurePSIGToRaw(message):
 def pressurePSIAToRaw(message):
     message = pressurePSIGToRaw(sm.pressurePSIADataID, message[1], (message[2][0]+14.7, message[2][1]+14.7, message[2][2]+14.7, message[2][3]+14.7))
     return message
+
+#------------------------------------------------------------------------------
+# Pressure Conversions
+#------------------------------------------------------------------------------
+
+def thermocoupleConvert(message):
+    data = []
+
+    # UAF
+    temp = (4.959 * (message[2][0] / 4095.0) - 1.25) / 0.005; # result in degrees C
+    data.append(temp)
+    return (sm.thermocoupleRawDataID, message[1], tuple(data))
 
 #------------------------------------------------------------------------------
 # Acceleration Conversions

@@ -83,12 +83,12 @@ messagePackedFormats = [
 '<hhhh', #pressureRawDataID 17
 '<IIII', #pressurePSIADataID 18
 '<IIII', #pressurePSIGDataID 19
-'<h',    #pressureRawADC1DataID 20
-'<h',    #thermocoupleRawDataID 21
-'<BB',   #hallEffectDataID 22
-'<h',    #batteryRawDataID 23
-'<f',    #batteryFloatDataID 24
-'s'      #strDataID 25
+'<h',    #pressureRawADC1DataID
+'<h',    #thermocoupleRawDataID
+'<BB',   #hallEffectDataID
+'<h',    #batteryRawDataID 20
+'<f',    #batteryFloatDataID 21
+'s'      #strDataID 22
 ]
 
 messageLogFormats = [
@@ -112,9 +112,9 @@ messageLogFormats = [
 "Raw Pressures - Methane=%i, LOX=%i, Helium=%i, Chamber=%i\n", #pressureRawDataID
 "PSI absolute - Methane=%i, LOX=%i, Helium=%i, Chamber=%i\n",  #pressurePSIADataID
 "PSI guage - Methane=%i, LOX=%i, Helium=%i, Chamber=%i\n",     #pressurePSIGDataID
-"Raw ADC 1 pressure - HE Reg=%i",                              #pressureRawADC1DataID
-"Raw thermocouple - UAF=%i",                                   #thermocoupleRawDataID
-"Hall effect sensors = Methane=%i, LOX=%i",                    #hallEffectDataID
+"Raw ADC 1 pressure - HE Reg=%i\n",                            #pressureRawADC1DataID
+"Raw thermocouple - UAF=%i\n",                                 #thermocoupleRawDataID
+"Hall effect sensors = Methane=%i, LOX=%i\n",                  #hallEffectDataID
 'Battery raw voltage - %i\n',                                  #batteryRawDataID
 'Battery voltage - %f\n',                                      #batteryFloatDataID
 "%s"                                                           #strDataID
@@ -171,8 +171,8 @@ messageCSVFormats = [
 "%i, %i, %i, %i\n",  #pressurePSIADataID
 "%i, %i, %i, %i\n",  #pressurePSIGDataID
 "%i, %i,\n",         #pressureRawADC1DataID
-"%i,",               #thermocoupleRawDataID
-"%i, %i,",           #hallEffectDataID
+"%i,\n",             #thermocoupleRawDataID
+"%i, %i,\n",         #hallEffectDataID
 '%i\n',              #batteryRawDataID
 '%f\n',              #batteryFloatDataID
 "%s,\n"              #strDataID
@@ -238,7 +238,7 @@ def writeLog(messages, fileName):
 def writeCSV(messages, msgID, fileName):
     if msgID >= NUM_SENSOR_MESSAGES:
         return
-
+    
     with open(fileName, 'w') as csvFile:
         csvFile.write(messageCSVHeaders[msgID])
         for message in messages:
