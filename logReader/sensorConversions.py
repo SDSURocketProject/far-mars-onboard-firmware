@@ -338,3 +338,7 @@ def cpuTempRawToCelcius(message):
 # Convert Celcius to raw CPU temperature
 def cpuTempCelciusToRaw(message):
     return (sm.cpuTemperatureRawDataID, message[1], message[2][0]*CPU_TEMP_DIV_CELCIUS)
+
+if (__name__ == "__main__"):
+    print("Do not use this file directly, use \"logRead.py\" instead.")
+    input("Press Enter to continue...")

@@ -30,6 +30,7 @@ batteryRawDataID = 23
 batteryFloatDataID = 24
 strDataID = 25
 NUM_SENSOR_MESSAGES = 26
+CSV_ALL_SENSOR_MESSAGES = 100
 
 messageSizes = [
 11, #accelerationRawDataID
@@ -194,9 +195,13 @@ def unpackMessages(fileName):
     messages = []
     dataIdx = 0
     while (dataIdx < len(data)):
-        (msgID, timestamp, msg, dataIdx) = unpackMessage(dataIdx, data)
-        messages.append((msgID, timestamp, msg))
-
+        try:
+            (msgID, timestamp, msg, dataIdx) = unpackMessage(dataIdx, data)
+            messages.append((msgID, timestamp, msg))
+        except IndexError:
+            print(f"Parsing \"{fileName}\" failed at byte {hex(dataIdx)}")
+            return []
+            
     return messages
 
 def unpackMessage(dataIdx, data):
@@ -235,11 +240,41 @@ def writeLog(messages, fileName):
             logFile.write(formatMessage(message))
     return
 
+CSV_ALL_TIMESTAMP = 0
+CSV_ALL_PT_METHANE = 1
+CSV_ALL_PT_LOX = 2
+CSV_ALL_PT_HELIUM = 3
+CSV_ALL_TC = 4
+CSV_ALL_HE_METHANE = 5
+CSV_ALL_HE_LOX = 6
+CSV_ALL_MAX = 7
 def writeCSV(messages, msgID, fileName):
-    if msgID >= NUM_SENSOR_MESSAGES:
+    if (msgID == CSV_ALL_SENSOR_MESSAGES): # It aint pretty, but it works (mostly)
+        outData = []
+        data = [0]*CSV_ALL_MAX
+        for message in messages:
+            if (message[0] == pressurePSIGDataID):
+                data[CSV_ALL_TIMESTAMP] = message[1]
+                data[CSV_ALL_PT_METHANE] = int(message[2][0])
+                data[CSV_ALL_PT_LOX] = int(message[2][1])
+                data[CSV_ALL_PT_HELIUM] = int(message[2][2])
+            elif (message[0] == thermocoupleRawDataID):
+                data[CSV_ALL_TC] = int(message[2][0])
+            elif (message[0] == hallEffectDataID):
+                data[CSV_ALL_HE_METHANE] = int(message[2][0])
+                data[CSV_ALL_HE_LOX] = int(message[2][1])
+                outData.append(data[:])
+        with open(fileName, 'w') as csvFile:
+            print(f"Logging data to \"{fileName}\".")
+            csvFile.write("Timestamp, PT_Methane, PT_LOX, PT_Helium, TC_UAF, HE_Methane, HE_LOX\n")
+            for dataPoint in outData:
+                csvFile.write(f"{dataPoint[CSV_ALL_TIMESTAMP]}, {dataPoint[CSV_ALL_PT_METHANE]}, {dataPoint[CSV_ALL_PT_LOX]}, {dataPoint[CSV_ALL_PT_HELIUM]}, {dataPoint[CSV_ALL_TC]}, {dataPoint[CSV_ALL_HE_METHANE]}, {dataPoint[CSV_ALL_HE_LOX]}\n")
+        return
+    elif msgID >= NUM_SENSOR_MESSAGES:
         return
     
     with open(fileName, 'w') as csvFile:
+        print(f"Logging data to \"{fileName}\".")
         csvFile.write(messageCSVHeaders[msgID])
         for message in messages:
             if (message[0] != msgID):
@@ -247,3 +282,6 @@ def writeCSV(messages, msgID, fileName):
             csvFile.write(formatMessage(message, style='csv'))
     return
 
+if (__name__ == "__main__"):
+    print("Do not use this file directly, use \"logRead.py\" instead.")
+    input("Press Enter to continue...")
