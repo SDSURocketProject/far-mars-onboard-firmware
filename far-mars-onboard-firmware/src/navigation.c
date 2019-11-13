@@ -35,7 +35,6 @@ void navigationTask(void *pvParameters) {
     uint32_t pressureReturn;
     uint32_t adc1Return;
     uint32_t hallReturn;
-    uint32_t thermocoupleReturn;
 
     xLastWakeupTime = xTaskGetTickCount();
     while (1) {
@@ -82,10 +81,6 @@ void navigationTask(void *pvParameters) {
         if (adc1Return == FMOF_SUCCESS) {
             daqSendSensorMessage(&pressureAdc1);
             logSensorMessage(&pressureAdc1, LOG_LEVEL_DATA);
-        }
-        if (thermocoupleReturn == FMOF_SUCCESS) {
-            daqSendSensorMessage(&thermocouple);
-            logSensorMessage(&thermocouple, LOG_LEVEL_DATA);
         }
         if (hallReturn == FMOF_SUCCESS) {
             daqSendSensorMessage(&hall);

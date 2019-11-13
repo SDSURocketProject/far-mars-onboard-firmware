@@ -134,7 +134,7 @@ def pressureRawToPSIG(message):
 
     # Methane
     temp = (message[2][0]/PRESSURE_DIVISION_CONSTANT)*5.0-0.5
-    temp = (temp/4.0)*PRESSURE_METHANE_MAX_PRESSURE
+	temp = (temp/4.0)*PRESSURE_METHANE_MAX_PRESSURE
     temp = temp - PRESSURE_METHANE_BIAS
     data.append(temp)
     # LOX
@@ -143,7 +143,7 @@ def pressureRawToPSIG(message):
     temp = temp - PRESSURE_LOX_BIAS
     data.append(temp)
     # Helium
-    temp = (message[2][2]/PRESSURE_DIVISION_CONSTANT)*PRESSURE_HELIUM_MAX_PRESSURE
+    temp = (message[2][2]/PRESSURE_DIVISION_CONSTANT)*PRESSURE_HELIUM_MAX_PRESSURE - PRESSURE_HELIUM_BIAS
     data.append(temp)
     # Chamber
     temp = (message[2][3]/PRESSURE_DIVISION_CONSTANT)*5.0-0.5
