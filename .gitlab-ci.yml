@@ -1,4 +1,4 @@
-image: fedora
+image: alpine
 
 stages:
     - build
@@ -7,7 +7,7 @@ stages:
 build:
     stage: build
     before_script:
-        - dnf install -q -y doxygen
+        - apt install -q -y doxygen
     script:
         doxygen
 
@@ -22,6 +22,7 @@ deploy:
         - echo -e "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
         - chmod 600 ~/.ssh/id_rsa
         - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-        - dnf install -q -y openssh openssh-clients
+        - apt install -q -y openssh openssh-clients
     script:
+        - ssh deployuser@elon.sdsurocketproject.org "rm -rf /var/www/html/wikistatic/far-mars-onboard-firmware/"
         - scp documentation/html/* deployuser@elon.sdsurocketproject.org:/var/www/html/wikistatic/far-mars-onboard-firmware
