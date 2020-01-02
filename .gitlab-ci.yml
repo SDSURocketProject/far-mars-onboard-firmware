@@ -26,5 +26,5 @@ deploy:
         - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
         - apk update && apk add openssh openssh-client
     script:
-        - ssh deployuser@elon.sdsurocketproject.org "rm -rf /var/www/html/wikistatic/far-mars-onboard-firmware/"
+        - ssh deployuser@elon.sdsurocketproject.org "rm -rf /var/www/html/wikistatic/far-mars-onboard-firmware/*"
         - scp documentation/html/* deployuser@elon.sdsurocketproject.org:/var/www/html/wikistatic/far-mars-onboard-firmware
