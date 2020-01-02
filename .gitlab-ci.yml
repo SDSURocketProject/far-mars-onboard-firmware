@@ -9,7 +9,6 @@ build:
     before_script:
         - dnf install -q -y doxygen
     script:
-        mkdir documentation/
         doxygen
 
 deploy:
