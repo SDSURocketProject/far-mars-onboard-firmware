@@ -1,0 +1,28 @@
+image: fedora
+
+stages:
+    - build
+    - deploy
+
+build:
+    stage: build
+    before_script:
+        - dnf install -q -y doxygen
+    script:
+        mkdir documentation/
+        doxygen
+
+deploy:
+    stage: deploy
+    when: on_success
+    needs: [build]
+    dependencies:
+        - build
+    before_script:
+        - mkdir -p ~/.ssh
+        - echo -e "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+        - chmod 600 ~/.ssh/id_rsa
+        - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+        - dnf install -q -y openssh openssh-clients
+    script:
+        - scp documentation/html/* deployuser@elon.sdsurocketproject.org:/var/www/html/wikistatic/far-mars-onboard-firmware
