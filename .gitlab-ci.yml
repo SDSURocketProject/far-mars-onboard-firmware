@@ -27,6 +27,6 @@ deploy:
         - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
         - apk update && apk add openssh-client rsync
     script:
-        - rsync -avP --delete --dry-run documentation/html/ deployuser@elon.sdsurocketproject.org:/var/www/html/wikistatic/far-mars-onboard-firmware/
+        - rsync -avP --delete documentation/html/ deployuser@elon.sdsurocketproject.org:/var/www/html/wikistatic/far-mars-onboard-firmware/
     only:
         - master
