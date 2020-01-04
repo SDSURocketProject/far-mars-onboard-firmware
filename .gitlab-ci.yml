@@ -9,7 +9,7 @@ build:
     before_script:
         - apk update && apk add doxygen
     script:
-        doxygen
+        - doxygen
     artifacts:
         paths:
             - documentation/
@@ -25,9 +25,8 @@ deploy:
         - echo -e "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
         - chmod 600 ~/.ssh/id_rsa
         - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-        - apk update && apk add openssh-client
+        - apk update && apk add openssh-client rsync
     script:
-        - ssh deployuser@elon.sdsurocketproject.org "rm -rf /var/www/html/wikistatic/far-mars-onboard-firmware/*"
-        - scp -r documentation/html/* deployuser@elon.sdsurocketproject.org:/var/www/html/wikistatic/far-mars-onboard-firmware
+        - rsync -avP --delete --dry-run documentation/html/ deployuser@elon.sdsurocketproject.org:/var/www/html/wikistatic/far-mars-onboard-firmware/
     only:
         - master
