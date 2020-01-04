@@ -14,4 +14,6 @@ The primary tasks for the onboard computer are:
 Recordings of the data collected during cryo, static, and launch are located in the folder testing. In each folder is are .mat files containing the data from the test and a .m Matlab script which uses that data to create graphs.
 
 # Documentation
-Open the file "./documentation/html/index.html" in any web browser to view the firmware documentation.
+The documentation for this project is hosted on the SDSU Rocket Project server at http://elon.sdsurocketproject.org/wikistatic/far-mars-onboard-firmware/index.html.
+
+Alternatively, you can compile the documentation locally by running doxygen on the root directory of this repo and then opening the file resulting file "./documentation/html/index.html" in any web browser to view the firmware documentation
