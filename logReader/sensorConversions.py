@@ -73,6 +73,7 @@ PRESSURE_HELIUM_MAX_PRESSURE = 5800
 PRESSURE_CHAMBER_MAX_PRESSURE = 1500
 PRESSURE_METHANE_BIAS = -8
 PRESSURE_LOX_BIAS = 375
+PRESSURE_HELIUM_BIAS = 0
 PRESSURE_CHAMBER_BIAS = 23
 
 # Returns true if the message contains pressure data
@@ -134,7 +135,7 @@ def pressureRawToPSIG(message):
 
     # Methane
     temp = (message[2][0]/PRESSURE_DIVISION_CONSTANT)*5.0-0.5
-	temp = (temp/4.0)*PRESSURE_METHANE_MAX_PRESSURE
+    temp = (temp/4.0)*PRESSURE_METHANE_MAX_PRESSURE
     temp = temp - PRESSURE_METHANE_BIAS
     data.append(temp)
     # LOX
